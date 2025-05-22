@@ -64,4 +64,28 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Relacionamento: um usuário pode ter vários pedidos
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    // Relacionamento: um usuário pode ter vários endereços
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
+
+    // Relacionamento: um usuário pode ter um registro de pontos de fidelidade
+    public function loyaltyPoints()
+    {
+        return $this->hasOne(LoyaltyPoint::class);
+    }
+
+    // Relacionamento: um usuário pode usar vários cupons/descontos (caso queira registrar uso)
+    public function discounts()
+    {
+        return $this->belongsToMany(Discount::class, 'user_discount');
+    }
 }
