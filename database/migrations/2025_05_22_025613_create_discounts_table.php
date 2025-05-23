@@ -12,16 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('discounts', function (Blueprint $table) {
-            Schema::create('discounts', function (Blueprint $table) {
-                $table->id();
-                $table->string('code')->unique();
-                $table->decimal('amount', 10, 2)->nullable();
-                $table->integer('percentage')->nullable();
-                $table->timestamp('valid_from')->nullable();
-                $table->timestamp('valid_until')->nullable();
-                $table->boolean('active')->default(true);
-                $table->timestamps();
-            });
+            $table->id();
+            $table->string('code')->unique();
+            $table->decimal('amount', 10, 2)->nullable();
+            $table->integer('percentage')->nullable();
+            $table->timestamp('valid_from')->nullable();
+            $table->timestamp('valid_until')->nullable();
+            $table->boolean('active')->default(true);
+            $table->timestamps();
         });
     }
 

@@ -8,9 +8,9 @@
     <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1200&q=80" alt="Banner"
       class="absolute inset-0 w-full h-full object-cover opacity-60">
     <div class="relative z-10 text-center">
-      <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-4 drop-shadow-lg">Encontre Seu Estilo</h1>
-      <p class="text-xl text-gray-100 mb-8">Produtos exclusivos, entrega rápida e pontos de fidelidade.</p>
-      <a href="{{ route('products.index') }}"
+      <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-4 drop-shadow-lg">MAIS DO QUE APENAS "UMA LOJA"</h1>
+      <p class="text-xl text-gray-100 mb-8">Um estilo de vida com qualidade e equilíbrio</p>
+      <a href="{{ route('shop.products.index') }}"
         class="inline-block bg-blue-600 text-white px-8 py-3 rounded-full text-lg font-bold shadow hover:bg-blue-700 transition">
         Ver Produtos
       </a>
@@ -28,7 +28,7 @@
         <h3 class="font-semibold text-lg mb-2">Tênis Esportivo</h3>
         <p class="text-gray-500 mb-4">Conforto e estilo para o seu dia a dia.</p>
         <span class="font-bold text-blue-600 text-xl mb-4">R$ 299,90</span>
-        <a href="{{ route('products.index') }}"
+        <a href="{{ route('shop.products.index') }}"
           class="bg-black text-white px-6 py-2 rounded hover:bg-blue-700 transition">Comprar</a>
       </div>
       <!-- Produto 2 -->
@@ -38,7 +38,7 @@
         <h3 class="font-semibold text-lg mb-2">Mochila Moderna</h3>
         <p class="text-gray-500 mb-4">Praticidade e resistência para sua rotina.</p>
         <span class="font-bold text-blue-600 text-xl mb-4">R$ 179,90</span>
-        <a href="{{ route('products.index') }}"
+        <a href="{{ route('shop.products.index') }}"
           class="bg-black text-white px-6 py-2 rounded hover:bg-blue-700 transition">Comprar</a>
       </div>
       <!-- Produto 3 -->
@@ -48,7 +48,7 @@
         <h3 class="font-semibold text-lg mb-2">Camiseta Casual</h3>
         <p class="text-gray-500 mb-4">Ideal para todas as ocasiões.</p>
         <span class="font-bold text-blue-600 text-xl mb-4">R$ 89,90</span>
-        <a href="{{ route('products.index') }}"
+        <a href="{{ route('shop.products.index') }}"
           class="bg-black text-white px-6 py-2 rounded hover:bg-blue-700 transition">Comprar</a>
       </div>
     </div>

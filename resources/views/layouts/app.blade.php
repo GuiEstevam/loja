@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+@php use Illuminate\Support\Str; @endphp
 
 <head>
   <meta charset="UTF-8">
@@ -8,14 +9,12 @@
   @vite('resources/css/app.css')
 </head>
 
-
-<body class="bg-gray-50 text-gray-900">
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
   <x-navbar />
-  <main>
+  <main class="flex-1">
     @yield('content')
   </main>
-  <x-footer />:
-
+  <x-footer />
 </body>
 
 </html>
