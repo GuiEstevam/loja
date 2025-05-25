@@ -6,6 +6,30 @@
   <div class="max-w-6xl mx-auto py-10 px-4">
     <h1 class="text-3xl font-bold mb-8">Painel Administrativo</h1>
 
+    <!-- Atalhos de gestão -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+      <a href="{{ route('admin.categories.index') }}"
+        class="bg-gray-50 rounded-xl shadow p-6 flex flex-col items-center hover:bg-blue-50 transition group cursor-pointer">
+        <ion-icon name="pricetags-outline" class="text-blue-600" size="large"></ion-icon>
+        <div class="font-semibold mt-2">Categorias</div>
+      </a>
+      <a href="{{ route('admin.brands.index') }}"
+        class="bg-gray-50 rounded-xl shadow p-6 flex flex-col items-center hover:bg-purple-50 transition group cursor-pointer">
+        <ion-icon name="ribbon-outline" class="text-purple-600" size="large"></ion-icon>
+        <div class="font-semibold mt-2">Marcas</div>
+      </a>
+      <a href="{{ route('admin.colors.index') }}"
+        class="bg-gray-50 rounded-xl shadow p-6 flex flex-col items-center hover:bg-pink-50 transition group cursor-pointer">
+        <ion-icon name="color-palette-outline" class="text-pink-600" size="large"></ion-icon>
+        <div class="font-semibold mt-2">Cores</div>
+      </a>
+      <a href="{{ route('admin.sizes.index') }}"
+        class="bg-gray-50 rounded-xl shadow p-6 flex flex-col items-center hover:bg-yellow-50 transition group cursor-pointer">
+        <ion-icon name="resize-outline" class="text-yellow-600" size="large"></ion-icon>
+        <div class="font-semibold mt-2">Tamanhos</div>
+      </a>
+    </div>
+
     <!-- Indicadores rápidos -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-10">
       <a href="{{ route('admin.orders.index') }}"

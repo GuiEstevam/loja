@@ -71,7 +71,7 @@
             @endif
             <!-- Imagem -->
             <a href="{{ route('shop.products.show', $product) }}" class="block relative">
-              <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
+              <img src="{{ asset('products/' . $product->image) }}" alt="{{ $product->name }}"
                 class="w-full h-48 object-cover rounded-lg mb-2" />
             </a>
             <!-- Nome -->
@@ -84,17 +84,17 @@
             <!-- Preço -->
             <div class="flex items-baseline gap-2 mb-1">
               <span class="text-lg font-bold text-blue-700">R$ {{ number_format($product->price, 2, ',', '.') }}</span>
-              @if ($product->old_price)
+              @if ($product->fakerprice)
                 <span class="line-through text-gray-400 text-xs">R$
-                  {{ number_format($product->old_price, 2, ',', '.') }}</span>
+                  {{ number_format($product->fakerprice, 2, ',', '.') }}</span>
               @endif
             </div>
             <!-- Tamanhos (desktop e mobile, nunca estoura) -->
-            @if ($product->sizes)
+            @if ($product->sizes && $product->sizes->count())
               <div class="flex flex-wrap gap-1 mt-1">
                 @foreach ($product->sizes as $size)
                   <span class="border rounded px-2 py-1 text-xs font-medium min-w-[2.2rem] text-center bg-gray-50">
-                    {{ rtrim(rtrim(number_format($size, 1, '.', ''), '0'), '.') }}
+                    {{ $size->name }}
                   </span>
                 @endforeach
               </div>

@@ -141,7 +141,7 @@
               <a href="{{ route('shop.products.show', $product) }}"
                 class="bg-white border border-slate-200 rounded-3xl shadow-lg hover:shadow-2xl transition w-full h-[480px] flex flex-col overflow-hidden group">
                 <!-- Imagem ocupa todo o topo do card -->
-                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
+                <img src="{{ asset('products/' . $product->image) }}" alt="{{ $product->name }}"
                   class="object-cover w-full h-[340px] group-hover:scale-105 transition-transform duration-300 rounded-t-3xl">
                 <div class="flex-1 flex flex-col justify-start w-full px-5 py-4 bg-white">
                   <h3 class="font-bold text-xl md:text-2xl mb-2 text-gray-900 truncate text-left"

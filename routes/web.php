@@ -1,13 +1,18 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+
+// Admin Controllers
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
-use App\Http\Controllers\Admin\OrderItemController as AdminOrderItemController;
-use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
-use App\Http\Controllers\Admin\DiscountController as AdminDiscountController;
-use App\Http\Controllers\Admin\LoyaltyPointController as AdminLoyaltyPointController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\BrandController as AdminBrandController;
+use App\Http\Controllers\Admin\ColorController as AdminColorController;
+use App\Http\Controllers\Admin\SizeController as AdminSizeController;
 
+// Shop Controllers
 use App\Http\Controllers\Shop\ProductController as ShopProductController;
 use App\Http\Controllers\Shop\OrderController as ShopOrderController;
 use App\Http\Controllers\Shop\OrderItemController as ShopOrderItemController;
@@ -16,9 +21,6 @@ use App\Http\Controllers\Shop\DiscountController as ShopDiscountController;
 use App\Http\Controllers\Shop\LoyaltyPointController as ShopLoyaltyPointController;
 use App\Http\Controllers\Shop\AddressController as ShopAddressController;
 use App\Http\Controllers\Shop\CartController as ShopCartController;
-
-use App\Http\Controllers\HomeController;
-use Illuminate\Support\Facades\Route;
 
 // Página inicial
 Route::get('/', [HomeController::class, 'welcome'])->name('home');
@@ -39,6 +41,7 @@ Route::post('/carrinho/adicionar/{product}', [ShopCartController::class, 'add'])
 Route::post('/carrinho/remover/{product}', [ShopCartController::class, 'remove'])->name('shop.cart.remove');
 Route::post('/carrinho/atualizar/{product}', [ShopCartController::class, 'update'])->name('shop.cart.update');
 Route::post('/comprar/{product}', [ShopCartController::class, 'buy'])->name('shop.cart.buy');
+
 // -------------------
 // Rotas Privadas (usuário autenticado)
 // -------------------
@@ -81,12 +84,20 @@ Route::middleware('auth')->group(function () {
 // Rotas de Admin (painel administrativo)
 // -------------------
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Dashboard admin
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
+    // Produtos
     Route::resource('products', AdminProductController::class);
 
     // Pedidos: apenas index, show e update (troca de status)
     Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'update']);
+
+    // Categorias, marcas, cores, tamanhos
+    Route::resource('categories', AdminCategoryController::class);
+    Route::resource('brands', AdminBrandController::class);
+    Route::resource('colors', AdminColorController::class);
+    Route::resource('sizes', AdminSizeController::class);
 
     // Outras resources do admin (descomente conforme necessidade do MVP)
     // Route::resource('order-items', AdminOrderItemController::class);
