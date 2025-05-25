@@ -14,7 +14,21 @@ class Order extends Model
         'subtotal',
         'discount',
         'total',
-        'status'
+        'status',
+        'name',
+        'email',
+        'phone',
+        'address',         // Endereço completo montado
+        'country',
+        'zip',             // CEP/Código Postal
+        'street',
+        'number',
+        'complement',
+        'neighborhood',
+        'city',
+        'state',
+        'payment_method',
+        'notes',
     ];
 
     public function user()

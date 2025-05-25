@@ -33,7 +33,7 @@ class OrderController extends Controller
 
         $order->update($validated);
 
-        return redirect()->route('admin.orders.index')->with('success', 'Pedido atualizado com sucesso!');
+        return redirect()->route('admin.orders.show', $order)->with('success', 'Status do pedido atualizado com sucesso!');
     }
 
     public function destroy(Order $order)

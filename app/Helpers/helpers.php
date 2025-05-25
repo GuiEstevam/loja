@@ -4,7 +4,7 @@ if (!function_exists('order_status_label')) {
     function order_status_label($status)
     {
         $labels = [
-            'pending'   => 'Aguardando pagamento',
+            'pending'   => 'Aguardando',
             'paid'      => 'Pago',
             'shipped'   => 'Enviado',
             'delivered' => 'Entregue',

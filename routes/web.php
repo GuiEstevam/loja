@@ -16,30 +16,38 @@ use App\Http\Controllers\Shop\LoyaltyPointController as ShopLoyaltyPointControll
 use App\Http\Controllers\Shop\AddressController as ShopAddressController;
 use App\Http\Controllers\Shop\CartController as ShopCartController;
 
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
 // Página inicial
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', [HomeController::class, 'welcome'])->name('home');
 
-// Listagem de produtos (público)
+// -------------------
+// Rotas Públicas
+// -------------------
+
+// Listagem de produtos
 Route::get('/produtos', [ShopProductController::class, 'index'])->name('shop.products.index');
 
-// Detalhe do produto (público)
+// Detalhe do produto
 Route::get('/produtos/{product}', [ShopProductController::class, 'show'])->name('shop.products.show');
+
+// Carrinho - ACESSO PÚBLICO
+Route::get('/carrinho', [ShopCartController::class, 'index'])->name('shop.cart.index');
+Route::post('/carrinho/adicionar/{product}', [ShopCartController::class, 'add'])->name('shop.cart.add');
+Route::post('/carrinho/remover/{product}', [ShopCartController::class, 'remove'])->name('shop.cart.remove');
+Route::post('/carrinho/atualizar/{product}', [ShopCartController::class, 'update'])->name('shop.cart.update');
 
 // -------------------
 // Rotas Privadas (usuário autenticado)
 // -------------------
 Route::middleware('auth')->group(function () {
 
+    // Dashboard do usuário
     Route::get('/minha-conta', function () {
         return view('shop.dashboard');
     })->name('shop.dashboard');
+
     // Pedidos do usuário
     Route::get('/meus-pedidos', [ShopOrderController::class, 'index'])->name('shop.orders.index');
     Route::get('/meus-pedidos/{order}', [ShopOrderController::class, 'show'])->name('shop.orders.show');
@@ -59,40 +67,31 @@ Route::middleware('auth')->group(function () {
     // Pontos de fidelidade
     Route::get('/meus-pontos', [ShopLoyaltyPointController::class, 'index'])->name('shop.loyalty_points.index');
 
-    // Endereços
+    // Endereços do usuário (CRUD)
     Route::resource('enderecos', ShopAddressController::class);
 
-    // Exibir carrinho
-    Route::get('/carrinho', [ShopCartController::class, 'index'])->name('shop.cart.index');
-
-    // Adicionar produto ao carrinho
-    Route::post('/carrinho/adicionar/{product}', [ShopCartController::class, 'add'])->name('shop.cart.add');
-
-    // Remover produto do carrinho
-    Route::post('/carrinho/remover/{product}', [ShopCartController::class, 'remove'])->name('shop.cart.remove');
-
-    // Atualizar quantidade (opcional)
-    Route::post('/carrinho/atualizar/{product}', [ShopCartController::class, 'update'])->name('shop.cart.update');
-
     // Checkout (exibe o formulário para finalizar compra)
-    Route::get('/checkout', function () {
-        $cart = session()->get('cart', []);
-        return view('shop.checkout', compact('cart'));
-    })->name('shop.checkout');
-
+    Route::get('/checkout', [ShopOrderController::class, 'checkout'])->name('shop.checkout');
     // Processa o pedido (checkout)
     Route::post('/checkout', [ShopOrderController::class, 'process'])->name('shop.checkout.process');
 });
 
+// -------------------
+// Rotas de Admin (painel administrativo)
+// -------------------
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('dashboard');
+
     Route::resource('products', AdminProductController::class);
-    Route::resource('orders', AdminOrderController::class);
-    Route::resource('order-items', AdminOrderItemController::class);
-    Route::resource('payments', AdminPaymentController::class);
-    Route::resource('discounts', AdminDiscountController::class);
-    Route::resource('loyalty-points', AdminLoyaltyPointController::class);
-    // AddressController admin só se/quando necessário
+
+    // Pedidos: apenas index, show e update (troca de status)
+    Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'update']);
+
+    // Outras resources do admin (descomente conforme necessidade do MVP)
+    // Route::resource('order-items', AdminOrderItemController::class);
+    // Route::resource('payments', AdminPaymentController::class);
+    // Route::resource('discounts', AdminDiscountController::class);
+    // Route::resource('loyalty-points', AdminLoyaltyPointController::class);
 });
