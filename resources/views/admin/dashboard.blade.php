@@ -3,55 +3,125 @@
 @section('title', 'Painel Administrativo')
 
 @section('content')
-  <div class="max-w-5xl mx-auto py-10 px-4">
+  <div class="max-w-6xl mx-auto py-10 px-4">
     <h1 class="text-3xl font-bold mb-8">Painel Administrativo</h1>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
 
-      <!-- Card: Produtos -->
-      <a href="{{ route('admin.products.index') }}"
-        class="bg-blue-600 text-white rounded-lg p-6 flex flex-col items-center shadow hover:bg-blue-700 transition">
-        <svg class="w-10 h-10 mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M3 7h18M3 12h18M3 17h18" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-        <span class="font-semibold text-lg">Produtos</span>
-      </a>
-
-      <!-- Card: Pedidos -->
+    <!-- Indicadores rápidos -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-10">
       <a href="{{ route('admin.orders.index') }}"
-        class="bg-blue-100 text-blue-700 rounded-lg p-6 flex flex-col items-center shadow hover:bg-blue-200 transition">
-        <svg class="w-10 h-10 mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M9 17v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6" />
-          <path d="M5 17h14" />
-        </svg>
-        <span class="font-semibold text-lg">Pedidos</span>
+        class="bg-white rounded-xl shadow p-6 flex flex-col items-center hover:bg-green-50 transition group cursor-pointer">
+        <ion-icon name="receipt-outline" class="text-green-600" size="large"></ion-icon>
+        <div class="text-2xl font-bold mt-2">{{ $totalPedidos }}</div>
+        <div class="text-gray-600 text-sm font-semibold mt-1">Pedidos ({{ $dias }} dias)</div>
       </a>
-
-      <!-- Card: Clientes (placeholder) -->
-      <div class="bg-gray-100 text-gray-400 rounded-lg p-6 flex flex-col items-center shadow">
-        <svg class="w-10 h-10 mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M16 21v-2a4 4 0 0 0-3-3.87" />
-          <path d="M12 7a4 4 0 0 1 4 4v1" />
-        </svg>
-        <span class="font-semibold text-lg">Clientes <span class="text-xs">(em breve)</span></span>
+      <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
+        <ion-icon name="cash-outline" class="text-blue-600" size="large"></ion-icon>
+        <div class="text-2xl font-bold mt-2">R$ {{ number_format($totalReceita, 2, ',', '.') }}</div>
+        <div class="text-gray-600 text-sm font-semibold mt-1">Receita ({{ $dias }} dias)</div>
       </div>
-
-      <!-- Card: Relatórios (placeholder) -->
-      <div class="bg-gray-100 text-gray-400 rounded-lg p-6 flex flex-col items-center shadow">
-        <svg class="w-10 h-10 mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M3 3v18h18" />
-          <path d="M9 17v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6" />
-        </svg>
-        <span class="font-semibold text-lg">Relatórios <span class="text-xs">(em breve)</span></span>
+      <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
+        <ion-icon name="pricetag-outline" class="text-orange-600" size="large"></ion-icon>
+        <div class="text-2xl font-bold mt-2">R$ {{ number_format($ticketMedio, 2, ',', '.') }}</div>
+        <div class="text-gray-600 text-sm font-semibold mt-1">Ticket Médio</div>
       </div>
-
-      <!-- Card: Cadastrar Produto -->
-      <a href="{{ route('admin.products.create') }}"
-        class="bg-green-600 text-white rounded-lg p-6 flex flex-col items-center shadow hover:bg-green-700 transition">
-        <svg class="w-10 h-10 mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-        <span class="font-semibold text-lg">Cadastrar Produto</span>
+      <a href="{{ route('admin.products.index') }}"
+        class="bg-white rounded-xl shadow p-6 flex flex-col items-center hover:bg-blue-50 transition group cursor-pointer">
+        <ion-icon name="cube-outline" class="text-blue-600" size="large"></ion-icon>
+        <div class="text-2xl font-bold mt-2">{{ $totalProdutos }}</div>
+        <div class="text-gray-600 text-sm font-semibold mt-1">Produtos ativos</div>
       </a>
+      <a href="{{ route('admin.products.index', ['filtro' => 'baixo_estoque']) }}"
+        class="bg-white rounded-xl shadow p-6 flex flex-col items-center hover:bg-red-50 transition group cursor-pointer">
+        <ion-icon name="warning-outline" class="text-red-600" size="large"></ion-icon>
+        <div class="text-2xl font-bold mt-2">{{ $produtosBaixoEstoque }}</div>
+        <div class="text-gray-600 text-sm font-semibold mt-1">Baixo estoque</div>
+      </a>
+      <div
+        class="bg-white rounded-xl shadow p-6 flex flex-col items-center transition group
+        {{ is_null($cuponsAtivos) ? 'pointer-events-none opacity-60' : 'hover:bg-purple-50 cursor-pointer' }}">
+        <ion-icon name="pricetags-outline" class="text-purple-600" size="large"></ion-icon>
+        <div class="text-2xl font-bold mt-2">
+          {{ is_null($cuponsAtivos) ? '—' : $cuponsAtivos }}
+        </div>
+        <div class="text-gray-600 text-sm font-semibold mt-1">
+          Cupons ativos {{ is_null($cuponsAtivos) ? '(em breve)' : '' }}
+        </div>
+      </div>
+      <div
+        class="bg-white rounded-xl shadow p-6 flex flex-col items-center transition group
+        {{ is_null($totalPontosFidelidade) ? 'pointer-events-none opacity-60' : 'hover:bg-yellow-50 cursor-pointer' }}">
+        <ion-icon name="star-outline" class="text-yellow-600" size="large"></ion-icon>
+        <div class="text-2xl font-bold mt-2">
+          {{ is_null($totalPontosFidelidade) ? '—' : $totalPontosFidelidade }}
+        </div>
+        <div class="text-gray-600 text-sm font-semibold mt-1">
+          Pontos distribuídos {{ is_null($totalPontosFidelidade) ? '(em breve)' : '' }}
+        </div>
+      </div>
+      <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
+        <ion-icon name="person-add-outline" class="text-indigo-600" size="large"></ion-icon>
+        <div class="text-2xl font-bold mt-2">{{ $novosClientes }}</div>
+        <div class="text-gray-600 text-sm font-semibold mt-1">Novos clientes ({{ $dias }} dias)</div>
+      </div>
+      <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
+        <ion-icon name="people-outline" class="text-indigo-600" size="large"></ion-icon>
+        <div class="text-2xl font-bold mt-2">{{ $totalClientes }}</div>
+        <div class="text-gray-600 text-sm font-semibold mt-1">Clientes totais</div>
+      </div>
+    </div>
+
+    <!-- Gráfico-resumo com seletor de período -->
+    <div class="bg-white rounded-xl shadow p-6 mb-10">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2">
+        <h2 class="font-semibold text-lg">Pedidos nos últimos {{ $dias }} dias</h2>
+        <form method="GET" class="flex items-center gap-2">
+          <label for="dias" class="text-sm font-medium">Período:</label>
+          <select name="dias" id="dias" class="border rounded px-2 py-1 text-sm" onchange="this.form.submit()">
+            <option value="7" {{ $dias == 7 ? 'selected' : '' }}>7 dias</option>
+            <option value="15" {{ $dias == 15 ? 'selected' : '' }}>15 dias</option>
+            <option value="30" {{ $dias == 30 ? 'selected' : '' }}>30 dias</option>
+          </select>
+        </form>
+      </div>
+      <canvas id="ordersChart" height="80"></canvas>
     </div>
   </div>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const ctx = document.getElementById('ordersChart').getContext('2d');
+    const chartData = @json($chartData);
+    const chartLabels = @json($chartLabels);
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: chartLabels,
+        datasets: [{
+          label: 'Pedidos',
+          data: chartData,
+          borderColor: '#2563eb',
+          backgroundColor: 'rgba(37,99,235,0.1)',
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1
+            }
+          }
+        }
+      }
+    });
+  </script>
 @endsection

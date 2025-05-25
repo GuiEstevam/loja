@@ -8,10 +8,40 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::with('user')->orderBy('created_at', 'desc')->paginate(10);
-        return view('admin.orders.index', compact('orders'));
+        $query = Order::with(['user', 'items.product'])->orderBy('id', 'desc');
+
+        // Filtros
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('id', $search)
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+        if ($request->filled('status') && $request->status != 'Todos') {
+            $query->where('status', $request->status);
+        }
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $orders = $query->paginate(10)->withQueryString();
+
+        // Estatísticas rápidas
+        $stats = [
+            'total' => Order::count(),
+            'revenue' => Order::whereIn('status', ['paid', 'delivered'])->sum('total'),
+            'average' => Order::whereIn('status', ['paid', 'delivered'])->avg('total') ?: 0,
+        ];
+
+        return view('admin.orders.index', compact('orders', 'stats'));
     }
 
     public function show(Order $order)
@@ -22,6 +52,7 @@ class OrderController extends Controller
 
     public function edit(Order $order)
     {
+        $order->load('items.product', 'user');
         return view('admin.orders.edit', compact('order'));
     }
 
@@ -30,10 +61,26 @@ class OrderController extends Controller
         $validated = $request->validate([
             'status' => 'required|string',
         ]);
-
         $order->update($validated);
 
-        return redirect()->route('admin.orders.show', $order)->with('success', 'Status do pedido atualizado com sucesso!');
+        // AJAX: retorna label e classe CSS do status
+        if ($request->wantsJson()) {
+            $labels = [
+                'pending' => ['Aguardando', 'bg-yellow-100 text-yellow-700'],
+                'paid' => ['Pago', 'bg-green-100 text-green-700'],
+                'shipped' => ['Enviado', 'bg-blue-100 text-blue-700'],
+                'delivered' => ['Entregue', 'bg-gray-200 text-gray-700'],
+                'canceled' => ['Cancelado', 'bg-red-100 text-red-700'],
+            ];
+            $status = $order->status;
+            return response()->json([
+                'success' => true,
+                'label' => $labels[$status][0] ?? ucfirst($status),
+                'class' => $labels[$status][1] ?? 'bg-gray-100 text-gray-700',
+            ]);
+        }
+
+        return back()->with('success', 'Status do pedido atualizado com sucesso!');
     }
 
     public function destroy(Order $order)
