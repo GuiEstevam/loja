@@ -7,28 +7,29 @@
     <h1 class="text-2xl font-bold mb-8 text-center">Finalizar Compra</h1>
     <div class="flex flex-col md:flex-row gap-8">
       {{-- Resumo do Pedido --}}
-      <div class="w-full md:w-1/3 bg-white shadow-lg rounded-xl p-6 flex flex-col justify-between">
-        <h2 class="text-lg font-semibold mb-2 border-b pb-2">Resumo do Pedido</h2>
-        <ul class="mt-2">
+      <div class="w-full md:w-5/10 bg-white shadow-lg rounded-xl p-6 flex flex-col justify-between">
+        <h2 class="text-lg font-semibold mb-4 border-b pb-2">Resumo do Pedido</h2>
+        <ul class="flex flex-col gap-4 mt-2">
           @php $total = 0; @endphp
-          @foreach ($cart as $item)
+          @foreach ($cart as $id => $item)
             @php
               $subtotal = $item['price'] * $item['quantity'];
               $total += $subtotal;
             @endphp
-            <li class="flex items-center gap-4 mb-2">
-              <img src="{{ asset('storage/' . $item['image']) }}" class="w-32 h-32 object-cover rounded border shadow"
-                alt="{{ $item['name'] }}">
-              <div>
-                <div class="font-semibold text-base">{{ $item['name'] }}</div>
-                <div class="text-gray-600 text-sm">Qtd: <b>{{ $item['quantity'] }}</b></div>
+            <li class="flex gap-4 items-center bg-gray-50 rounded-lg p-3 shadow-sm">
+              <img src="{{ asset('storage/' . $item['image']) }}"
+                class="w-24 h-24 md:w-32 md:h-32 object-cover rounded border" alt="{{ $item['name'] }}">
+              <div class="flex-1 min-w-0">
+                <div class="font-bold text-base md:text-lg text-gray-900 truncate">{{ $item['name'] }}</div>
+                <div class="text-gray-600 text-sm mt-1">Qtd: <b>{{ $item['quantity'] }}</b></div>
                 <div class="text-gray-600 text-sm">Preço: R$ {{ number_format($item['price'], 2, ',', '.') }}</div>
-                <div class="text-gray-800 font-bold mt-1">Subtotal: R$ {{ number_format($subtotal, 2, ',', '.') }}</div>
+                <div class="text-blue-700 font-bold mt-2 text-base">Subtotal: R$
+                  {{ number_format($subtotal, 2, ',', '.') }}</div>
               </div>
             </li>
           @endforeach
         </ul>
-        <div class="text-right font-bold text-xl mt-6">
+        <div class="text-right font-bold text-xl mt-8">
           Total: R$ {{ number_format($total, 2, ',', '.') }}
         </div>
         <div class="mt-6">
@@ -37,7 +38,7 @@
       </div>
 
       {{-- Dados para Entrega --}}
-      <div class="w-full md:w-2/3 bg-gray-50 shadow-lg rounded-xl p-8">
+      <div class="w-full md:w-2/10 bg-gray-50 shadow-lg rounded-xl p-8">
         @if ($errors->any())
           <div class="mb-4 text-red-700 bg-red-100 border border-red-300 px-4 py-3 rounded">
             <ul class="list-disc ml-5">

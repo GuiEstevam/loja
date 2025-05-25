@@ -46,9 +46,10 @@
         </div>
       @endif
       <div class="mt-6 flex gap-4">
-        <!-- Botão de compra direta (opcional, pode futuramente ir para checkout direto) -->
-        <form action="#" method="GET">
-          <button type="button" class="bg-blue-300 text-white px-6 py-3 rounded font-bold cursor-not-allowed opacity-70">
+        <!-- Botão de compra direta (pode futuramente ir para checkout direto) -->
+        <form action="{{ route('shop.cart.buy', $product) }}" method="POST">
+          @csrf
+          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded font-bold transition">
             Comprar
           </button>
         </form>

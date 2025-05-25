@@ -47,6 +47,19 @@ class CartController extends Controller
         return redirect()->route('shop.cart.index')->with('success', 'Produto removido do carrinho.');
     }
 
+    public function buy(Request $request, Product $product)
+    {
+        $cart = session()->get('cart', []);
+        $cart[$product->id] = [
+            'name' => $product->name,
+            'price' => $product->price,
+            'quantity' => 1,
+            'image' => $product->image,
+        ];
+        session()->put('cart', $cart);
+        return redirect()->route('shop.checkout');
+    }
+
     // Atualiza quantidade (opcional)
     public function update(Request $request, Product $product)
     {

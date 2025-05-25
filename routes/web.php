@@ -37,7 +37,7 @@ Route::get('/carrinho', [ShopCartController::class, 'index'])->name('shop.cart.i
 Route::post('/carrinho/adicionar/{product}', [ShopCartController::class, 'add'])->name('shop.cart.add');
 Route::post('/carrinho/remover/{product}', [ShopCartController::class, 'remove'])->name('shop.cart.remove');
 Route::post('/carrinho/atualizar/{product}', [ShopCartController::class, 'update'])->name('shop.cart.update');
-
+Route::post('/comprar/{product}', [ShopCartController::class, 'buy'])->name('shop.cart.buy');
 // -------------------
 // Rotas Privadas (usuário autenticado)
 // -------------------

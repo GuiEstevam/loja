@@ -9,6 +9,9 @@
   @vite('resources/css/app.css')
   <script src="//unpkg.com/alpinejs" defer></script>
   @stack('styles') {{-- Aqui renderiza os styles das views --}}
+  <script type="module" src="https://unpkg.com/ionicons@7.2.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.2.2/dist/ionicons/ionicons.js"></script>
+
 </head>
 
 <body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">

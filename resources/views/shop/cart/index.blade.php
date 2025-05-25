@@ -27,7 +27,7 @@
         </thead>
         <tbody>
           @php $total = 0; @endphp
-          @foreach ($cart as $item)
+          @foreach ($cart as $id => $item)
             @php
               $subtotal = $item['price'] * $item['quantity'];
               $total += $subtotal;
@@ -35,18 +35,17 @@
             <tr>
               <td class="py-2 flex items-center gap-2">
                 <img src="{{ asset('storage/' . $item['image']) }}" class="w-32 h-32 object-cover rounded border">
-
                 <span class="font-semibold">{{ $item['name'] }}</span>
               </td>
               <td>
                 <input type="number" value="{{ $item['quantity'] }}" min="1"
                   class="w-16 border rounded px-2 py-1 text-center"
-                  onchange="updateCartQuantity({{ $item['id'] }}, this.value)">
+                  onchange="updateCartQuantity({{ $id }}, this.value)">
               </td>
               <td>R$ {{ number_format($item['price'], 2, ',', '.') }}</td>
               <td>R$ {{ number_format($subtotal, 2, ',', '.') }}</td>
               <td>
-                <form action="{{ route('shop.cart.remove', $item['id']) }}" method="POST" style="display:inline">
+                <form action="{{ route('shop.cart.remove', $id) }}" method="POST" style="display:inline">
                   @csrf
                   <button type="submit" title="Remover" class="text-red-600 hover:text-red-800">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
