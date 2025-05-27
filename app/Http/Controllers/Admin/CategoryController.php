@@ -8,9 +8,20 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::orderBy('name')->paginate(15);
+        $query = Category::orderBy('name');
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('slug', 'like', "%{$search}%");
+            });
+        }
+
+        $categories = $query->paginate(15);
+
         return view('admin.categories.index', compact('categories'));
     }
 
@@ -34,6 +45,13 @@ class CategoryController extends Controller
     {
         return view('admin.categories.edit', compact('category'));
     }
+
+    public function show(Category $category)
+    {
+        $products = $category->products()->with('brand', 'colors', 'sizes')->paginate(12);
+        return view('admin.categories.show', compact('category', 'products'));
+    }
+
 
     public function update(Request $request, Category $category)
     {

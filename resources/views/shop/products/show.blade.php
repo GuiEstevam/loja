@@ -7,7 +7,7 @@
     <!-- Imagem à esquerda -->
     <div class="w-full md:w-1/2 flex flex-col gap-4">
       <div class="bg-white rounded-lg shadow flex items-center justify-center aspect-square overflow-hidden">
-        <img src="{{ asset('storage/' . ($product->image ?? 'placeholder.jpg')) }}" alt="{{ $product->name }}"
+        <img src="{{ asset('products/' . ($product->image ?? 'placeholder.jpg')) }}" alt="{{ $product->name }}"
           class="w-full h-full object-cover" style="object-position: center;">
       </div>
     </div>

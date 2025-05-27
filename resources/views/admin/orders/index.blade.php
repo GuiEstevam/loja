@@ -147,7 +147,7 @@
                 <td class="px-4 py-3">
                   <div class="flex flex-wrap gap-1">
                     @foreach ($order->items->take(2) as $item)
-                      <img src="{{ asset('storage/' . ($item->product->image ?? '')) }}"
+                      <img src="{{ asset('products/' . ($item->product->image ?? '')) }}"
                         class="w-8 h-8 object-cover rounded border" alt="{{ $item->product->name ?? $item->name }}"
                         title="{{ $item->product->name ?? $item->name }} (x{{ $item->quantity }})">
                     @endforeach

@@ -8,9 +8,20 @@ use Illuminate\Http\Request;
 
 class BrandController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $brands = Brand::orderBy('name')->paginate(15);
+        $query = Brand::orderBy('name');
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('slug', 'like', "%{$search}%");
+            });
+        }
+
+        $brands = $query->paginate(15);
+
         return view('admin.brands.index', compact('brands'));
     }
 
@@ -33,6 +44,15 @@ class BrandController extends Controller
     public function edit(Brand $brand)
     {
         return view('admin.brands.edit', compact('brand'));
+    }
+
+    public function show(Brand $brand)
+    {
+        $products = $brand->products()
+            ->with('categories', 'colors', 'sizes')
+            ->paginate(12);
+
+        return view('admin.brands.show', compact('brand', 'products'));
     }
 
     public function update(Request $request, Brand $brand)

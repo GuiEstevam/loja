@@ -21,6 +21,9 @@ use App\Http\Controllers\Shop\DiscountController as ShopDiscountController;
 use App\Http\Controllers\Shop\LoyaltyPointController as ShopLoyaltyPointController;
 use App\Http\Controllers\Shop\AddressController as ShopAddressController;
 use App\Http\Controllers\Shop\CartController as ShopCartController;
+use App\Http\Controllers\Shop\CategoryController as ShopCategoryController;
+use App\Http\Controllers\Shop\BrandController as ShopBrandController;
+
 
 // Página inicial
 Route::get('/', [HomeController::class, 'welcome'])->name('home');
@@ -28,6 +31,16 @@ Route::get('/', [HomeController::class, 'welcome'])->name('home');
 // -------------------
 // Rotas Públicas
 // -------------------
+
+
+// Listagem de categorias
+Route::get('/categorias/{category:slug}', [ShopCategoryController::class, 'show'])
+    ->name('shop.categories.show');
+
+//Listagem de marcas
+
+Route::get('/marcas', [ShopBrandController::class, 'index'])->name('shop.brands.index');
+Route::get('/marcas/{brand:slug}', [ShopBrandController::class, 'show'])->name('shop.brands.show');
 
 // Listagem de produtos
 Route::get('/produtos', [ShopProductController::class, 'index'])->name('shop.products.index');

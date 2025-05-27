@@ -27,7 +27,7 @@
             <tr class="bg-white">
               <td class="px-4 py-2 align-middle">
                 @if ($product->image)
-                  <img src="{{ asset('storage/' . $product->image) }}" alt="Imagem Produto"
+                  <img src="{{ asset('products/' . $product->image) }}" alt="Imagem Produto"
                     class="w-16 h-16 object-cover rounded">
                 @else
                   <span class="text-gray-400">Sem imagem</span>

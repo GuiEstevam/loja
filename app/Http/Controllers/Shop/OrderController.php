@@ -77,11 +77,13 @@ class OrderController extends Controller
             $data['neighborhood'] . ', ' . $city . '/' . $state .
             ', ' . $country . ', CEP: ' . $data['zip'];
 
+        // Calcula total do pedido
         $total = 0;
         foreach ($cart as $item) {
             $total += $item['price'] * $item['quantity'];
         }
 
+        // Cria o pedido
         $order = \App\Models\Order::create([
             'user_id' => $user->id,
             'name' => $data['name'],
@@ -104,15 +106,18 @@ class OrderController extends Controller
             'status' => 'pending',
         ]);
 
-        foreach ($cart as $item) {
+        // Salva os itens do pedido
+        foreach ($cart as $productId => $item) {
             $order->items()->create([
-                'product_id' => $item['id'],
-                'name' => $item['name'],
-                'price' => $item['price'],
-                'quantity' => $item['quantity'],
+                'product_id' => $productId,
+                'name'      => $item['name'],
+                'price'     => $item['price'],
+                'quantity'  => $item['quantity'],
+                'image'     => $item['image'] ?? null, // Se quiser salvar imagem do produto no item
             ]);
         }
 
+        // Salva endereço, se solicitado
         if ($request->filled('save_address')) {
             $user->addresses()->create([
                 'name' => $data['name'],
@@ -126,6 +131,7 @@ class OrderController extends Controller
             ]);
         }
 
+        // Limpa o carrinho
         session()->forget('cart');
 
         return redirect()->route('shop.orders.index')->with('success', 'Pedido realizado com sucesso!');

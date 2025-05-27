@@ -42,12 +42,7 @@
         <!-- Banner 1 -->
         <div class="swiper-slide relative flex items-center justify-center h-full">
           <div class="absolute inset-0 w-full h-full"
-            style="
-            background-image: url('{{ asset('images/banner_1.jpg') }}');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-          ">
+            style="background-image: url('{{ asset('images/banner_1.jpg') }}'); background-size: cover; background-position: center; background-repeat: no-repeat;">
           </div>
           <div class="absolute inset-0 w-full h-full"
             style="background: linear-gradient(to bottom, rgba(0,0,0,0.20) 0%, rgba(0,0,0,0.10) 60%, rgba(0,0,0,0.20) 100%);">
@@ -66,12 +61,7 @@
         <!-- Banner 2 -->
         <div class="swiper-slide relative flex items-center justify-center h-full">
           <div class="absolute inset-0 w-full h-full"
-            style="
-            background-image: url('{{ asset('images/banner_2.jpg') }}');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-          ">
+            style="background-image: url('{{ asset('images/banner_2.jpg') }}'); background-size: cover; background-position: center; background-repeat: no-repeat;">
           </div>
           <div class="absolute inset-0 w-full h-full"
             style="background: linear-gradient(to bottom, rgba(0,0,0,0.20) 0%, rgba(0,0,0,0.10) 60%, rgba(0,0,0,0.20) 100%);">
@@ -90,12 +80,7 @@
         <!-- Banner 3 -->
         <div class="swiper-slide relative flex items-center justify-center h-full">
           <div class="absolute inset-0 w-full h-full"
-            style="
-            background-image: url('{{ asset('images/banner_3.jpg') }}');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-          ">
+            style="background-image: url('{{ asset('images/banner_3.jpg') }}'); background-size: cover; background-position: center; background-repeat: no-repeat;">
           </div>
           <div class="absolute inset-0 w-full h-full"
             style="background: linear-gradient(to bottom, rgba(0,0,0,0.20) 0%, rgba(0,0,0,0.10) 60%, rgba(0,0,0,0.20) 100%);">
@@ -125,10 +110,88 @@
       </div>
     </div>
   </section>
+
+  <!-- Slider de Categorias Feminino -->
+  <section class="w-full mb-14">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Feminino</h2>
+      <a href="{{ route('shop.categories.show', 'feminino') }}" class="text-blue-600 hover:underline font-medium">Ver
+        tudo</a>
+    </div>
+    <div class="swiper femininoSwiper relative">
+      <div class="swiper-wrapper">
+        @foreach ($femininoCategories as $category)
+          <div class="swiper-slide">
+            <a href="{{ route('shop.categories.show', $category) }}"
+              class="block bg-white rounded-xl shadow p-4 text-center hover:shadow-lg transition">
+              <img src="{{ asset('categories/' . $category->image) }}" alt="{{ $category->name }}"
+                class="w-24 h-24 mx-auto object-cover rounded-full mb-2">
+              <div class="font-semibold text-lg text-gray-800">{{ $category->name }}</div>
+            </a>
+          </div>
+        @endforeach
+      </div>
+      <div class="feminino-pagination mt-4"></div>
+      <div class="feminino-button-prev custom-swiper-arrow absolute -left-4 top-1/2 -translate-y-1/2"></div>
+      <div class="feminino-button-next custom-swiper-arrow absolute -right-4 top-1/2 -translate-y-1/2"></div>
+    </div>
+  </section>
+
+  <!-- Slider de Categorias Masculino -->
+  <section class="w-full mb-14">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Masculino</h2>
+      <a href="{{ route('shop.categories.show', 'masculino') }}" class="text-blue-600 hover:underline font-medium">Ver
+        tudo</a>
+    </div>
+    <div class="swiper masculinoSwiper relative">
+      <div class="swiper-wrapper">
+        @foreach ($masculinoCategories as $category)
+          <div class="swiper-slide">
+            <a href="{{ route('shop.categories.show', $category) }}"
+              class="block bg-white rounded-xl shadow p-4 text-center hover:shadow-lg transition">
+              <img src="{{ asset('categories/' . $category->image) }}" alt="{{ $category->name }}"
+                class="w-24 h-24 mx-auto object-cover rounded-full mb-2">
+              <div class="font-semibold text-lg text-gray-800">{{ $category->name }}</div>
+            </a>
+          </div>
+        @endforeach
+      </div>
+      <div class="masculino-pagination mt-4"></div>
+      <div class="masculino-button-prev custom-swiper-arrow absolute -left-4 top-1/2 -translate-y-1/2"></div>
+      <div class="masculino-button-next custom-swiper-arrow absolute -right-4 top-1/2 -translate-y-1/2"></div>
+    </div>
+  </section>
+
+  <!-- Slider de Marcas -->
+  <section class="w-full mb-14">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Marcas em destaque</h2>
+      <a href="#" class="text-blue-600 hover:underline font-medium">Ver todas</a>
+    </div>
+    <div class="swiper marcasSwiper relative">
+      <div class="swiper-wrapper">
+        @foreach ($brands as $brand)
+          <div class="swiper-slide">
+            <a href="{{ route('shop.brands.show', $brand) }}"
+              class="block bg-white rounded-xl shadow p-4 text-center hover:shadow-lg transition">
+              <img src="{{ asset('brands/' . $brand->logo) }}" alt="{{ $brand->name }}"
+                class="w-20 h-20 mx-auto object-contain rounded-full mb-2 bg-gray-100">
+              <div class="font-semibold text-lg text-gray-800">{{ $brand->name }}</div>
+            </a>
+          </div>
+        @endforeach
+      </div>
+      <div class="marcas-pagination mt-4"></div>
+      <div class="marcas-button-prev custom-swiper-arrow absolute -left-4 top-1/2 -translate-y-1/2"></div>
+      <div class="marcas-button-next custom-swiper-arrow absolute -right-4 top-1/2 -translate-y-1/2"></div>
+    </div>
+  </section>
+
   <!-- Carrossel de produtos em destaque -->
   <section class="w-full">
     <h2 class="text-4xl md:text-5xl font-extrabold tracking-widest uppercase text-center mb-14">DESTAQUES</h2>
-    <div class="relative max-w-8xl mx-auto px-4"> <!-- padding lateral aqui -->
+    <div class="relative max-w-8xl mx-auto px-4">
       <div class="product-button-prev custom-swiper-arrow absolute left-4 top-1/2 -translate-y-1/2 z-20">
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -140,7 +203,6 @@
             <div class="swiper-slide">
               <a href="{{ route('shop.products.show', $product) }}"
                 class="bg-white border border-slate-200 rounded-3xl shadow-lg hover:shadow-2xl transition w-full h-[480px] flex flex-col overflow-hidden group">
-                <!-- Imagem ocupa todo o topo do card -->
                 <img src="{{ asset('products/' . $product->image) }}" alt="{{ $product->name }}"
                   class="object-cover w-full h-[340px] group-hover:scale-105 transition-transform duration-300 rounded-t-3xl">
                 <div class="flex-1 flex flex-col justify-start w-full px-5 py-4 bg-white">
@@ -193,9 +255,75 @@
       },
     });
 
-    // Carrossel de produtos: 4 itens, espaço lateral pequeno, setas estilizadas
+    // Feminino categorias
+    new Swiper('.femininoSwiper', {
+      slidesPerView: 2,
+      spaceBetween: 18,
+      navigation: {
+        nextEl: '.feminino-button-next',
+        prevEl: '.feminino-button-prev',
+      },
+      pagination: {
+        el: '.feminino-pagination',
+        clickable: true,
+      },
+      breakpoints: {
+        640: {
+          slidesPerView: 3
+        },
+        1024: {
+          slidesPerView: 5
+        }
+      }
+    });
+
+    // Masculino categorias
+    new Swiper('.masculinoSwiper', {
+      slidesPerView: 2,
+      spaceBetween: 18,
+      navigation: {
+        nextEl: '.masculino-button-next',
+        prevEl: '.masculino-button-prev',
+      },
+      pagination: {
+        el: '.masculino-pagination',
+        clickable: true,
+      },
+      breakpoints: {
+        640: {
+          slidesPerView: 3
+        },
+        1024: {
+          slidesPerView: 5
+        }
+      }
+    });
+
+    // Marcas
+    new Swiper('.marcasSwiper', {
+      slidesPerView: 3,
+      spaceBetween: 24,
+      navigation: {
+        nextEl: '.marcas-button-next',
+        prevEl: '.marcas-button-prev',
+      },
+      pagination: {
+        el: '.marcas-pagination',
+        clickable: true,
+      },
+      breakpoints: {
+        640: {
+          slidesPerView: 5
+        },
+        1024: {
+          slidesPerView: 8
+        }
+      }
+    });
+
+    // Produtos em destaque
     new Swiper('.productSwiper', {
-      slidesPerView: 1,
+      slidesPerView: 2,
       spaceBetween: 8,
       loop: true,
       pagination: {
@@ -218,7 +346,7 @@
         1280: {
           slidesPerView: 4,
           spaceBetween: 32
-        } // espaço entre os cards em desktop
+        }
       }
     });
   </script>

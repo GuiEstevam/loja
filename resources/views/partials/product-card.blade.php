@@ -2,7 +2,7 @@
   class="group bg-white border border-slate-200 rounded-3xl shadow hover:shadow-2xl transition flex flex-col overflow-hidden h-[420px] w-full cursor-pointer">
   <!-- Imagem do produto -->
   <div class="w-full flex items-center justify-center bg-[#f6f6f6] rounded-t-3xl" style="height: 220px;">
-    <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
+    <img src="{{ asset('products/' . $product->image) }}" alt="{{ $product->name }}"
       class="object-contain h-[180px] w-[180px] group-hover:scale-105 transition-transform duration-300" loading="lazy">
   </div>
   <!-- Conteúdo -->

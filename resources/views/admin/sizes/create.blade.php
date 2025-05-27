@@ -31,7 +31,7 @@ class SizeController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'active' => 'boolean'
+            'active' => 'boolean',
         ]);
         Size::create($data);
         return redirect()->route('admin.sizes.index')->with('success', 'Tamanho criado!');
@@ -46,7 +46,7 @@ class SizeController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'active' => 'boolean'
+            'active' => 'boolean',
         ]);
         $size->update($data);
         return redirect()->route('admin.sizes.index')->with('success', 'Tamanho atualizado!');
@@ -54,7 +54,10 @@ class SizeController extends Controller
 
     public function show(Size $size)
     {
-        $products = $size->products()->with(['categories', 'brand', 'colors'])->paginate(12);
+        $products = $size
+            ->products()
+            ->with(['categories', 'brand', 'colors'])
+            ->paginate(12);
         return view('admin.sizes.show', compact('size', 'products'));
     }
 

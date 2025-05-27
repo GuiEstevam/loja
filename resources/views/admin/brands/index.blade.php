@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Categorias')
+@section('title', 'Marcas')
 
 @section('content')
   <div class="max-w-7xl mx-auto py-8 px-2 md:px-0">
@@ -15,7 +15,7 @@
             Dashboard
           </a>
           <span>/</span>
-          <span class="text-gray-700 font-semibold">Categorias</span>
+          <span class="text-gray-700 font-semibold">Marcas</span>
         </nav>
         <a href="{{ route('admin.dashboard') }}"
           class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition text-base font-medium">
@@ -26,8 +26,8 @@
         </a>
       </div>
 
-      <h1 class="text-3xl font-bold mb-2 text-center md:text-left">Gerenciar Categorias</h1>
-      <p class="text-gray-600 mb-6 text-center md:text-left">Visão geral e gestão de todas as categorias</p>
+      <h1 class="text-3xl font-bold mb-2 text-center md:text-left">Gerenciar Marcas</h1>
+      <p class="text-gray-600 mb-6 text-center md:text-left">Visão geral e gestão de todas as marcas</p>
 
       <!-- Filtros -->
       <form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4 items-end mb-6">
@@ -43,12 +43,12 @@
         </div>
         <div class="flex gap-2">
           <label class="block text-xs text-gray-500 mb-1 invisible md:visible">.</label>
-          <a href="{{ route('admin.categories.create') }}"
+          <a href="{{ route('admin.brands.create') }}"
             class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 w-full justify-center">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
-            Nova Categoria
+            Nova Marca
           </a>
         </div>
       </form>
@@ -65,22 +65,22 @@
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-100">
-            @forelse($categories as $category)
+            @forelse($brands as $brand)
               <tr class="hover:bg-gray-50 transition">
-                <td class="px-4 py-3 font-semibold">{{ $category->name }}</td>
-                <td class="px-4 py-3 text-gray-600">{{ $category->slug }}</td>
+                <td class="px-4 py-3 font-semibold">{{ $brand->name }}</td>
+                <td class="px-4 py-3 text-gray-600">{{ $brand->slug }}</td>
                 <td class="px-4 py-3 text-center">
                   <span
                     class="px-3 py-2 rounded-full text-base font-bold
-                                    {{ $category->active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
-                    {{ $category->active ? 'Sim' : 'Não' }}
+                                    {{ $brand->active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                    {{ $brand->active ? 'Sim' : 'Não' }}
                   </span>
                 </td>
                 <td class="px-4 py-3 text-center">
                   <div class="flex gap-4 justify-center items-center">
-                    <!-- Visualizar produtos da categoria -->
-                    <a href="{{ route('admin.categories.show', $category) }}"
-                      class="text-indigo-600 hover:text-indigo-900" title="Ver produtos">
+                    <!-- Visualizar produtos da marca -->
+                    <a href="{{ route('admin.brands.show', $brand) }}" class="text-indigo-600 hover:text-indigo-900"
+                      title="Ver produtos">
                       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -89,7 +89,7 @@
                       </svg>
                     </a>
                     <!-- Editar -->
-                    <a href="{{ route('admin.categories.edit', $category) }}" class="text-blue-600 hover:text-blue-900"
+                    <a href="{{ route('admin.brands.edit', $brand) }}" class="text-blue-600 hover:text-blue-900"
                       title="Editar">
                       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -97,8 +97,8 @@
                       </svg>
                     </a>
                     <!-- Excluir -->
-                    <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" class="inline"
-                      onsubmit="return confirm('Remover esta categoria?')">
+                    <form action="{{ route('admin.brands.destroy', $brand) }}" method="POST" class="inline"
+                      onsubmit="return confirm('Remover esta marca?')">
                       @csrf @method('DELETE')
                       <button type="submit" class="text-red-600 hover:text-red-900" title="Excluir">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -112,14 +112,14 @@
               </tr>
             @empty
               <tr>
-                <td colspan="4" class="py-8 text-center text-gray-500 text-lg">Nenhuma categoria encontrada.</td>
+                <td colspan="4" class="py-8 text-center text-gray-500 text-lg">Nenhuma marca encontrada.</td>
               </tr>
             @endforelse
           </tbody>
         </table>
       </div>
       <div class="mt-6 flex justify-center">
-        {{ $categories->links() }}
+        {{ $brands->links() }}
       </div>
     </div>
   </div>

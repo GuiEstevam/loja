@@ -34,7 +34,7 @@
             @endphp
             <tr>
               <td class="py-2 flex items-center gap-2">
-                <img src="{{ asset('storage/' . $item['image']) }}" class="w-32 h-32 object-cover rounded border">
+                <img src="{{ asset('products/' . $item['image']) }}" class="w-32 h-32 object-cover rounded border">
                 <span class="font-semibold">{{ $item['name'] }}</span>
               </td>
               <td>

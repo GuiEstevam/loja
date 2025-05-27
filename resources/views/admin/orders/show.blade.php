@@ -92,7 +92,7 @@
             <div class="space-y-4">
               @foreach ($order->items as $item)
                 <div class="flex flex-col sm:flex-row items-center gap-4 border-b pb-4">
-                  <img src="{{ asset('storage/' . ($item->product->image ?? '')) }}"
+                  <img src="{{ asset('products/' . ($item->product->image ?? '')) }}"
                     class="w-20 h-20 object-cover rounded-lg border shadow-sm"
                     alt="{{ $item->product->name ?? $item->name }}">
                   <div class="flex-1 w-full">

@@ -56,7 +56,7 @@
                   @foreach ($cart as $id => $item)
                     <li class="flex items-center justify-between py-3">
                       <div class="flex items-center gap-4">
-                        <img src="{{ asset('storage/' . ($item['image'] ?? 'placeholder.jpg')) }}"
+                        <img src="{{ asset('products/' . ($item['image'] ?? 'placeholder.jpg')) }}"
                           alt="{{ $item['name'] }}" class="w-24 h-24 object-cover rounded-lg border">
                         <div>
                           <div class="font-bold text-gray-900 text-base">{{ $item['name'] }}</div>

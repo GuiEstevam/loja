@@ -17,7 +17,7 @@
               $total += $subtotal;
             @endphp
             <li class="flex gap-4 items-center bg-gray-50 rounded-lg p-3 shadow-sm">
-              <img src="{{ asset('storage/' . $item['image']) }}"
+              <img src="{{ asset('products/' . $item['image']) }}"
                 class="w-24 h-24 md:w-32 md:h-32 object-cover rounded border" alt="{{ $item['name'] }}">
               <div class="flex-1 min-w-0">
                 <div class="font-bold text-base md:text-lg text-gray-900 truncate">{{ $item['name'] }}</div>
