@@ -31,6 +31,36 @@
       height: 2rem;
       display: block;
     }
+
+    .marcasSwiper {
+      padding-left: 48px;
+      padding-right: 48px;
+    }
+
+    @media (min-width: 1024px) {
+      .marcasSwiper {
+        padding-left: 96px;
+        padding-right: 96px;
+      }
+    }
+
+    .swiper-slide {
+      opacity: 0.8;
+      transition: box-shadow 0.2s, border-color 0.2s, opacity 0.2s;
+    }
+
+    .swiper-slide-active,
+    .swiper-slide-next,
+    .swiper-slide-prev {
+      opacity: 1;
+      z-index: 2;
+    }
+
+    .swiper-slide:hover {
+      box-shadow: 0 8px 32px 0 rgba(37, 99, 235, 0.10), 0 1.5px 8px 0 rgba(0, 0, 0, 0.06);
+      border-color: #2563eb;
+      opacity: 1;
+    }
   </style>
 @endpush
 
@@ -111,63 +141,11 @@
     </div>
   </section>
 
-  <!-- Slider de Categorias Feminino -->
-  <section class="w-full mb-14">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Feminino</h2>
-      <a href="{{ route('shop.categories.show', 'feminino') }}" class="text-blue-600 hover:underline font-medium">Ver
-        tudo</a>
-    </div>
-    <div class="swiper femininoSwiper relative">
-      <div class="swiper-wrapper">
-        @foreach ($femininoCategories as $category)
-          <div class="swiper-slide">
-            <a href="{{ route('shop.categories.show', $category) }}"
-              class="block bg-white rounded-xl shadow p-4 text-center hover:shadow-lg transition">
-              <img src="{{ asset('categories/' . $category->image) }}" alt="{{ $category->name }}"
-                class="w-24 h-24 mx-auto object-cover rounded-full mb-2">
-              <div class="font-semibold text-lg text-gray-800">{{ $category->name }}</div>
-            </a>
-          </div>
-        @endforeach
-      </div>
-      <div class="feminino-pagination mt-4"></div>
-      <div class="feminino-button-prev custom-swiper-arrow absolute -left-4 top-1/2 -translate-y-1/2"></div>
-      <div class="feminino-button-next custom-swiper-arrow absolute -right-4 top-1/2 -translate-y-1/2"></div>
-    </div>
-  </section>
-
-  <!-- Slider de Categorias Masculino -->
-  <section class="w-full mb-14">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Masculino</h2>
-      <a href="{{ route('shop.categories.show', 'masculino') }}" class="text-blue-600 hover:underline font-medium">Ver
-        tudo</a>
-    </div>
-    <div class="swiper masculinoSwiper relative">
-      <div class="swiper-wrapper">
-        @foreach ($masculinoCategories as $category)
-          <div class="swiper-slide">
-            <a href="{{ route('shop.categories.show', $category) }}"
-              class="block bg-white rounded-xl shadow p-4 text-center hover:shadow-lg transition">
-              <img src="{{ asset('categories/' . $category->image) }}" alt="{{ $category->name }}"
-                class="w-24 h-24 mx-auto object-cover rounded-full mb-2">
-              <div class="font-semibold text-lg text-gray-800">{{ $category->name }}</div>
-            </a>
-          </div>
-        @endforeach
-      </div>
-      <div class="masculino-pagination mt-4"></div>
-      <div class="masculino-button-prev custom-swiper-arrow absolute -left-4 top-1/2 -translate-y-1/2"></div>
-      <div class="masculino-button-next custom-swiper-arrow absolute -right-4 top-1/2 -translate-y-1/2"></div>
-    </div>
-  </section>
-
   <!-- Slider de Marcas -->
   <section class="w-full mb-14">
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Marcas em destaque</h2>
-      <a href="#" class="text-blue-600 hover:underline font-medium">Ver todas</a>
+      <a href="{{ route('shop.brands.index') }}" class="text-blue-600 hover:underline font-medium">Ver todas</a>
     </div>
     <div class="swiper marcasSwiper relative">
       <div class="swiper-wrapper">
@@ -222,7 +200,7 @@
             </div>
           @endforeach
         </div>
-        <div class="product-pagination text-center mt-8"></div>
+        <div class="product-pagination text-center mt-8 mb-8"></div>
       </div>
       <div class="product-button-next custom-swiper-arrow absolute right-4 top-1/2 -translate-y-1/2 z-20">
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -253,50 +231,6 @@
         delay: 5000,
         disableOnInteraction: false,
       },
-    });
-
-    // Feminino categorias
-    new Swiper('.femininoSwiper', {
-      slidesPerView: 2,
-      spaceBetween: 18,
-      navigation: {
-        nextEl: '.feminino-button-next',
-        prevEl: '.feminino-button-prev',
-      },
-      pagination: {
-        el: '.feminino-pagination',
-        clickable: true,
-      },
-      breakpoints: {
-        640: {
-          slidesPerView: 3
-        },
-        1024: {
-          slidesPerView: 5
-        }
-      }
-    });
-
-    // Masculino categorias
-    new Swiper('.masculinoSwiper', {
-      slidesPerView: 2,
-      spaceBetween: 18,
-      navigation: {
-        nextEl: '.masculino-button-next',
-        prevEl: '.masculino-button-prev',
-      },
-      pagination: {
-        el: '.masculino-pagination',
-        clickable: true,
-      },
-      breakpoints: {
-        640: {
-          slidesPerView: 3
-        },
-        1024: {
-          slidesPerView: 5
-        }
-      }
     });
 
     // Marcas

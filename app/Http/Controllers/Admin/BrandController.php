@@ -35,9 +35,18 @@ class BrandController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:brands,slug',
-            'active' => 'boolean'
+            'active' => 'boolean',
+            'logo' => 'nullable|image|',
         ]);
+
+        if ($request->hasFile('logo')) {
+            $logoName = uniqid() . '.' . $request->logo->extension();
+            $request->logo->move(public_path('brands'), $logoName); // Salva em public/brands
+            $data['logo'] = $logoName;
+        }
+
         Brand::create($data);
+
         return redirect()->route('admin.brands.index')->with('success', 'Marca criada!');
     }
 
@@ -60,9 +69,22 @@ class BrandController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:brands,slug,' . $brand->id,
-            'active' => 'boolean'
+            'active' => 'boolean',
+            'logo' => 'nullable|image|',
         ]);
+
+        if ($request->hasFile('logo')) {
+            $logoName = uniqid() . '.' . $request->logo->extension();
+            $request->logo->move(public_path('brands'), $logoName);
+            $data['logo'] = $logoName;
+            // Remove logo antiga se existir
+            if ($brand->logo && file_exists(public_path('brands/' . $brand->logo))) {
+                unlink(public_path('brands/' . $brand->logo));
+            }
+        }
+
         $brand->update($data);
+
         return redirect()->route('admin.brands.index')->with('success', 'Marca atualizada!');
     }
 

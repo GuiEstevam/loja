@@ -11,7 +11,7 @@
       <!-- Logo -->
       <a href="/" class="flex items-center gap-2 text-blue-700 font-extrabold text-2xl">
         <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-10 w-auto">
-        <span>MinhaLoja</span>
+        <span>SkyFashion</span>
       </a>
 
       <!-- Botão Hamburguer (mobile) -->

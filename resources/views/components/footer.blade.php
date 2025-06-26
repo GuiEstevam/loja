@@ -5,7 +5,7 @@
       <!-- Branding -->
       <div class="space-y-4">
         <a href="/" class="flex items-center">
-          <img src="/logo.svg" alt="Logo da Empresa" class="h-12 w-auto" loading="lazy">
+          <img src="{{ asset('images/logo.png') }}" alt="Logo da Empresa" class="h-12 w-auto" loading="lazy">
         </a>
         <p class="text-sm leading-relaxed">
           Transformando ideias em realidade digital desde 2023.

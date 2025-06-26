@@ -29,7 +29,8 @@
 
     <div class="w-full max-w-2xl bg-white rounded-2xl shadow p-8">
       <h1 class="text-2xl font-bold mb-8 text-center">Editar Marca</h1>
-      <form method="POST" action="{{ route('admin.brands.update', $brand) }}" class="flex flex-col space-y-6">
+      <form method="POST" action="{{ route('admin.brands.update', $brand) }}" class="flex flex-col space-y-6"
+        enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -52,6 +53,21 @@
             <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
           @enderror
         </div>
+
+        <div>
+          <label for="logo" class="block font-semibold mb-2 text-lg">Logo da Marca</label>
+          <input type="file" name="logo" id="logo" accept="image/*"
+            class="border rounded-xl px-5 py-3 w-full text-lg focus:outline-none focus:border-blue-500">
+          <small class="text-gray-500">PNG ou JPG, até 500x500px, fundo transparente de preferência.</small>
+        </div>
+
+        @if ($brand->logo)
+          <div class="mb-4">
+            <label class="block font-semibold mb-2 text-lg">Logo atual:</label>
+            <img src="{{ asset('brands/' . $brand->logo) }}" alt="{{ $brand->name }}"
+              class="h-20 w-auto rounded bg-gray-100 border">
+          </div>
+        @endif
 
         <div>
           <label class="block font-semibold mb-2 text-lg" for="active">Status</label>

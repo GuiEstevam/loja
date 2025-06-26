@@ -33,14 +33,34 @@
               $total += $subtotal;
             @endphp
             <tr>
-              <td class="py-2 flex items-center gap-2">
-                <img src="{{ asset('products/' . $item['image']) }}" class="w-32 h-32 object-cover rounded border">
-                <span class="font-semibold">{{ $item['name'] }}</span>
+              <td class="py-2 flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                <img src="{{ asset('products/' . $item['image']) }}" class="w-24 h-24 object-cover rounded border">
+                <div>
+                  <div class="font-semibold">{{ $item['name'] }}</div>
+                  <div class="text-xs text-gray-500">SKU: {{ $item['sku'] ?? '-' }}</div>
+                  @if (!empty($item['brand']))
+                    <div class="text-xs text-gray-500">Marca: {{ $item['brand'] }}</div>
+                  @endif
+                  @if (!empty($item['categories']))
+                    <div class="text-xs text-gray-500">Categorias: {{ implode(', ', $item['categories']) }}</div>
+                  @endif
+                  @if (!empty($item['color']))
+                    <div class="text-xs text-gray-500 flex items-center gap-1">
+                      Cor:
+                      <span class="inline-block w-4 h-4 rounded-full border"
+                        style="background: {{ $item['color_hex'] }}"></span>
+                      {{ $item['color'] }}
+                    </div>
+                  @endif
+                  @if (!empty($item['size']))
+                    <div class="text-xs text-gray-500">Tamanho: {{ $item['size'] }}</div>
+                  @endif
+                </div>
               </td>
               <td>
                 <input type="number" value="{{ $item['quantity'] }}" min="1"
                   class="w-16 border rounded px-2 py-1 text-center"
-                  onchange="updateCartQuantity({{ $id }}, this.value)">
+                  onchange="updateCartQuantity('{{ $id }}', this.value)">
               </td>
               <td>R$ {{ number_format($item['price'], 2, ',', '.') }}</td>
               <td>R$ {{ number_format($subtotal, 2, ',', '.') }}</td>

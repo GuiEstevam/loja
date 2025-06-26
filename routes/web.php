@@ -33,6 +33,8 @@ Route::get('/', [HomeController::class, 'welcome'])->name('home');
 // -------------------
 
 
+Route::get('/checkout', [ShopOrderController::class, 'checkout'])->name('shop.checkout');
+
 // Listagem de categorias
 Route::get('/categorias/{category:slug}', [ShopCategoryController::class, 'show'])
     ->name('shop.categories.show');
@@ -88,7 +90,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('enderecos', ShopAddressController::class);
 
     // Checkout (exibe o formulário para finalizar compra)
-    Route::get('/checkout', [ShopOrderController::class, 'checkout'])->name('shop.checkout');
+
     // Processa o pedido (checkout)
     Route::post('/checkout', [ShopOrderController::class, 'process'])->name('shop.checkout.process');
 });

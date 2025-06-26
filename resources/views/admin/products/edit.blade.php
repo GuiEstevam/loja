@@ -19,7 +19,6 @@
           <span class="text-gray-400">/</span>
           <span class="text-gray-900 font-medium">Editar</span>
         </nav>
-
         <h1 class="text-3xl font-bold text-gray-900">Editar Produto</h1>
       </div>
 
@@ -29,21 +28,25 @@
         @csrf
         @method('PUT')
 
-        <!-- Seção de Informações Básicas -->
         <div class="space-y-6 divide-y divide-gray-200">
-          <!-- Nome e Slug -->
+          <!-- Nome, Slug e SKU -->
           <div class="grid grid-cols-1 gap-6">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Nome do Produto</label>
-              <input type="text" name="name" value="{{ old('name', $product->name) }}"
+              <input type="text" name="name" id="name" value="{{ old('name', $product->name) }}"
                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition duration-200"
                 required>
             </div>
-
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">URL Amigável (Slug)</label>
-              <input type="text" name="slug" value="{{ old('slug', $product->slug) }}"
+              <input type="text" name="slug" id="slug" value="{{ old('slug', $product->slug) }}"
                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-gray-50"
+                required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">SKU</label>
+              <input type="text" name="sku" value="{{ old('sku', $product->sku) }}"
+                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition duration-200"
                 required>
             </div>
           </div>
@@ -60,13 +63,9 @@
           <div class="pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Preço (R$)</label>
-              <div class="relative mt-1 rounded-md shadow-sm">
-                <input type="number" step="0.01" name="price" value="{{ old('price', $product->price) }}"
-                  class="block w-full pr-12 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                  required>
-              </div>
+              <input type="number" step="0.01" name="price" value="{{ old('price', $product->price) }}"
+                class="block w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" required>
             </div>
-
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Estoque Disponível</label>
               <input type="number" name="stock" value="{{ old('stock', $product->stock) }}"
@@ -75,13 +74,14 @@
             </div>
           </div>
 
-          <!-- Seleções com Componentes Personalizados -->
+          <!-- Seleções -->
           <div class="pt-6 space-y-6">
             <!-- Marcas -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Marca</label>
               <select name="brand_id"
-                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white">
+                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white"
+                required>
                 @foreach ($brands as $brand)
                   <option value="{{ $brand->id }}" {{ $brand->id == $product->brand_id ? 'selected' : '' }}>
                     {{ $brand->name }}
@@ -89,24 +89,20 @@
                 @endforeach
               </select>
             </div>
-
-            <!-- Categorias (Select Múltiplo Estilizado) -->
+            <!-- Categorias -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Categorias</label>
-              <div class="relative mt-1">
-                <select name="categories[]" multiple
-                  class="select-multiple block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white">
-                  @foreach ($categories as $category)
-                    <option value="{{ $category->id }}"
-                      {{ $product->categories->contains($category) ? 'selected' : '' }}>
-                      {{ $category->name }}
-                    </option>
-                  @endforeach
-                </select>
-              </div>
+              <select name="categories[]" multiple
+                class="select-multiple block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white"
+                required>
+                @foreach ($categories as $category)
+                  <option value="{{ $category->id }}" {{ $product->categories->contains($category) ? 'selected' : '' }}>
+                    {{ $category->name }}
+                  </option>
+                @endforeach
+              </select>
             </div>
-
-            <!-- Cores com Mini Swatches -->
+            <!-- Cores -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Cores Disponíveis</label>
               <div class="mt-1 grid grid-cols-2 md:grid-cols-4 gap-2">
@@ -125,8 +121,7 @@
                 @endforeach
               </div>
             </div>
-
-            <!-- Tamanhos com Badges Interativos -->
+            <!-- Tamanhos -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Tamanhos Oferecidos</label>
               <div class="mt-1 flex flex-wrap gap-2">
@@ -163,6 +158,16 @@
           </div>
         </div>
 
+        <!-- Status -->
+        <div class="pt-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+          <select name="active"
+            class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+            <option value="1" {{ old('active', $product->active) == 1 ? 'selected' : '' }}>Ativo</option>
+            <option value="0" {{ old('active', $product->active) == 0 ? 'selected' : '' }}>Inativo</option>
+          </select>
+        </div>
+
         <!-- Ações -->
         <div class="pt-6 flex justify-end space-x-4">
           <a href="{{ route('admin.products.index') }}"
@@ -179,6 +184,7 @@
   </div>
 
   <script>
+    // Preview de imagem
     function previewImage(event) {
       const preview = document.getElementById('image-preview');
       const file = event.target.files[0];
@@ -190,10 +196,31 @@
         reader.readAsDataURL(file);
       }
     }
+
+    // Slug automático
+    function slugify(str) {
+      return str
+        .toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '');
+    }
+    const nameInput = document.getElementById('name');
+    const slugInput = document.getElementById('slug');
+    let slugTouched = false;
+    if (nameInput && slugInput) {
+      nameInput.addEventListener('input', function() {
+        if (!slugTouched) {
+          slugInput.value = slugify(this.value);
+        }
+      });
+      slugInput.addEventListener('input', function() {
+        slugTouched = this.value.length > 0;
+      });
+    }
   </script>
 
   <style>
-    /* Estilização avançada para selects múltiplos */
     .select-multiple {
       background-image: none;
       padding: 0.5rem 1rem;
