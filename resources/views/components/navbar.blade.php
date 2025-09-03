@@ -37,15 +37,18 @@
       </li>
 
       <!-- Favoritos -->
-      <li class="navbar-menu-item navbar-favorites" @mouseenter="if(window.innerWidth >= 768) favoritesDropdown = true"
-        @mouseleave="if(window.innerWidth >= 768) favoritesDropdown = false">
+      <li class="navbar-menu-item navbar-favorites"
+        @mouseenter="if(window.innerWidth >= 768) { clearTimeout(favoritesDropdownTimeout); favoritesDropdown = true; }"
+        @mouseleave="if(window.innerWidth >= 768) { favoritesDropdownTimeout = setTimeout(() => favoritesDropdown = false, 150); }">
         <button @click="if(window.innerWidth < 768) favoritesDropdown = !favoritesDropdown" class="navbar-icon-btn">
           <ion-icon name="heart-outline"></ion-icon>
           <span class="navbar-favorites-badge" x-text="favoritesItemCount" x-show="favoritesItemCount > 0"></span>
         </button>
 
         <!-- Dropdown dos Favoritos -->
-        <div class="navbar-dropdown" :class="{ 'show': favoritesDropdown }" @click.away="favoritesDropdown = false">
+        <div class="navbar-dropdown" :class="{ 'show': favoritesDropdown }" @click.stop
+          @mouseenter="if(window.innerWidth >= 768) { clearTimeout(favoritesDropdownTimeout); favoritesDropdown = true; }"
+          @mouseleave="if(window.innerWidth >= 768) { favoritesDropdownTimeout = setTimeout(() => favoritesDropdown = false, 150); }">
           <div class="navbar-dropdown-header">
             <h3 class="navbar-dropdown-title">Seus Favoritos</h3>
           </div>
@@ -61,11 +64,11 @@
                   </div>
                 </div>
                 <div class="navbar-dropdown-item-actions">
-                  <button @click="removeFromFavorites(item.id)" class="action-btn action-btn--remove"
+                  <button @click.stop="removeFromFavorites(item.id)" class="action-btn action-btn--remove"
                     title="Remover dos favoritos">
                     <ion-icon name="heart-dislike-outline"></ion-icon>
                   </button>
-                  <button @click="addToCartFromFavorites(item.id, item.name, item.price, item.image)"
+                  <button @click.stop="addToCartFromFavorites(item.id, item.name, item.price, item.image)"
                     class="action-btn action-btn--add" title="Adicionar ao carrinho">
                     <ion-icon name="bag-add-outline"></ion-icon>
                   </button>
@@ -78,7 +81,8 @@
             </div>
           </div>
           <div class="navbar-dropdown-actions" x-show="favoritesItems.length > 0">
-            <a href="{{ route('shop.favorites.index') }}" class="navbar-dropdown-btn">Ver todos os favoritos</a>
+            <a href="{{ route('shop.favorites.index') }}" class="navbar-dropdown-btn"
+              @click="favoritesDropdown = false">Ver todos os favoritos</a>
           </div>
           <div class="navbar-dropdown-empty" x-show="favoritesItems.length === 0">
             Você ainda não tem favoritos.
@@ -87,15 +91,18 @@
       </li>
 
       <!-- Carrinho -->
-      <li class="navbar-menu-item navbar-cart" @mouseenter="if(window.innerWidth >= 768) cartDropdown = true"
-        @mouseleave="if(window.innerWidth >= 768) cartDropdown = false">
+      <li class="navbar-menu-item navbar-cart"
+        @mouseenter="if(window.innerWidth >= 768) { clearTimeout(cartDropdownTimeout); cartDropdown = true; }"
+        @mouseleave="if(window.innerWidth >= 768) { cartDropdownTimeout = setTimeout(() => cartDropdown = false, 150); }">
         <button @click="if(window.innerWidth < 768) cartDropdown = !cartDropdown" class="navbar-icon-btn">
           <ion-icon name="cart-outline"></ion-icon>
           <span class="navbar-cart-badge" x-text="cartItemCount" x-show="cartItemCount > 0"></span>
         </button>
 
         <!-- Dropdown do Carrinho -->
-        <div class="navbar-dropdown" :class="{ 'show': cartDropdown }" @click.away="cartDropdown = false">
+        <div class="navbar-dropdown" :class="{ 'show': cartDropdown }" @click.stop
+          @mouseenter="if(window.innerWidth >= 768) { clearTimeout(cartDropdownTimeout); cartDropdown = true; }"
+          @mouseleave="if(window.innerWidth >= 768) { cartDropdownTimeout = setTimeout(() => cartDropdown = false, 150); }">
           <div class="navbar-dropdown-header">
             <h3 class="navbar-dropdown-title">Seu Carrinho</h3>
           </div>
@@ -114,7 +121,7 @@
                   </div>
                 </div>
                 <div class="navbar-dropdown-item-actions">
-                  <button @click="removeFromCart(item.id)" class="action-btn action-btn--remove" title="Remover">
+                  <button @click.stop="removeFromCart(item.id)" class="action-btn action-btn--remove" title="Remover">
                     <ion-icon name="trash-outline"></ion-icon>
                   </button>
                 </div>
@@ -127,7 +134,8 @@
           </div>
 
           <div class="navbar-dropdown-actions" x-show="cartItems.length > 0">
-            <a href="{{ route('shop.cart.index') }}" class="navbar-dropdown-btn">Ir para o carrinho</a>
+            <a href="{{ route('shop.cart.index') }}" class="navbar-dropdown-btn" @click="cartDropdown = false">Ir
+              para o carrinho</a>
           </div>
 
           <div class="navbar-dropdown-empty" x-show="cartItems.length === 0">
@@ -137,8 +145,9 @@
       </li>
 
       <!-- Usuário -->
-      <li class="navbar-menu-item" @mouseenter="if(window.innerWidth >= 768) userDropdown = true"
-        @mouseleave="if(window.innerWidth >= 768) userDropdown = false">
+      <li class="navbar-menu-item"
+        @mouseenter="if(window.innerWidth >= 768) { clearTimeout(userDropdownTimeout); userDropdown = true; }"
+        @mouseleave="if(window.innerWidth >= 768) { userDropdownTimeout = setTimeout(() => userDropdown = false, 150); }">
         @auth
           <button @click="if(window.innerWidth < 768) userDropdown = !userDropdown" class="navbar-link">
             <ion-icon name="person-circle-outline"></ion-icon>
@@ -147,7 +156,9 @@
           </button>
 
           <!-- Dropdown do Usuário -->
-          <div class="navbar-dropdown" :class="{ 'show': userDropdown }" @click.away="userDropdown = false">
+          <div class="navbar-dropdown" :class="{ 'show': userDropdown }" @click.stop
+            @mouseenter="if(window.innerWidth >= 768) { clearTimeout(userDropdownTimeout); userDropdown = true; }"
+            @mouseleave="if(window.innerWidth >= 768) { userDropdownTimeout = setTimeout(() => userDropdown = false, 150); }">
             <ul class="navbar-user-menu">
               @if ($isAdmin)
                 <li class="navbar-user-item">

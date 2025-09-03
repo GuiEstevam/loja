@@ -33,14 +33,29 @@ class OrderController extends Controller
     }
     public function checkout()
     {
+        // Verificar se há dados do carrinho na sessão (fallback)
         $cart = session()->get('cart', []);
-        $user = auth()->user();
+
+        // Se não há dados na sessão, retornar view vazia
+        // Os dados serão carregados via JavaScript do localStorage
+        $user = Auth::user();
         return view('shop.checkout', compact('cart', 'user'));
     }
 
     public function process(Request $request)
     {
+        // Verificar se há dados do carrinho na sessão (fallback)
         $cart = session()->get('cart', []);
+
+        // Se não há dados na sessão, verificar se há dados no request
+        if (empty($cart)) {
+            // Tentar obter dados do localStorage via request
+            $cartData = $request->input('cart_data');
+            if ($cartData) {
+                $cart = json_decode($cartData, true);
+            }
+        }
+
         if (empty($cart)) {
             return redirect()->route('shop.cart.index')->with('error', 'Seu carrinho está vazio.');
         }
@@ -58,12 +73,33 @@ class OrderController extends Controller
             'city' => 'required|string|max:255',
             'state' => 'nullable|string|max:255',
             'state_other' => 'nullable|string|max:255',
-            'payment' => 'required|string',
+            'payment_method' => 'required|string',
             'notes' => 'nullable|string',
             'save_address' => 'nullable|boolean',
         ]);
 
-        $user = auth()->user();
+        $user = Auth::user();
+
+        // Salvar dados do usuário para persistência
+        $user->update([
+            'phone' => $data['phone'] ?? $user->phone,
+        ]);
+
+        // Salvar endereço padrão do usuário
+        $user->addresses()->updateOrCreate(
+            ['is_default' => true],
+            [
+                'name' => $data['name'],
+                'phone' => $data['phone'] ?? null,
+                'address_line1' => $data['street'],
+                'address_line2' => $data['complement'],
+                'city' => $data['city'],
+                'state' => $data['country'] === 'BR' ? ($data['state'] ?? '') : ($data['state_other'] ?? ''),
+                'country' => $data['country'],
+                'zipcode' => $data['zip'],
+                'is_default' => true,
+            ]
+        );
 
         $country = $data['country'];
         $state = $country === 'BR'
@@ -79,7 +115,7 @@ class OrderController extends Controller
 
         // Calcula total do pedido
         $total = 0;
-        foreach ($cart as $item) {
+        foreach ($cart as $productId => $item) {
             $total += $item['price'] * $item['quantity'];
         }
 
@@ -98,7 +134,7 @@ class OrderController extends Controller
             'city' => $city,
             'state' => $state,
             'address' => $fullAddress,
-            'payment_method' => $data['payment'],
+            'payment_method' => $data['payment_method'],
             'notes' => $data['notes'] ?? null,
             'subtotal' => $total,
             'discount' => 0,
@@ -107,33 +143,37 @@ class OrderController extends Controller
         ]);
 
         // Salva os itens do pedido
-        foreach ($cart as $productId => $item) {
+        foreach ($cart as $variationKey => $item) {
+            // Salvar imagem exatamente como vem do localStorage
+            $imagePath = $item['image'] ?? null;
+
             $order->items()->create([
-                'product_id' => $productId,
+                'product_id' => $item['id'],
                 'name'      => $item['name'],
                 'price'     => $item['price'],
                 'quantity'  => $item['quantity'],
-                'image'     => $item['image'] ?? null, // Se quiser salvar imagem do produto no item
+                'image'     => $imagePath,
+                'color_id'  => $item['color'] ?? null,
+                'color_name' => $item['colorName'] ?? null,
+                'size'      => $item['size'] ?? null,
             ]);
         }
 
-        // Salva endereço, se solicitado
-        if ($request->filled('save_address')) {
-            $user->addresses()->create([
-                'name' => $data['name'],
-                'phone' => $data['phone'] ?? null,
-                'address_line1' => $data['street'],
-                'address_line2' => $data['complement'],
-                'city' => $city,
-                'state' => $state,
-                'country' => $country,
-                'zipcode' => $data['zip'],
-            ]);
-        }
-
-        // Limpa o carrinho
+        // Limpa o carrinho (session e localStorage via JavaScript)
         session()->forget('cart');
 
-        return redirect()->route('shop.orders.index')->with('success', 'Pedido realizado com sucesso!');
+        return redirect()->route('shop.confirmation', $order)->with('success', 'Pedido realizado com sucesso!');
+    }
+
+    public function confirmation(Order $order)
+    {
+        // Garante que o pedido pertence ao usuário autenticado
+        if ($order->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $order->load('items.product');
+
+        return view('shop.confirmation', compact('order'));
     }
 }

@@ -2,139 +2,150 @@
 
 @section('title', 'Meus Pedidos')
 
+@push('styles')
+  @vite(['resources/css/dashboard.css'])
+@endpush
+
 @section('content')
-  <div class="w-full py-8 px-2 md:px-8">
-    <h1 class="text-2xl md:text-4xl font-extrabold mb-8">Meus Pedidos</h1>
-    @if ($orders->isEmpty())
-      <div class="bg-white rounded-lg shadow p-8 text-center text-gray-500 text-xl">
-        Você ainda não fez nenhum pedido.
+  <div class="dashboard-page">
+    <div class="dashboard-container">
+      <!-- Header da Página -->
+      <div class="dashboard-header">
+        <h1 class="dashboard-title">
+          <ion-icon name="bag-outline"></ion-icon>
+          Meus Pedidos
+        </h1>
+        <p class="dashboard-subtitle">Acompanhe todos os seus pedidos e status de entrega</p>
       </div>
-    @else
-      <div class="flex flex-col gap-8">
-        @foreach ($orders as $order)
-          <div class="bg-white rounded-xl shadow p-4 md:p-8">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div>
-                <div class="font-bold text-xl md:text-2xl text-blue-700">Pedido #{{ $order->id }}</div>
-                <div class="text-gray-500 text-base md:text-lg">{{ $order->created_at->format('d/m/Y H:i') }}</div>
-              </div>
-              <div class="mt-2 md:mt-0">
-                <span
-                  class="inline-block px-3 py-1 rounded-full text-sm md:text-base font-semibold
-                            @if ($order->status === 'pending') bg-yellow-100 text-yellow-700
-                            @elseif($order->status === 'paid') bg-green-100 text-green-700
-                            @elseif($order->status === 'shipped') bg-blue-100 text-blue-700
-                            @elseif($order->status === 'delivered') bg-gray-200 text-gray-700
-                            @elseif($order->status === 'canceled') bg-red-100 text-red-700
-                            @else bg-gray-100 text-gray-700 @endif">
-                  {{ order_status_label($order->status) }}
-                </span>
-                <a href="{{ route('shop.orders.show', $order) }}"
-                  class="ml-4 text-blue-700 hover:underline text-sm md:text-base font-bold transition">
-                  Ver detalhes
+
+      <!-- Lista de Pedidos -->
+      <div class="dashboard-sections">
+        @if ($orders->isEmpty())
+          <div class="dashboard-section">
+            <div class="section-content">
+              <div class="empty-state">
+                <ion-icon name="bag-outline"></ion-icon>
+                <h3>Nenhum pedido ainda</h3>
+                <p>Você ainda não fez nenhum pedido. Que tal começar a comprar?</p>
+                <a href="{{ route('shop.products.index') }}" class="section-action">
+                  <ion-icon name="bag-outline"></ion-icon>
+                  Ver Produtos
                 </a>
               </div>
             </div>
-            <div class="mt-6">
-              <!-- Tabela no desktop, lista no mobile -->
-              <div class="hidden md:block overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-100 text-lg">
-                  <thead>
-                    <tr>
-                      <th class="py-3 text-left font-semibold">Produto</th>
-                      <th class="py-3 text-center font-semibold">Qtd</th>
-                      <th class="py-3 text-center font-semibold">Cor/Tam/Marca</th>
-                      <th class="py-3 text-right font-semibold">Preço</th>
-                      <th class="py-3 text-right font-semibold">Subtotal</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @foreach ($order->items as $item)
-                      <tr>
-                        <td class="py-3 flex items-center gap-3 min-w-[200px]">
-                          @if ($item->product && $item->product->image)
-                            <img src="{{ asset('products/' . $item->product->image) }}"
-                              class="w-16 h-16 object-cover rounded border">
-                          @else
-                            <span class="text-gray-400">Sem imagem</span>
-                          @endif
-                          <span class="font-bold text-lg">{{ $item->product->name ?? $item->name }}</span>
-                        </td>
-                        <td class="text-center">{{ $item->quantity }}</td>
-                        <td class="text-center">
-                          @if ($item->product)
-                            <div class="flex flex-col gap-1">
-                              @if ($item->product->colors && $item->product->colors->count())
-                                <span class="inline-block text-base text-gray-500">
-                                  Cor: {{ $item->product->colors->pluck('name')->join(', ') }}
-                                </span>
-                              @endif
-                              @if ($item->product->sizes && $item->product->sizes->count())
-                                <span class="inline-block text-base text-gray-500">
-                                  Tam: {{ $item->product->sizes->pluck('name')->join(', ') }}
-                                </span>
-                              @endif
-                              @if ($item->product->brand)
-                                <span class="inline-block text-base text-gray-500">
-                                  Marca: {{ $item->product->brand->name }}
-                                </span>
-                              @endif
-                            </div>
-                          @else
-                            <span class="text-base text-gray-400">—</span>
-                          @endif
-                        </td>
-                        <td class="text-right font-semibold">R$ {{ number_format($item->price, 2, ',', '.') }}</td>
-                        <td class="text-right font-semibold">R$
-                          {{ number_format($item->price * $item->quantity, 2, ',', '.') }}</td>
-                      </tr>
-                    @endforeach
-                  </tbody>
-                </table>
+          </div>
+        @else
+          @foreach ($orders as $order)
+            <div class="dashboard-section">
+              <div class="section-header">
+                <h2 class="section-title">
+                  <ion-icon name="receipt-outline"></ion-icon>
+                  Pedido #{{ $order->id }}
+                </h2>
+                <div class="flex items-center gap-3">
+                  <span class="item-status {{ $order->status }}">
+                    @switch($order->status)
+                      @case('pending')
+                        Pendente
+                      @break
+
+                      @case('processing')
+                        Processando
+                      @break
+
+                      @case('shipped')
+                        Enviado
+                      @break
+
+                      @case('delivered')
+                        Entregue
+                      @break
+
+                      @case('cancelled')
+                        Cancelado
+                      @break
+
+                      @default
+                        {{ ucfirst($order->status) }}
+                    @endswitch
+                  </span>
+                  <a href="{{ route('shop.orders.show', $order) }}" class="section-action">
+                    <ion-icon name="eye-outline"></ion-icon>
+                    Ver Detalhes
+                  </a>
+                </div>
               </div>
-              <!-- Lista mobile -->
-              <div class="md:hidden flex flex-col gap-4">
-                @foreach ($order->items as $item)
-                  <div class="flex gap-3 items-center bg-gray-50 rounded-lg p-3">
-                    @if ($item->product && $item->product->image)
-                      <img src="{{ asset('products/' . $item->product->image) }}"
-                        class="w-16 h-16 object-cover rounded border">
-                    @else
-                      <span class="text-gray-400">Sem imagem</span>
-                    @endif
-                    <div class="flex-1">
-                      <div class="font-bold text-base">{{ $item->product->name ?? $item->name }}</div>
-                      <div class="text-gray-500 text-sm">
-                        Qtd: <span class="font-semibold">{{ $item->quantity }}</span>
-                      </div>
-                      <div class="text-gray-500 text-sm">
-                        @if ($item->product && $item->product->colors && $item->product->colors->count())
-                          Cor: {{ $item->product->colors->pluck('name')->join(', ') }}<br>
-                        @endif
-                        @if ($item->product && $item->product->sizes && $item->product->sizes->count())
-                          Tam: {{ $item->product->sizes->pluck('name')->join(', ') }}<br>
-                        @endif
-                        @if ($item->product && $item->product->brand)
-                          Marca: {{ $item->product->brand->name }}
-                        @endif
-                      </div>
-                      <div class="text-blue-700 font-bold mt-1">
-                        R$ {{ number_format($item->price * $item->quantity, 2, ',', '.') }}
-                      </div>
+              <div class="section-content">
+                <div class="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                    <div>
+                      <p class="text-sm text-gray-600 dark:text-gray-400">
+                        <strong>Data:</strong> {{ $order->created_at->format('d/m/Y H:i') }}
+                      </p>
+                      <p class="text-sm text-gray-600 dark:text-gray-400">
+                        <strong>Itens:</strong> {{ $order->items->count() }} produto(s)
+                      </p>
+                      <p class="text-sm text-gray-600 dark:text-gray-400">
+                        <strong>Método de Pagamento:</strong> {{ translatePaymentMethod($order->payment_method) }}
+                      </p>
+                    </div>
+                    <div class="text-right">
+                      <p class="text-lg font-semibold text-blue-600 dark:text-blue-400">
+                        Total: €{{ number_format($order->total, 2, ',', '.') }}
+                      </p>
                     </div>
                   </div>
-                @endforeach
-              </div>
-              <div class="text-right font-extrabold text-2xl text-blue-700 mt-6">
-                Total do pedido: R$ {{ number_format($order->total, 2, ',', '.') }}
+                </div>
+
+                <!-- Itens do Pedido -->
+                <div class="items-list">
+                  @foreach ($order->items as $item)
+                    <div class="item-card">
+                      <div class="item-image">
+                        @if ($item->image)
+                          <img src="{{ $item->image }}" alt="{{ $item->name }}"
+                            onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<ion-icon name=\'image-outline\' style=\'font-size: 1.5rem; color: var(--dashboard-text-secondary);\'></ion-icon>';">
+                        @else
+                          <ion-icon name="image-outline"></ion-icon>
+                        @endif
+                      </div>
+                      <div class="item-details">
+                        <h3 class="item-title">{{ $item->name }}</h3>
+                        <p class="item-meta">
+                          Quantidade: <strong>{{ $item->quantity }}</strong> •
+                          Preço: <strong>€{{ number_format($item->price, 2, ',', '.') }}</strong>
+                          @if ($item->color_name)
+                            • Cor: <strong>{{ $item->color_name }}</strong>
+                          @endif
+                          @if ($item->size)
+                            • Tamanho: <strong>{{ $item->size }}</strong>
+                          @endif
+                        </p>
+                      </div>
+                      <div class="text-right">
+                        <p class="text-lg font-semibold text-blue-600 dark:text-blue-400">
+                          €{{ number_format($item->price * $item->quantity, 2, ',', '.') }}
+                        </p>
+                      </div>
+                    </div>
+                  @endforeach
+                </div>
               </div>
             </div>
-          </div>
-        @endforeach
+          @endforeach
+
+          <!-- Paginação -->
+          @if ($orders->hasPages())
+            <div class="dashboard-section">
+              <div class="section-content">
+                <div class="flex justify-center">
+                  {{ $orders->links() }}
+                </div>
+              </div>
+            </div>
+          @endif
+        @endif
       </div>
-      <div class="mt-12">
-        {{ $orders->links() }}
-      </div>
-    @endif
+    </div>
   </div>
 @endsection

@@ -209,7 +209,31 @@ class ProductController extends Controller
             abort(404);
         }
 
-        return view('shop.products.show', compact('product'));
+        // Buscar produtos recomendados (mesma categoria, excluindo o produto atual)
+        $recommendedProducts = Product::with(['brand', 'categories'])
+            ->where('active', true)
+            ->where('id', '!=', $product->id)
+            ->whereHas('categories', function ($query) use ($product) {
+                $query->whereIn('categories.id', $product->categories->pluck('id'));
+            })
+            ->orderBy('rating', 'desc')
+            ->limit(4)
+            ->get();
+
+        // Se não há produtos da mesma categoria, buscar produtos populares
+        if ($recommendedProducts->count() < 4) {
+            $additionalProducts = Product::with(['brand', 'categories'])
+                ->where('active', true)
+                ->where('id', '!=', $product->id)
+                ->whereNotIn('id', $recommendedProducts->pluck('id'))
+                ->orderBy('rating', 'desc')
+                ->limit(4 - $recommendedProducts->count())
+                ->get();
+
+            $recommendedProducts = $recommendedProducts->merge($additionalProducts);
+        }
+
+        return view('shop.products.show', compact('product', 'recommendedProducts'));
     }
 
     // Helper para verificar se há filtros ativos

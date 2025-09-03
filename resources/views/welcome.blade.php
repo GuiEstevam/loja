@@ -447,22 +447,27 @@
 
     // Função para adicionar ao carrinho
     function addToCart(productId, productName, price, image) {
-      // Obter carrinho atual do localStorage
-      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      // Obter carrinho atual do localStorage (novo formato de objeto)
+      let cart = JSON.parse(localStorage.getItem('cart') || '{}');
+
+      // Criar chave única para o produto (sem variações para produtos da home)
+      const cartKey = productId.toString();
 
       // Verificar se o produto já está no carrinho
-      const existingItem = cart.find(item => item.id === productId);
-
-      if (existingItem) {
-        existingItem.quantity += 1;
+      if (cart[cartKey]) {
+        cart[cartKey].quantity += 1;
       } else {
-        cart.push({
+        cart[cartKey] = {
           id: productId,
           name: productName,
           price: price,
           image: image,
-          quantity: 1
-        });
+          quantity: 1,
+          color: null,
+          colorName: null,
+          size: null,
+          added_at: new Date().toISOString()
+        };
       }
 
       // Salvar no localStorage
@@ -474,7 +479,7 @@
       // Disparar evento para sincronizar com navbar
       window.dispatchEvent(new CustomEvent('cartUpdated', {
         detail: {
-          totalItems: cart.reduce((sum, item) => sum + item.quantity, 0)
+          totalItems: Object.values(cart).reduce((sum, item) => sum + item.quantity, 0)
         }
       }));
 
@@ -484,8 +489,8 @@
 
     // Função para atualizar badge do carrinho
     function updateCartBadge() {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+      const totalItems = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
 
       // Atualizar badge na navbar
       const cartBadge = document.querySelector('.navbar-cart-badge');
@@ -522,17 +527,20 @@
 
     // Função para comprar agora
     function buyNow(productId, productName, price, image) {
-      // Limpar carrinho atual
-      localStorage.setItem('cart', JSON.stringify([]));
+      // Limpar carrinho atual (novo formato de objeto)
+      localStorage.setItem('cart', JSON.stringify({}));
 
       // Adicionar apenas este produto
-      const cart = [{
-        id: productId,
-        name: productName,
-        price: price,
-        image: image,
-        quantity: 1
-      }];
+      const cart = {
+        [productId.toString()]: {
+          id: productId,
+          name: productName,
+          price: price,
+          image: image,
+          quantity: 1,
+          added_at: new Date().toISOString()
+        }
+      };
 
       localStorage.setItem('cart', JSON.stringify(cart));
 
@@ -549,9 +557,9 @@
         }
       }));
 
-      // Redirecionar para checkout (você pode ajustar a rota)
+      // Redirecionar para checkout
       setTimeout(() => {
-        window.location.href = '{{ route('shop.cart.index') }}';
+        window.location.href = '{{ route('shop.checkout') }}';
       }, 1000);
     }
 
@@ -568,26 +576,6 @@
       setTimeout(() => {
         toast.remove();
       }, 3000);
-    }
-
-    // Função para atualizar badge do carrinho
-    function updateCartBadge() {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-      // Atualizar badge na navbar
-      const cartBadge = document.querySelector('.navbar-cart-badge');
-      if (cartBadge) {
-        cartBadge.textContent = totalItems;
-        cartBadge.style.display = totalItems > 0 ? 'flex' : 'none';
-      }
-
-      // Disparar evento para sincronizar com navbar
-      window.dispatchEvent(new CustomEvent('cartUpdated', {
-        detail: {
-          totalItems: totalItems
-        }
-      }));
     }
 
     // Função para mostrar feedback visual

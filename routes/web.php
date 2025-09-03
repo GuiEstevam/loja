@@ -70,9 +70,7 @@ Route::post('/comprar/{product}', [ShopCartController::class, 'buy'])->name('sho
 Route::middleware('auth')->group(function () {
 
     // Dashboard do usuário
-    Route::get('/minha-conta', function () {
-        return view('shop.dashboard');
-    })->name('shop.dashboard');
+    Route::get('/minha-conta', [App\Http\Controllers\Shop\DashboardController::class, 'index'])->name('shop.dashboard');
 
     // Pedidos do usuário
     Route::get('/meus-pedidos', [ShopOrderController::class, 'index'])->name('shop.orders.index');
@@ -100,6 +98,9 @@ Route::middleware('auth')->group(function () {
 
     // Processa o pedido (checkout)
     Route::post('/checkout', [ShopOrderController::class, 'process'])->name('shop.checkout.process');
+
+    // Confirmação do pedido
+    Route::get('/confirmacao/{order}', [ShopOrderController::class, 'confirmation'])->name('shop.confirmation');
 });
 
 // -------------------

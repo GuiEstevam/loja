@@ -95,6 +95,7 @@
         cartTotal: 0,
         favoritesItems: [],
         favoritesItemCount: 0,
+        searchQuery: '', // Adicionado para corrigir o erro
 
         init() {
           this.loadCart();
@@ -113,13 +114,63 @@
             this.loadFavorites();
             this.updateFavoritesDisplay();
           });
+
+          // Listener para mudanças no localStorage
+          window.addEventListener('storage', (event) => {
+            if (event.key === 'cart') {
+              this.loadCart();
+              this.updateCartDisplay();
+            }
+            if (event.key === 'favorites') {
+              this.loadFavorites();
+              this.updateFavoritesDisplay();
+            }
+          });
+
+          // Variáveis para controlar delay dos dropdowns
+          this.cartDropdownTimeout = null;
+          this.favoritesDropdownTimeout = null;
+          this.userDropdownTimeout = null;
+
+          // Listener global para fechar dropdowns com delay
+          document.addEventListener('click', (event) => {
+            const isDropdownClick = event.target.closest('.navbar-dropdown');
+            const isDropdownButton = event.target.closest('.navbar-icon-btn, .navbar-link');
+            const isNavbarItem = event.target.closest('.navbar-menu-item');
+
+            if (!isDropdownClick && !isDropdownButton && !isNavbarItem) {
+              // Fechar dropdowns com delay para evitar fechamento acidental
+              this.closeDropdownsWithDelay();
+            }
+          });
+        },
+
+        // Método para fechar dropdowns com delay
+        closeDropdownsWithDelay() {
+          // Limpar timeouts existentes
+          if (this.cartDropdownTimeout) clearTimeout(this.cartDropdownTimeout);
+          if (this.favoritesDropdownTimeout) clearTimeout(this.favoritesDropdownTimeout);
+          if (this.userDropdownTimeout) clearTimeout(this.userDropdownTimeout);
+
+          // Fechar com delay de 100ms
+          this.cartDropdownTimeout = setTimeout(() => {
+            this.cartDropdown = false;
+          }, 100);
+
+          this.favoritesDropdownTimeout = setTimeout(() => {
+            this.favoritesDropdown = false;
+          }, 100);
+
+          this.userDropdownTimeout = setTimeout(() => {
+            this.userDropdown = false;
+          }, 100);
         },
 
         loadCart() {
-          const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-          this.cartItems = cart;
-          this.cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-          this.cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+          const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+          this.cartItems = Object.values(cart);
+          this.cartItemCount = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
+          this.cartTotal = Object.values(cart).reduce((sum, item) => sum + (item.price * item.quantity), 0);
         },
 
         loadFavorites() {
@@ -145,8 +196,8 @@
         },
 
         removeFromCart(productId) {
-          let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-          cart = cart.filter(item => item.id !== productId);
+          let cart = JSON.parse(localStorage.getItem('cart') || '{}');
+          delete cart[productId.toString()];
           localStorage.setItem('cart', JSON.stringify(cart));
           this.loadCart();
           this.updateCartDisplay();
@@ -168,19 +219,20 @@
         },
 
         addToCartFromFavorites(productId, productName, price, image) {
-          let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-          const existingItem = cart.find(item => item.id === productId);
+          let cart = JSON.parse(localStorage.getItem('cart') || '{}');
+          const cartKey = productId.toString();
 
-          if (existingItem) {
-            existingItem.quantity += 1;
+          if (cart[cartKey]) {
+            cart[cartKey].quantity += 1;
           } else {
-            cart.push({
+            cart[cartKey] = {
               id: productId,
               name: productName,
               price: price,
               image: image,
-              quantity: 1
-            });
+              quantity: 1,
+              added_at: new Date().toISOString()
+            };
           }
 
           localStorage.setItem('cart', JSON.stringify(cart));
@@ -190,7 +242,7 @@
           // Disparar evento para sincronizar com welcome page
           window.dispatchEvent(new CustomEvent('cartUpdated', {
             detail: {
-              totalItems: cart.reduce((sum, item) => sum + item.quantity, 0)
+              totalItems: Object.values(cart).reduce((sum, item) => sum + item.quantity, 0)
             }
           }));
         },

@@ -127,19 +127,20 @@
 
     // Função para adicionar ao carrinho a partir dos favoritos
     function addToCartFromFavorites(productId, productName, price, image) {
-      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const existingItem = cart.find(item => item.id === productId);
+      let cart = JSON.parse(localStorage.getItem('cart') || '{}'); // Mudado de '[]' para '{}'
+      const cartKey = productId.toString();
 
-      if (existingItem) {
-        existingItem.quantity += 1;
+      if (cart[cartKey]) {
+        cart[cartKey].quantity += 1;
       } else {
-        cart.push({
+        cart[cartKey] = {
           id: productId,
           name: productName,
           price: price,
           image: image,
-          quantity: 1
-        });
+          quantity: 1,
+          added_at: new Date().toISOString()
+        };
       }
 
       localStorage.setItem('cart', JSON.stringify(cart));
@@ -147,7 +148,7 @@
       // Disparar evento para sincronizar com navbar
       window.dispatchEvent(new CustomEvent('cartUpdated', {
         detail: {
-          totalItems: cart.reduce((sum, item) => sum + item.quantity, 0)
+          totalItems: Object.values(cart).reduce((sum, item) => sum + item.quantity, 0)
         }
       }));
 

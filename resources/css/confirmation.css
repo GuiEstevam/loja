@@ -1,0 +1,753 @@
+/* ===== CONFIRMATION PAGE CUSTOM CSS ===== */
+
+/* Variáveis CSS específicas da confirmação */
+:root {
+    --confirmation-bg: #f8fafc;
+    --confirmation-card-bg: #ffffff;
+    --confirmation-border: #e2e8f0;
+    --confirmation-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+        0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --confirmation-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --confirmation-text: #1e293b;
+    --confirmation-text-secondary: #64748b;
+    --confirmation-primary: #8b5cf6;
+    --confirmation-primary-hover: #7c3aed;
+    --confirmation-success: #10b981;
+    --confirmation-error: #ef4444;
+    --confirmation-warning: #f59e0b;
+    --confirmation-radius: 0.75rem;
+    --confirmation-radius-lg: 1rem;
+    --confirmation-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --confirmation-spacing: 1.5rem;
+    --confirmation-spacing-lg: 2rem;
+    --confirmation-spacing-xl: 3rem;
+}
+
+/* Dark Mode */
+.dark {
+    --confirmation-bg: #0f172a;
+    --confirmation-card-bg: #1e293b;
+    --confirmation-border: #334155;
+    --confirmation-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3),
+        0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    --confirmation-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3),
+        0 4px 6px -2px rgba(0, 0, 0, 0.2);
+    --confirmation-text: #f1f5f9;
+    --confirmation-text-secondary: #94a3b8;
+    --confirmation-primary: #8b5cf6;
+    --confirmation-primary-hover: #7c3aed;
+}
+
+/* ===== LAYOUT PRINCIPAL ===== */
+.confirmation-page {
+    min-height: 100vh;
+    background: var(--confirmation-bg);
+    padding: var(--confirmation-spacing) 0;
+}
+
+.confirmation-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--confirmation-spacing);
+}
+
+/* ===== HEADER ===== */
+.confirmation-header {
+    text-align: center;
+    margin-bottom: var(--confirmation-spacing-xl);
+}
+
+.confirmation-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--confirmation-text);
+    margin: 0 0 0.5rem 0;
+}
+
+.confirmation-title ion-icon {
+    font-size: 2.5rem;
+    color: var(--confirmation-success);
+}
+
+.confirmation-subtitle {
+    font-size: 1.125rem;
+    color: var(--confirmation-text-secondary);
+    margin: 0;
+}
+
+/* ===== PROGRESSO ===== */
+.confirmation-progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+}
+
+.progress-step {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--confirmation-bg);
+    border: 2px solid var(--confirmation-border);
+    border-radius: var(--confirmation-radius);
+    font-family: var(--font-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--confirmation-text-secondary);
+    transition: var(--confirmation-transition);
+}
+
+.progress-step.active {
+    background: var(--confirmation-primary);
+    border-color: var(--confirmation-primary);
+    color: white;
+}
+
+.progress-step.completed {
+    background: var(--confirmation-success);
+    border-color: var(--confirmation-success);
+    color: white;
+}
+
+.progress-step ion-icon {
+    font-size: 1.25rem;
+}
+
+.progress-connector {
+    width: 2rem;
+    height: 2px;
+    background: var(--confirmation-border);
+    border-radius: 1px;
+}
+
+.progress-connector.completed {
+    background: var(--confirmation-success);
+}
+
+/* ===== LAYOUT PRINCIPAL ===== */
+.confirmation-main {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: var(--confirmation-spacing-xl);
+    align-items: start;
+}
+
+/* ===== RESUMO DO PEDIDO ===== */
+.confirmation-summary-section {
+    background: var(--confirmation-card-bg);
+    border-radius: var(--confirmation-radius-lg);
+    box-shadow: var(--confirmation-shadow-lg);
+    overflow: hidden;
+    width: 100%;
+}
+
+.confirmation-summary {
+    padding: var(--confirmation-spacing-lg);
+    width: 100%;
+}
+
+.confirmation-summary {
+    padding: var(--confirmation-spacing-lg);
+}
+
+.summary-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: var(--confirmation-spacing);
+    padding-bottom: var(--confirmation-spacing);
+    border-bottom: 1px solid var(--confirmation-border);
+}
+
+.summary-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--confirmation-text);
+    margin: 0;
+}
+
+.summary-title ion-icon {
+    color: var(--confirmation-primary);
+}
+
+/* Informações do Pedido */
+.order-info {
+    margin-bottom: var(--confirmation-spacing);
+    padding: var(--confirmation-spacing);
+    background: var(--confirmation-bg);
+    border-radius: var(--confirmation-radius);
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.info-row:last-child {
+    margin-bottom: 0;
+}
+
+.info-label {
+    font-family: var(--font-primary);
+    font-size: 0.875rem;
+    color: var(--confirmation-text-secondary);
+}
+
+.info-value {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--confirmation-text);
+}
+
+.status-pending {
+    color: var(--confirmation-warning);
+}
+
+.status-processing {
+    color: var(--confirmation-primary);
+}
+
+.status-shipped {
+    color: var(--confirmation-success);
+}
+
+.status-delivered {
+    color: var(--confirmation-success);
+}
+
+/* Itens do Pedido */
+.order-items {
+    margin-bottom: var(--confirmation-spacing);
+}
+
+.items-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--confirmation-text);
+    margin: 0 0 1rem 0;
+}
+
+.items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.order-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--confirmation-bg);
+    border-radius: var(--confirmation-radius);
+    border: 1px solid var(--confirmation-border);
+}
+
+.item-image {
+    flex-shrink: 0;
+    width: 4rem;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--confirmation-card-bg);
+    border-radius: var(--confirmation-radius);
+    overflow: hidden;
+}
+
+.item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.item-image ion-icon {
+    font-size: 1.5rem;
+    color: var(--confirmation-text-secondary);
+}
+
+.item-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.item-name {
+    font-family: var(--font-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--confirmation-text);
+}
+
+.item-quantity {
+    font-family: var(--font-primary);
+    font-size: 0.75rem;
+    color: var(--confirmation-text-secondary);
+}
+
+.item-color {
+    font-family: var(--font-primary);
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    display: inline-block;
+    text-align: center;
+    line-height: 1.2;
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--confirmation-primary);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.item-size {
+    font-family: var(--font-primary);
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    display: inline-block;
+    text-align: center;
+    line-height: 1.2;
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.item-price {
+    font-family: var(--font-primary);
+    font-size: 0.75rem;
+    color: var(--confirmation-text-secondary);
+}
+
+.item-subtotal {
+    font-family: var(--font-secondary);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--confirmation-primary);
+}
+
+/* Totais */
+.order-totals {
+    padding-top: var(--confirmation-spacing);
+    border-top: 1px solid var(--confirmation-border);
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.total-row:last-child {
+    margin-bottom: 0;
+}
+
+.total-label {
+    font-family: var(--font-primary);
+    font-size: 0.875rem;
+    color: var(--confirmation-text-secondary);
+}
+
+.total-value {
+    font-family: var(--font-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--confirmation-text);
+}
+
+.total-value.discount {
+    color: var(--confirmation-error);
+}
+
+.total-final {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--confirmation-border);
+}
+
+.total-final .total-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--confirmation-text);
+}
+
+.total-final .total-value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--confirmation-primary);
+}
+
+.total-divider {
+    height: 1px;
+    background: var(--confirmation-border);
+    margin: 1rem 0;
+}
+
+/* ===== DETALHES ===== */
+.confirmation-details-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--confirmation-spacing);
+}
+
+.confirmation-details {
+    background: var(--confirmation-card-bg);
+    border-radius: var(--confirmation-radius-lg);
+    box-shadow: var(--confirmation-shadow-lg);
+    overflow: hidden;
+}
+
+.details-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: var(--confirmation-spacing);
+    border-bottom: 1px solid var(--confirmation-border);
+    background: var(--confirmation-bg);
+}
+
+.details-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--confirmation-text);
+    margin: 0;
+}
+
+.details-title ion-icon {
+    color: var(--confirmation-primary);
+}
+
+.details-content {
+    padding: var(--confirmation-spacing);
+}
+
+/* Endereço */
+.address-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.address-info p {
+    margin: 0;
+    font-family: var(--font-primary);
+    font-size: 0.875rem;
+    color: var(--confirmation-text);
+}
+
+.address-name {
+    font-weight: 600;
+}
+
+/* Contato */
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.contact-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.contact-label {
+    font-family: var(--font-primary);
+    font-size: 0.875rem;
+    color: var(--confirmation-text-secondary);
+}
+
+.contact-value {
+    font-family: var(--font-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--confirmation-text);
+}
+
+/* Próximos Passos */
+.next-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--confirmation-bg);
+    border-radius: var(--confirmation-radius);
+    border: 1px solid var(--confirmation-border);
+}
+
+.step-item ion-icon {
+    font-size: 1.25rem;
+    color: var(--confirmation-primary);
+    margin-top: 0.125rem;
+}
+
+.step-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.step-title {
+    font-family: var(--font-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--confirmation-text);
+}
+
+.step-description {
+    font-family: var(--font-primary);
+    font-size: 0.75rem;
+    color: var(--confirmation-text-secondary);
+}
+
+/* Ações */
+.confirmation-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: var(--confirmation-spacing);
+    background: var(--confirmation-card-bg);
+    border-radius: var(--confirmation-radius-lg);
+    box-shadow: var(--confirmation-shadow-lg);
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    border-radius: var(--confirmation-radius);
+    font-family: var(--font-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: var(--confirmation-transition);
+    cursor: pointer;
+    border: none;
+}
+
+.btn-primary {
+    background: var(--confirmation-primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--confirmation-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--confirmation-shadow-lg);
+}
+
+.btn-secondary {
+    background: var(--confirmation-bg);
+    color: var(--confirmation-text);
+    border: 1px solid var(--confirmation-border);
+}
+
+.btn-secondary:hover {
+    background: var(--confirmation-border);
+    transform: translateY(-1px);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--confirmation-text-secondary);
+    border: 1px solid var(--confirmation-border);
+}
+
+.btn-outline:hover {
+    background: var(--confirmation-bg);
+    color: var(--confirmation-text);
+    transform: translateY(-1px);
+}
+
+/* ===== RESPONSIVIDADE ===== */
+
+/* Desktop (992px+) */
+@media (min-width: 992px) {
+    .confirmation-main {
+        grid-template-columns: 1fr 400px;
+    }
+}
+
+/* Tablet (768px - 991px) */
+@media (max-width: 991px) {
+    .confirmation-main {
+        grid-template-columns: 1fr;
+        gap: var(--confirmation-spacing);
+    }
+
+    .confirmation-container {
+        padding: 0 1rem;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .confirmation-summary-section,
+    .confirmation-details-section {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .confirmation-header {
+        margin-bottom: var(--confirmation-spacing);
+    }
+
+    .confirmation-title {
+        font-size: 2rem;
+    }
+
+    .confirmation-title ion-icon {
+        font-size: 2rem;
+    }
+
+    .confirmation-progress {
+        padding: 1rem 0;
+        gap: 0.5rem;
+    }
+
+    .progress-step {
+        padding: 0.5rem 1rem;
+        font-size: 0.75rem;
+    }
+
+    .progress-step ion-icon {
+        font-size: 1rem;
+    }
+
+    .progress-connector {
+        width: 1rem;
+    }
+}
+
+/* Mobile (menos de 768px) */
+@media (max-width: 767px) {
+    .confirmation-page {
+        padding: 1rem 0;
+    }
+
+    .confirmation-container {
+        padding: 0 0.75rem;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .confirmation-summary-section,
+    .confirmation-details-section {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .confirmation-header {
+        margin-bottom: var(--confirmation-spacing);
+    }
+
+    .confirmation-title {
+        font-size: 1.75rem;
+    }
+
+    .confirmation-title ion-icon {
+        font-size: 1.75rem;
+    }
+
+    .confirmation-subtitle {
+        font-size: 1rem;
+    }
+
+    .confirmation-progress {
+        padding: 0.75rem 0;
+        gap: 0.25rem;
+        flex-wrap: wrap;
+    }
+
+    .progress-step {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+    }
+
+    .progress-step ion-icon {
+        font-size: 0.875rem;
+    }
+
+    .progress-connector {
+        width: 0.75rem;
+    }
+
+    .confirmation-summary,
+    .details-content {
+        padding: 1rem;
+    }
+
+    .order-item {
+        padding: 0.75rem;
+        gap: 0.75rem;
+    }
+
+    .item-image {
+        width: 3rem;
+        height: 3rem;
+    }
+
+    .item-image ion-icon {
+        font-size: 1.25rem;
+    }
+
+    .step-item {
+        padding: 0.75rem;
+    }
+
+    .step-item ion-icon {
+        font-size: 1rem;
+    }
+
+    .confirmation-actions {
+        padding: 1rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* ===== DARK MODE PARA VARIAÇÕES DA CONFIRMAÇÃO ===== */
+.dark .item-color {
+    background: rgba(168, 85, 247, 0.15);
+    color: #a855f7;
+    border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.dark .item-size {
+    background: rgba(96, 165, 250, 0.15);
+    color: #60a5fa;
+    border: 1px solid rgba(96, 165, 250, 0.3);
+}

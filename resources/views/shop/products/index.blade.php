@@ -463,19 +463,20 @@
     });
     // Funções reutilizadas do welcome.blade.php
     function addToCart(productId, productName, price, image) {
-      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      let cart = JSON.parse(localStorage.getItem('cart') || '{}'); // Mudado de '[]' para '{}'
+      const cartKey = productId.toString();
 
-      const existingItem = cart.find(item => item.id === productId);
-      if (existingItem) {
-        existingItem.quantity += 1;
+      if (cart[cartKey]) {
+        cart[cartKey].quantity += 1;
       } else {
-        cart.push({
+        cart[cartKey] = {
           id: productId,
           name: productName,
           price: price,
           image: image,
-          quantity: 1
-        });
+          quantity: 1,
+          added_at: new Date().toISOString()
+        };
       }
 
       localStorage.setItem('cart', JSON.stringify(cart));
@@ -489,14 +490,14 @@
       // Disparar evento para sincronizar com navbar
       window.dispatchEvent(new CustomEvent('cartUpdated', {
         detail: {
-          totalItems: cart.reduce((sum, item) => sum + item.quantity, 0)
+          totalItems: Object.values(cart).reduce((sum, item) => sum + item.quantity, 0)
         }
       }));
     }
 
     function updateCartBadge() {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const cart = JSON.parse(localStorage.getItem('cart') || '{}'); // Mudado de '[]' para '{}'
+      const totalItems = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
 
       // Atualizar badge se existir
       const cartBadge = document.querySelector('.navbar-cart-badge');
@@ -587,17 +588,20 @@
     }
 
     function buyNow(productId, productName, price, image) {
-      // Limpar carrinho atual
-      localStorage.setItem('cart', JSON.stringify([]));
+      // Limpar carrinho atual (novo formato de objeto)
+      localStorage.setItem('cart', JSON.stringify({}));
 
       // Adicionar apenas este produto
-      const cart = [{
-        id: productId,
-        name: productName,
-        price: price,
-        image: image,
-        quantity: 1
-      }];
+      const cart = {
+        [productId.toString()]: {
+          id: productId,
+          name: productName,
+          price: price,
+          image: image,
+          quantity: 1,
+          added_at: new Date().toISOString()
+        }
+      };
 
       localStorage.setItem('cart', JSON.stringify(cart));
 
@@ -614,9 +618,9 @@
         }
       }));
 
-      // Redirecionar para checkout (você pode ajustar a rota)
+      // Redirecionar para checkout
       setTimeout(() => {
-        window.location.href = '{{ route('shop.cart.index') }}';
+        window.location.href = '{{ route('shop.checkout') }}';
       }, 1000);
     }
 

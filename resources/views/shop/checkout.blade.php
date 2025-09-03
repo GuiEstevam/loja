@@ -2,187 +2,519 @@
 
 @section('title', 'Finalizar Compra')
 
+@push('styles')
+  @vite(['resources/css/checkout.css'])
+@endpush
+
 @section('content')
-  <div class="max-w-6xl mx-auto py-10 px-4">
-    <h1 class="text-2xl font-bold mb-8 text-center">Finalizar Compra</h1>
-    <div class="flex flex-col md:flex-row gap-8">
-      {{-- Resumo do Pedido --}}
-      <div class="w-full md:w-5/10 bg-white shadow-lg rounded-xl p-6 flex flex-col justify-between">
-        <h2 class="text-lg font-semibold mb-4 border-b pb-2">Resumo do Pedido</h2>
-        <ul class="flex flex-col gap-4 mt-2">
-          @php $total = 0; @endphp
-          @foreach ($cart as $id => $item)
-            @php
-              $subtotal = $item['price'] * $item['quantity'];
-              $total += $subtotal;
-            @endphp
-            <li class="flex gap-4 items-center bg-gray-50 rounded-lg p-3 shadow-sm">
-              <img src="{{ asset('products/' . $item['image']) }}"
-                class="w-24 h-24 md:w-32 md:h-32 object-cover rounded border" alt="{{ $item['name'] }}">
-              <div class="flex-1 min-w-0">
-                <div class="font-bold text-base md:text-lg text-gray-900 truncate">{{ $item['name'] }}</div>
-                <div class="text-gray-600 text-sm mt-1">Qtd: <b>{{ $item['quantity'] }}</b></div>
-                <div class="text-gray-600 text-sm">Preço: R$ {{ number_format($item['price'], 2, ',', '.') }}</div>
-                <div class="text-blue-700 font-bold mt-2 text-base">Subtotal: R$
-                  {{ number_format($subtotal, 2, ',', '.') }}</div>
-              </div>
-            </li>
-          @endforeach
-        </ul>
-        <div class="text-right font-bold text-xl mt-8">
-          Total: R$ {{ number_format($total, 2, ',', '.') }}
+  <div class="checkout-page">
+    <div class="checkout-container">
+      <!-- Header da Página -->
+      <div class="checkout-header">
+        <h1 class="checkout-title">
+          <ion-icon name="card-outline"></ion-icon>
+          Finalizar Compra
+        </h1>
+        <p class="checkout-subtitle">Complete seus dados para finalizar o pedido</p>
+      </div>
+
+      <!-- Progresso do Checkout -->
+      <div class="checkout-progress">
+        <div class="progress-step completed">
+          <ion-icon name="checkmark-circle"></ion-icon>
+          <span>Carrinho</span>
         </div>
-        <div class="mt-6">
-          <a href="{{ route('shop.cart.index') }}" class="text-blue-600 hover:underline">&larr; Voltar ao carrinho</a>
+        <div class="progress-connector completed"></div>
+        <div class="progress-step active">
+          <ion-icon name="card-outline"></ion-icon>
+          <span>Pagamento</span>
+        </div>
+        <div class="progress-connector"></div>
+        <div class="progress-step">
+          <ion-icon name="checkmark-outline"></ion-icon>
+          <span>Confirmação</span>
         </div>
       </div>
 
-      {{-- Dados para Entrega --}}
-      <div class="w-full md:w-2/10 bg-gray-50 shadow-lg rounded-xl p-8">
-        @if ($errors->any())
-          <div class="mb-4 text-red-700 bg-red-100 border border-red-300 px-4 py-3 rounded">
-            <ul class="list-disc ml-5">
-              @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-              @endforeach
-            </ul>
-          </div>
-        @endif
+      <!-- Layout Principal -->
+      <div class="checkout-main">
+        <!-- Formulário de Checkout -->
+        <div class="checkout-form-section">
+          <form action="{{ route('shop.checkout.process') }}" method="POST" id="checkout-form">
+            @csrf
+            <input type="hidden" name="cart_data" id="cart-data-input">
 
-        <form action="{{ route('shop.checkout.process') }}" method="POST">
-          @csrf
-          <h2 class="text-lg font-semibold mb-4 border-b pb-2">Dados para Entrega</h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label for="name" class="block mb-1 font-semibold">Nome Completo</label>
-              <input type="text" name="name" id="name" class="w-full border rounded px-3 py-2" required
-                value="{{ old('name', auth()->user()->name ?? '') }}">
+            <!-- Informações Pessoais -->
+            <div class="form-section">
+              <div class="section-header">
+                <ion-icon name="person-outline"></ion-icon>
+                <h2>Informações Pessoais</h2>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="name">Nome Completo *</label>
+                  <input type="text" name="name" id="name" required
+                    value="{{ old('name', auth()->user()->name ?? '') }}" placeholder="Seu nome completo">
+                </div>
+                <div class="form-group">
+                  <label for="email">E-mail *</label>
+                  <input type="email" name="email" id="email" required
+                    value="{{ old('email', auth()->user()->email ?? '') }}" placeholder="seu@email.com">
+                </div>
+                <div class="form-group">
+                  <label for="phone">Telefone *</label>
+                  <input type="tel" name="phone" id="phone" required
+                    value="{{ old('phone', auth()->user()->phone ?? '') }}" placeholder="(11) 99999-9999">
+                </div>
+              </div>
             </div>
-            <div>
-              <label for="email" class="block mb-1 font-semibold">E-mail</label>
-              <input type="email" name="email" id="email" class="w-full border rounded px-3 py-2" required
-                value="{{ old('email', auth()->user()->email ?? '') }}">
+
+            <!-- Endereço de Entrega -->
+            <div class="form-section">
+              <div class="section-header">
+                <ion-icon name="location-outline"></ion-icon>
+                <h2>Endereço de Entrega</h2>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="country">País *</label>
+                  <select name="country" id="country" required onchange="toggleStateField(this.value)">
+                    <option value="">Selecione o país</option>
+                    <option value="BR"
+                      {{ old('country', $user->addresses->where('is_default', true)->first()->country ?? '') == 'BR' ? 'selected' : '' }}>
+                      Brasil</option>
+                    <option value="US"
+                      {{ old('country', $user->addresses->where('is_default', true)->first()->country ?? '') == 'US' ? 'selected' : '' }}>
+                      Estados Unidos</option>
+                    <option value="PT"
+                      {{ old('country', $user->addresses->where('is_default', true)->first()->country ?? '') == 'PT' ? 'selected' : '' }}>
+                      Portugal</option>
+                    <option value="AR"
+                      {{ old('country', $user->addresses->where('is_default', true)->first()->country ?? '') == 'AR' ? 'selected' : '' }}>
+                      Argentina</option>
+                    <option value="other"
+                      {{ old('country', $user->addresses->where('is_default', true)->first()->country ?? '') == 'other' ? 'selected' : '' }}>
+                      Outro</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="zip">CEP/Código Postal *</label>
+                  <input type="text" name="zip" id="zip" required
+                    value="{{ old('zip', $user->addresses->where('is_default', true)->first()->zipcode ?? '') }}"
+                    placeholder="00000-000">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="street">Rua *</label>
+                  <input type="text" name="street" id="street" required
+                    value="{{ old('street', $user->addresses->where('is_default', true)->first()->address_line1 ?? '') }}"
+                    placeholder="Nome da rua">
+                </div>
+                <div class="form-group">
+                  <label for="number">Número *</label>
+                  <input type="text" name="number" id="number" required value="{{ old('number') }}"
+                    placeholder="123">
+                </div>
+                <div class="form-group">
+                  <label for="neighborhood">Bairro *</label>
+                  <input type="text" name="neighborhood" id="neighborhood" required value="{{ old('neighborhood') }}"
+                    placeholder="Nome do bairro">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="city">Cidade *</label>
+                  <input type="text" name="city" id="city" required
+                    value="{{ old('city', $user->addresses->where('is_default', true)->first()->city ?? '') }}"
+                    placeholder="Nome da cidade">
+                </div>
+                <div class="form-group" id="state-select-br" style="display: none;">
+                  <label for="state">Estado *</label>
+                  <select name="state" id="state">
+                    <option value="">Selecione o estado</option>
+                    <option value="AC">Acre</option>
+                    <option value="AL">Alagoas</option>
+                    <option value="AP">Amapá</option>
+                    <option value="AM">Amazonas</option>
+                    <option value="BA">Bahia</option>
+                    <option value="CE">Ceará</option>
+                    <option value="DF">Distrito Federal</option>
+                    <option value="ES">Espírito Santo</option>
+                    <option value="GO">Goiás</option>
+                    <option value="MA">Maranhão</option>
+                    <option value="MT">Mato Grosso</option>
+                    <option value="MS">Mato Grosso do Sul</option>
+                    <option value="MG">Minas Gerais</option>
+                    <option value="PA">Pará</option>
+                    <option value="PB">Paraíba</option>
+                    <option value="PR">Paraná</option>
+                    <option value="PE">Pernambuco</option>
+                    <option value="PI">Piauí</option>
+                    <option value="RJ">Rio de Janeiro</option>
+                    <option value="RN">Rio Grande do Norte</option>
+                    <option value="RS">Rio Grande do Sul</option>
+                    <option value="RO">Rondônia</option>
+                    <option value="RR">Roraima</option>
+                    <option value="SC">Santa Catarina</option>
+                    <option value="SP">São Paulo</option>
+                    <option value="SE">Sergipe</option>
+                    <option value="TO">Tocantins</option>
+                  </select>
+                </div>
+                <div class="form-group" id="state-text-other" style="display: none;">
+                  <label for="state_other">Estado/Província *</label>
+                  <input type="text" name="state_other" id="state_other" value="{{ old('state_other') }}"
+                    placeholder="Nome do estado/província">
+                </div>
+                <div class="form-group">
+                  <label for="complement">Complemento</label>
+                  <input type="text" name="complement" id="complement" value="{{ old('complement') }}"
+                    placeholder="Apartamento, bloco, etc.">
+                </div>
+              </div>
+
+              <div class="save-address-checkbox">
+                <input type="checkbox" name="save_address" id="save_address" value="1"
+                  {{ old('save_address') ? 'checked' : '' }}>
+                <label for="save_address">Salvar este endereço na minha conta</label>
+              </div>
             </div>
-            <div>
-              <label for="phone" class="block mb-1 font-semibold">Telefone</label>
-              <input type="text" name="phone" id="phone" class="w-full border rounded px-3 py-2"
-                value="{{ old('phone', auth()->user()->phone ?? '') }}">
+
+            <!-- Forma de Pagamento -->
+            <div class="form-section">
+              <div class="section-header">
+                <ion-icon name="card-outline"></ion-icon>
+                <h2>Forma de Pagamento</h2>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="payment_method">Método de Pagamento *</label>
+                  <select name="payment_method" id="payment_method" required>
+                    <option value="">Selecione a forma de pagamento</option>
+                    <option value="credit_card" {{ old('payment_method') == 'credit_card' ? 'selected' : '' }}>Cartão de
+                      Crédito</option>
+                    <option value="debit_card" {{ old('payment_method') == 'debit_card' ? 'selected' : '' }}>Cartão de
+                      Débito</option>
+                    <option value="pix" {{ old('payment_method') == 'pix' ? 'selected' : '' }}>PIX</option>
+                    <option value="boleto" {{ old('payment_method') == 'boleto' ? 'selected' : '' }}>Boleto Bancário
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="card_number">Número do Cartão *</label>
+                  <input type="text" name="card_number" id="card_number" required value="{{ old('card_number') }}"
+                    placeholder="0000 0000 0000 0000">
+                </div>
+                <div class="form-group">
+                  <label for="card_name">Nome no Cartão *</label>
+                  <input type="text" name="card_name" id="card_name" required value="{{ old('card_name') }}"
+                    placeholder="Nome como está no cartão">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="card_expiry">Data de Validade *</label>
+                  <input type="text" name="card_expiry" id="card_expiry" required value="{{ old('card_expiry') }}"
+                    placeholder="MM/AA">
+                </div>
+                <div class="form-group">
+                  <label for="card_cvv">CVV *</label>
+                  <input type="text" name="card_cvv" id="card_cvv" required value="{{ old('card_cvv') }}"
+                    placeholder="123">
+                </div>
+              </div>
             </div>
-            <div>
-              <label for="country" class="block mb-1 font-semibold">País</label>
-              <select name="country" id="country" class="w-full border rounded px-3 py-2" required
-                onchange="toggleStateField(this.value)">
-                <option value="BR" {{ old('country') == 'BR' ? 'selected' : '' }}>Brasil</option>
-                <option value="US" {{ old('country') == 'US' ? 'selected' : '' }}>Estados Unidos</option>
-                <option value="PT" {{ old('country') == 'PT' ? 'selected' : '' }}>Portugal</option>
-                <option value="AR" {{ old('country') == 'AR' ? 'selected' : '' }}>Argentina</option>
-                <option value="other" {{ old('country') == 'other' ? 'selected' : '' }}>Outro</option>
-              </select>
+
+            <!-- Observações -->
+            <div class="form-section">
+              <div class="section-header">
+                <ion-icon name="chatbubble-outline"></ion-icon>
+                <h2>Observações</h2>
+              </div>
+              <div class="form-group full-width">
+                <label for="notes">Observações do Pedido</label>
+                <textarea name="notes" id="notes" rows="3" placeholder="Alguma observação especial para o pedido?">{{ old('notes') }}</textarea>
+              </div>
             </div>
-            <div>
-              <label for="zip" class="block mb-1 font-semibold">CEP/Código Postal</label>
-              <input type="text" name="zip" id="zip" class="w-full border rounded px-3 py-2" required
-                value="{{ old('zip') }}">
+
+            <!-- Botões de Ação -->
+            <div class="form-actions">
+              <a href="{{ route('shop.cart.index') }}" class="btn btn-secondary">
+                <ion-icon name="arrow-back-outline"></ion-icon>
+                Voltar ao Carrinho
+              </a>
+              <button type="submit" class="btn btn-primary" id="confirm-btn">
+                <ion-icon name="checkmark-outline"></ion-icon>
+                Finalizar Compra
+              </button>
             </div>
-            <div>
-              <label for="street" class="block mb-1 font-semibold">Rua</label>
-              <input type="text" name="street" id="street" class="w-full border rounded px-3 py-2" required
-                value="{{ old('street') }}">
+
+            <!-- Mensagens de Erro -->
+            @if ($errors->any())
+              <div class="form-errors" id="error-modal">
+                <button type="button" class="close-btn" onclick="closeErrorModal()">
+                  <ion-icon name="close-outline"></ion-icon>
+                </button>
+                <h4>Erros encontrados:</h4>
+                <ul>
+                  @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                  @endforeach
+                </ul>
+              </div>
+            @endif
+          </form>
+        </div>
+
+        <!-- Resumo do Pedido -->
+        <div class="checkout-summary-section">
+          <div class="summary-card">
+            <div class="summary-header">
+              <ion-icon name="bag-outline"></ion-icon>
+              <h2>Resumo do Pedido</h2>
             </div>
-            <div>
-              <label for="neighborhood" class="block mb-1 font-semibold">Bairro</label>
-              <input type="text" name="neighborhood" id="neighborhood" class="w-full border rounded px-3 py-2" required
-                value="{{ old('neighborhood') }}">
-            </div>
-            <div>
-              <label for="city" class="block mb-1 font-semibold">Cidade</label>
-              <input type="text" name="city" id="city" class="w-full border rounded px-3 py-2" required
-                value="{{ old('city') }}">
-            </div>
-            <div>
-              <label for="number" class="block mb-1 font-semibold">Número</label>
-              <input type="text" name="number" id="number" class="w-full border rounded px-3 py-2" required
-                value="{{ old('number') }}">
-            </div>
-            <div>
-              <label for="complement" class="block mb-1 font-semibold">Complemento</label>
-              <input type="text" name="complement" id="complement" class="w-full border rounded px-3 py-2"
-                value="{{ old('complement') }}">
-            </div>
-            {{-- Campo estado dinâmico --}}
-            <div id="state-select-br" style="display: none;">
-              <label for="state" class="block mb-1 font-semibold">Estado</label>
-              <select name="state" id="state" class="w-full border rounded px-3 py-2">
-                <option value="">Selecione</option>
-                <option value="AC">AC</option>
-                <option value="AL">AL</option>
-                <option value="AP">AP</option>
-                <option value="AM">AM</option>
-                <option value="BA">BA</option>
-                <option value="CE">CE</option>
-                <option value="DF">DF</option>
-                <option value="ES">ES</option>
-                <option value="GO">GO</option>
-                <option value="MA">MA</option>
-                <option value="MT">MT</option>
-                <option value="MS">MS</option>
-                <option value="MG">MG</option>
-                <option value="PA">PA</option>
-                <option value="PB">PB</option>
-                <option value="PR">PR</option>
-                <option value="PE">PE</option>
-                <option value="PI">PI</option>
-                <option value="RJ">RJ</option>
-                <option value="RN">RN</option>
-                <option value="RS">RS</option>
-                <option value="RO">RO</option>
-                <option value="RR">RR</option>
-                <option value="SC">SC</option>
-                <option value="SP">SP</option>
-                <option value="SE">SE</option>
-                <option value="TO">TO</option>
-              </select>
-            </div>
-            <div id="state-text-other" style="display: none;">
-              <label for="state_other" class="block mb-1 font-semibold">Estado/Província</label>
-              <input type="text" name="state_other" id="state_other" class="w-full border rounded px-3 py-2">
+
+            <div class="summary-content">
+              <div class="summary-items" id="checkout-items">
+                <!-- Os itens serão carregados via JavaScript -->
+                <div class="summary-loading">
+                  <ion-icon name="refresh-outline"></ion-icon>
+                  <span>Carregando itens do carrinho...</span>
+                </div>
+              </div>
+
+              <div class="summary-totals">
+                <div class="summary-row">
+                  <span class="summary-label">Subtotal</span>
+                  <span class="summary-value" id="checkout-subtotal">€0,00</span>
+                </div>
+                <div class="summary-row">
+                  <span class="summary-label">Frete</span>
+                  <span class="summary-value">Grátis</span>
+                </div>
+                <div class="summary-row total">
+                  <span class="summary-label">Total</span>
+                  <span class="summary-value" id="checkout-total">€0,00</span>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="my-4 flex items-center gap-2">
-            <input type="checkbox" name="save_address" id="save_address" value="1" class="rounded">
-            <label for="save_address" class="font-medium">Salvar este endereço na minha conta</label>
-          </div>
-          <div class="mb-4">
-            <label for="payment" class="block mb-1 font-semibold">Forma de Pagamento</label>
-            <select name="payment" id="payment" class="w-full border rounded px-3 py-2">
-              <option value="pix">Pix</option>
-              <option value="boleto">Boleto</option>
-              <option value="cartao">Cartão de Crédito</option>
-            </select>
-          </div>
-          <div class="mb-4">
-            <label for="notes" class="block mb-1 font-semibold">Observações (opcional)</label>
-            <textarea name="notes" id="notes" class="w-full border rounded px-3 py-2">{{ old('notes') }}</textarea>
-          </div>
-          <button type="submit"
-            class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 font-bold w-full mt-4">
-            Confirmar Pedido
-          </button>
-        </form>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    function toggleStateField(country) {
-      document.getElementById('state-select-br').style.display = (country === 'BR') ? 'block' : 'none';
-      document.getElementById('state-text-other').style.display = (country !== 'BR') ? 'block' : 'none';
+    // Função para carregar itens do carrinho
+    function loadCartItems() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+      const itemsContainer = document.getElementById('checkout-items');
+      const subtotalElement = document.getElementById('checkout-subtotal');
+      const totalElement = document.getElementById('checkout-total');
+
+      itemsContainer.innerHTML = ''; // Limpar container
+
+      let total = 0;
+
+      // Verificar se há itens no carrinho
+      if (Object.keys(cart).length === 0) {
+        itemsContainer.innerHTML = `
+                <div class="summary-empty">
+                    <ion-icon name="bag-outline"></ion-icon>
+                    <p>Seu carrinho está vazio</p>
+                    <a href="{{ route('shop.cart.index') }}">
+                        Voltar ao carrinho
+                    </a>
+                </div>
+            `;
+        return;
+      }
+
+      // Renderizar cada item
+      Object.values(cart).forEach(item => {
+        const subtotal = item.price * item.quantity;
+        total += subtotal;
+
+        // Verificar se a imagem existe e construir URL correta
+        let imageSrc = '{{ asset('images/placeholder.svg') }}';
+        if (item.image && item.image !== 'undefined' && item.image !== 'null' && item.image !== '' && item.image !==
+          'null') {
+          // A imagem já vem com o path completo do localStorage
+          imageSrc = item.image;
+        }
+
+        // Extrair informações de variação
+        let variationInfo = '';
+        if (item.colorName || item.size) {
+          variationInfo = `
+            <div class="summary-item-variations">
+              ${item.colorName ? `<span class="summary-item-variation summary-item-color">Cor: ${item.colorName}</span>` : ''}
+              ${item.size ? `<span class="summary-item-variation summary-item-size">Tamanho: ${item.size}</span>` : ''}
+            </div>
+          `;
+        }
+
+        const itemHtml = `
+           <div class="summary-item">
+             <div class="summary-item-image">
+               <img src="${imageSrc}" alt="${item.name}"
+                 onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<ion-icon name=\\"image-outline\\" style=\\"font-size: 1.5rem; color: var(--checkout-text-secondary);\\"></ion-icon>
+             </div>
+             <div class="summary-item-details">
+               <h3 class="summary-item-name">${item.name}</h3>
+               ${variationInfo}
+               <div class="summary-item-meta">
+                 <span>Quantidade: <strong>${item.quantity}</strong></span>
+                 <span>Preço: <strong>€${item.price.toFixed(2).replace('.', ',')}</strong></span>
+               </div>
+               <div class="summary-item-price">
+                 Subtotal: €${subtotal.toFixed(2).replace('.', ',')}
+               </div>
+             </div>
+           </div>
+         `;
+
+        itemsContainer.innerHTML += itemHtml;
+      });
+
+      // Atualizar totais em euro com formato correto
+      const formattedTotal = total.toFixed(2).replace('.', ',');
+      subtotalElement.textContent = `€${formattedTotal}`;
+      totalElement.textContent = `€${formattedTotal}`;
     }
+
+    // Função para alternar campos de estado
+    function toggleStateField(country) {
+      const stateSelectBr = document.getElementById('state-select-br');
+      const stateTextOther = document.getElementById('state-text-other');
+      const stateSelect = document.getElementById('state');
+      const stateOther = document.getElementById('state_other');
+
+      // Ocultar ambos os campos
+      stateSelectBr.style.display = 'none';
+      stateTextOther.style.display = 'none';
+      stateSelect.removeAttribute('required');
+      stateOther.removeAttribute('required');
+
+      // Mostrar o campo apropriado baseado no país
+      if (country === 'BR') {
+        stateSelectBr.style.display = 'block';
+        stateSelect.setAttribute('required', 'required');
+      } else if (country === 'other' || country === 'US' || country === 'PT' || country === 'AR') {
+        stateTextOther.style.display = 'block';
+        stateOther.setAttribute('required', 'required');
+      }
+    }
+
+    // Inicialização quando a página carrega
     document.addEventListener('DOMContentLoaded', function() {
-      toggleStateField(document.getElementById('country').value);
-      document.getElementById('country').addEventListener('change', function() {
+      // Carregar itens do carrinho
+      loadCartItems();
+
+      // Carregar dados persistentes do usuário
+      loadPersistentData();
+
+      // Configurar campo de estado baseado no país selecionado
+      const countrySelect = document.getElementById('country');
+      if (countrySelect.value) {
+        toggleStateField(countrySelect.value);
+      }
+
+      // Adicionar listener para mudanças no país
+      countrySelect.addEventListener('change', function() {
         toggleStateField(this.value);
       });
+
+      // Configurar validação em tempo real
+      const form = document.getElementById('checkout-form');
+      const confirmBtn = document.getElementById('confirm-btn');
+
+      // Adicionar validação em tempo real para todos os campos obrigatórios
+      const requiredFields = form.querySelectorAll('[required]');
+      requiredFields.forEach(field => {
+        field.addEventListener('blur', function() {
+          if (this.value.trim() === '') {
+            this.classList.add('error');
+          } else {
+            this.classList.remove('error');
+          }
+        });
+      });
+
+      // Feedback visual durante o envio do formulário
+      form.addEventListener('submit', function(e) {
+        // Enviar dados do localStorage
+        const cartData = localStorage.getItem('cart') || '{}';
+        document.getElementById('cart-data-input').value = cartData;
+
+        const originalText = confirmBtn.innerHTML;
+        confirmBtn.innerHTML = `
+                <ion-icon name="refresh-outline" class="spinning"></ion-icon>
+                Processando...
+            `;
+        confirmBtn.disabled = true;
+
+        // Re-habilitar após 5 segundos caso haja erro
+        setTimeout(() => {
+          confirmBtn.innerHTML = originalText;
+          confirmBtn.disabled = false;
+        }, 5000);
+      });
+    });
+
+    // Função para carregar dados persistentes
+    function loadPersistentData() {
+      // Se não há dados persistentes, não fazer nada
+      const defaultAddress = @json($user->addresses->where('is_default', true)->first());
+      if (!defaultAddress) return;
+
+      // Preencher campos se estiverem vazios
+      const fields = {
+        'phone': defaultAddress.phone,
+        'zip': defaultAddress.zipcode,
+        'street': defaultAddress.address_line1,
+        'city': defaultAddress.city,
+        'state': defaultAddress.state,
+        'country': defaultAddress.country
+      };
+
+      Object.keys(fields).forEach(fieldName => {
+        const field = document.getElementById(fieldName);
+        if (field && !field.value && fields[fieldName]) {
+          field.value = fields[fieldName];
+        }
+      });
+
+      // Configurar estado se país foi carregado
+      const countrySelect = document.getElementById('country');
+      if (countrySelect.value) {
+        toggleStateField(countrySelect.value);
+      }
+    }
+
+    // Função para fechar modal de erro
+    function closeErrorModal() {
+      const errorModal = document.getElementById('error-modal');
+      if (errorModal) {
+        errorModal.style.display = 'none';
+      }
+    }
+
+    // Fechar modal ao clicar fora dele
+    document.addEventListener('click', function(e) {
+      const errorModal = document.getElementById('error-modal');
+      if (errorModal && e.target === errorModal) {
+        closeErrorModal();
+      }
     });
   </script>
 @endsection

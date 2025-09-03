@@ -9,212 +9,317 @@
 @section('content')
   <div class="product-detail-container">
     <!-- Breadcrumb -->
-    <div class="breadcrumb">
-      <a href="/" class="breadcrumb-link">Início</a>
+    <nav class="product-breadcrumb">
+      <a href="{{ route('home') }}" class="breadcrumb-link">
+        <ion-icon name="home-outline"></ion-icon>
+        Início
+      </a>
       <ion-icon name="chevron-forward"></ion-icon>
-      <a href="{{ route('shop.products.index') }}" class="breadcrumb-link">Produtos</a>
-      <ion-icon name="chevron-forward"></ion-icon>
+      @if ($product->categories->count() > 0)
+        <a href="{{ route('shop.products.index', ['category' => $product->categories->first()->slug]) }}"
+          class="breadcrumb-link">
+          {{ $product->categories->first()->name }}
+        </a>
+        <ion-icon name="chevron-forward"></ion-icon>
+      @endif
       <span class="breadcrumb-current">{{ $product->name }}</span>
-    </div>
+    </nav>
 
-    <!-- Produto Principal -->
-    <div class="product-detail-main">
-      <!-- Galeria de Imagens -->
-      <div class="product-gallery">
-        <div class="product-main-image">
-          <img src="{{ asset('products/' . ($product->image ?? 'placeholder.jpg')) }}" alt="{{ $product->name }}"
-            class="product-image">
-
-          <!-- Botão de Favorito -->
-          <button class="product-favorite-btn" title="Adicionar aos favoritos"
-            onclick="toggleFavorite({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
-            <ion-icon name="heart-outline"></ion-icon>
-          </button>
-
-          <!-- Badges -->
-          <div class="product-badges">
-            @if ($product->is_new)
-              <span class="product-badge product-badge--new">Novo</span>
-            @endif
-            @if ($product->is_sale)
-              <span class="product-badge product-badge--sale">
-                {{ round((($product->price - $product->sale_price) / $product->price) * 100) }}% OFF
-              </span>
-            @endif
-            @if ($product->free_shipping)
-              <span class="product-badge product-badge--shipping">Frete Grátis</span>
-            @endif
+    <div class="product-main-layout">
+      <!-- Coluna Principal -->
+      <div class="product-main-content">
+        <!-- Galeria de Imagens -->
+        <div class="product-gallery">
+          <div class="product-main-image">
+            <img src="{{ asset('products/' . $product->image) }}" alt="{{ $product->name }}" id="main-product-image">
           </div>
-        </div>
 
-        <!-- Miniaturas de Cores -->
-        @if ($product->colors && $product->colors->count() > 0)
-          <div class="product-colors">
-            <h3 class="product-colors-title">
-              @if ($product->colors->count() > 1)
-                Cores disponíveis
-              @else
-                Cor disponível
-              @endif
-            </h3>
-            <div class="product-colors-grid">
-              @foreach ($product->colors as $color)
-                <div class="product-color-item">
-                  <div class="product-color-circle" style="background: {{ $color->hex_code }}"
-                    title="{{ $color->name }}"></div>
-                  <span class="product-color-name">{{ $color->name }}</span>
+          @if ($product->images && $product->images->count() > 0)
+            <div class="product-thumbnails">
+              <div class="product-thumbnail active"
+                onclick="changeMainImage('{{ asset('products/' . $product->image) }}', this)">
+                <img src="{{ asset('products/' . $product->image) }}" alt="{{ $product->name }}">
+              </div>
+              @foreach ($product->images as $image)
+                <div class="product-thumbnail"
+                  onclick="changeMainImage('{{ asset('products/' . $image->image) }}', this)">
+                  <img src="{{ asset('products/' . $image->image) }}" alt="{{ $product->name }}">
                 </div>
               @endforeach
             </div>
+          @endif
+        </div>
+
+        <!-- Informações do Produto -->
+        <div class="product-info-section">
+          <!-- Meta Info -->
+          <div class="product-meta">
+            @if ($product->categories->count() > 0)
+              <span class="product-category">{{ $product->categories->first()->name }}</span>
+            @endif
+            @if ($product->brand)
+              <span class="product-brand">{{ $product->brand->name }}</span>
+            @endif
+            <span class="product-sku">SKU: {{ $product->sku ?? 'N/A' }}</span>
           </div>
-        @endif
-      </div>
 
-      <!-- Informações do Produto -->
-      <div class="product-info">
-        <!-- Categoria e Marca -->
-        <div class="product-meta">
-          @if ($product->categories->count() > 0)
-            <span class="product-category">{{ $product->categories->first()->name }}</span>
-          @endif
-          @if ($product->brand)
-            <span class="product-brand">{{ $product->brand->name }}</span>
-          @endif
-        </div>
-
-        <!-- Nome do Produto -->
-        <h1 class="product-title">{{ $product->name }}</h1>
-
-        <!-- Rating -->
-        <div class="product-rating">
-          <div class="product-stars">
-            @for ($i = 1; $i <= 5; $i++)
-              <ion-icon name="{{ $i <= $product->rating ? 'star' : 'star-outline' }}"></ion-icon>
-            @endfor
-          </div>
-          <span class="product-rating-count">({{ $product->rating_count }} avaliações)</span>
-        </div>
-
-        <!-- Preços -->
-        <div class="product-price-container">
-          @if ($product->is_sale && $product->sale_price)
-            <span class="product-old-price">€{{ number_format($product->price, 2, ',', '.') }}</span>
-            <span class="product-new-price">€{{ number_format($product->sale_price, 2, ',', '.') }}</span>
-          @else
-            <span class="product-price">€{{ number_format($product->price, 2, ',', '.') }}</span>
-          @endif
-        </div>
-
-        <!-- Parcelas -->
-        <div class="product-installments">
-          @if ($product->installments > 1 && $product->installment_value)
-            ou {{ $product->installments }}x de €{{ number_format($product->installment_value, 2, ',', '.') }}
-          @else
-            ou 10x de
-            €{{ number_format(($product->is_sale ? $product->sale_price : $product->price) / 10, 2, ',', '.') }}
-          @endif
-        </div>
-
-        <!-- Descrição -->
-        <div class="product-description">
-          <h3 class="product-description-title">Descrição</h3>
-          <p class="product-description-text">{{ $product->description }}</p>
-        </div>
-
-        <!-- Seleção de Tamanho -->
-        @if ($product->sizes && $product->sizes->count())
-          <div class="product-sizes">
-            <h3 class="product-sizes-title">Tamanhos disponíveis</h3>
-            <div class="product-sizes-grid">
-              @foreach ($product->sizes as $size)
-                <button class="product-size-btn" data-size="{{ $size->name }}" onclick="selectSize(this)">
-                  {{ $size->name }}
-                </button>
-              @endforeach
+          <!-- Título e Rating -->
+          <div class="product-header">
+            <h1 class="product-title">{{ $product->name }}</h1>
+            <div class="product-rating">
+              <div class="product-stars">
+                @for ($i = 1; $i <= 5; $i++)
+                  <ion-icon name="{{ $i <= $product->rating ? 'star' : 'star-outline' }}"></ion-icon>
+                @endfor
+              </div>
+              <span class="product-rating-count">({{ $product->rating_count }} avaliações)</span>
+              <span class="product-rating-text">Excelente</span>
             </div>
           </div>
-        @endif
 
-        <!-- Ações -->
-        <div class="product-actions">
-          <div class="product-actions-row">
-            <button class="product-add-cart-btn" title="Adicionar ao carrinho"
-              onclick="addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
+          <!-- Preços -->
+          <div class="product-pricing">
+            @if ($product->is_sale && $product->sale_price)
+              <div class="product-price-old">€{{ number_format($product->price, 2, ',', '.') }}</div>
+              <div class="product-price-current">€{{ number_format($product->sale_price, 2, ',', '.') }}</div>
+              <div class="product-discount">
+                -{{ number_format((($product->price - $product->sale_price) / $product->price) * 100, 0) }}% OFF</div>
+            @else
+              <div class="product-price-current">€{{ number_format($product->price, 2, ',', '.') }}</div>
+            @endif
+
+            <div class="product-installments">
+              @if ($product->installments > 1 && $product->installment_value)
+                ou {{ $product->installments }}x de €{{ number_format($product->installment_value, 2, ',', '.') }} sem
+                juros
+              @else
+                ou 10x de
+                €{{ number_format(($product->is_sale ? $product->sale_price : $product->price) / 10, 2, ',', '.') }} sem
+                juros
+              @endif
+            </div>
+          </div>
+
+          <!-- Seleção de Cor -->
+          @if ($product->colors && $product->colors->count() > 0)
+            <div class="product-variation-section">
+              <h3 class="variation-title">
+                @if ($product->colors->count() > 1)
+                  Escolha a Cor
+                @else
+                  Cor Disponível
+                @endif
+              </h3>
+              <div class="product-colors-grid">
+                @foreach ($product->colors as $color)
+                  <div class="product-color-item"
+                    onclick="selectColor(this, '{{ $color->id }}', '{{ $color->name }}')">
+                    <div class="product-color-circle" style="background: {{ $color->hex_code }}"
+                      data-color="{{ $color->id }}" data-color-name="{{ $color->name }}"></div>
+                    <span class="product-color-name">{{ $color->name }}</span>
+                  </div>
+                @endforeach
+              </div>
+            </div>
+          @endif
+
+          <!-- Seleção de Tamanho -->
+          @if ($product->sizes && $product->sizes->count() > 0)
+            <div class="product-variation-section">
+              <h3 class="variation-title">Escolha o Tamanho</h3>
+              <div class="product-sizes-grid">
+                @foreach ($product->sizes as $size)
+                  <button class="product-size-btn" data-size="{{ $size->name }}" onclick="selectSize(this)">
+                    {{ $size->name }}
+                  </button>
+                @endforeach
+              </div>
+            </div>
+          @endif
+
+          <!-- Quantidade -->
+          <div class="product-quantity-section">
+            <h3 class="variation-title">Quantidade</h3>
+            <div class="quantity-selector">
+              <button class="quantity-btn" onclick="changeQuantity(-1)">
+                <ion-icon name="remove"></ion-icon>
+              </button>
+              <input type="number" id="product-quantity" value="1" min="1" max="99" readonly>
+              <button class="quantity-btn" onclick="changeQuantity(1)">
+                <ion-icon name="add"></ion-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Ações -->
+          <div class="product-actions">
+            <button class="product-add-cart-btn" onclick="addToCart()">
               <ion-icon name="bag-outline"></ion-icon>
+              Adicionar ao Carrinho
+            </button>
+            <button class="product-buy-now-btn" onclick="buyNow()">
+              <ion-icon name="flash-outline"></ion-icon>
+              Comprar Agora
             </button>
           </div>
-          <button class="product-buy-now-btn" title="Comprar agora"
-            onclick="buyNow({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
-            <ion-icon name="flash-outline"></ion-icon>
-            Comprar Agora
-          </button>
-        </div>
 
-        <!-- Informações Adicionais -->
-        <div class="product-additional-info">
-          <div class="product-info-item">
-            <ion-icon name="shield-checkmark-outline"></ion-icon>
-            <span>Garantia de 30 dias</span>
+          <!-- Informações Adicionais -->
+          <div class="product-additional-info">
+            <div class="info-item">
+              <ion-icon name="shield-checkmark-outline"></ion-icon>
+              <span>Garantia de 30 dias</span>
+            </div>
+            <div class="info-item">
+              <ion-icon name="car-outline"></ion-icon>
+              <span>Entrega grátis em pedidos acima de €50</span>
+            </div>
+            <div class="info-item">
+              <ion-icon name="refresh-outline"></ion-icon>
+              <span>Devolução gratuita em 7 dias</span>
+            </div>
           </div>
-          <div class="product-info-item">
-            <ion-icon name="car-outline"></ion-icon>
-            <span>Entrega em 2-5 dias úteis</span>
-          </div>
-          <div class="product-info-item">
-            <ion-icon name="card-outline"></ion-icon>
-            <span>Pagamento seguro</span>
+        </div>
+      </div>
+
+      <!-- Produtos Recomendados - Container Lateral -->
+      <div class="recommended-products-container">
+        <div class="recommended-section">
+          <h3 class="recommended-title">Produtos Recomendados</h3>
+          <div class="recommended-products">
+            @foreach ($recommendedProducts ?? [] as $recProduct)
+              <div class="recommended-product">
+                <div class="rec-product-image">
+                  <img src="{{ asset('products/' . $recProduct->image) }}" alt="{{ $recProduct->name }}">
+                </div>
+                <div class="rec-product-info">
+                  <h4 class="rec-product-name">{{ $recProduct->name }}</h4>
+                  <div class="rec-product-price">
+                    @if ($recProduct->is_sale && $recProduct->sale_price)
+                      <span class="rec-old-price">€{{ number_format($recProduct->price, 2, ',', '.') }}</span>
+                      <span class="rec-current-price">€{{ number_format($recProduct->sale_price, 2, ',', '.') }}</span>
+                    @else
+                      <span class="rec-current-price">€{{ number_format($recProduct->price, 2, ',', '.') }}</span>
+                    @endif
+                  </div>
+                  <a href="{{ route('shop.products.show', $recProduct->slug) }}" class="rec-product-link">
+                    Ver Produto
+                  </a>
+                </div>
+              </div>
+            @endforeach
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Avaliações -->
-    <div class="product-reviews">
-      <h2 class="product-reviews-title">Avaliações dos clientes</h2>
-      <div class="product-reviews-grid">
-        <div class="product-review">
-          <div class="product-review-header">
-            <span class="product-review-author">Maria S.</span>
-            <div class="product-review-stars">
-              <ion-icon name="star"></ion-icon>
-              <ion-icon name="star"></ion-icon>
-              <ion-icon name="star"></ion-icon>
-              <ion-icon name="star"></ion-icon>
-              <ion-icon name="star"></ion-icon>
-            </div>
+    <!-- Seção de Detalhes -->
+    <div class="product-details-section">
+      <div class="details-tabs">
+        <button class="tab-btn active" onclick="showTab('description')">Descrição</button>
+        <button class="tab-btn" onclick="showTab('specifications')">Especificações</button>
+        <button class="tab-btn" onclick="showTab('reviews')">Avaliações</button>
+      </div>
+
+      <div class="tab-content">
+        <!-- Descrição -->
+        <div id="description" class="tab-panel active">
+          <div class="product-description">
+            <h3>Descrição do Produto</h3>
+            <p>{{ $product->description }}</p>
           </div>
-          <p class="product-review-text">Produto de ótima qualidade, chegou antes do prazo!</p>
-          <span class="product-review-date">há 2 dias</span>
         </div>
 
-        <div class="product-review">
-          <div class="product-review-header">
-            <span class="product-review-author">João P.</span>
-            <div class="product-review-stars">
-              <ion-icon name="star"></ion-icon>
-              <ion-icon name="star"></ion-icon>
-              <ion-icon name="star"></ion-icon>
-              <ion-icon name="star"></ion-icon>
-              <ion-icon name="star-outline"></ion-icon>
+        <!-- Especificações -->
+        <div id="specifications" class="tab-panel">
+          <div class="product-specifications">
+            <h3>Especificações Técnicas</h3>
+            <div class="specs-grid">
+              @if ($product->weight)
+                <div class="spec-item">
+                  <span class="spec-label">Peso:</span>
+                  <span class="spec-value">{{ $product->weight }}g</span>
+                </div>
+              @endif
+              @if ($product->dimensions)
+                <div class="spec-item">
+                  <span class="spec-label">Dimensões:</span>
+                  <span class="spec-value">{{ $product->dimensions }}</span>
+                </div>
+              @endif
+              @if ($product->material)
+                <div class="spec-item">
+                  <span class="spec-label">Material:</span>
+                  <span class="spec-value">{{ $product->material }}</span>
+                </div>
+              @endif
             </div>
           </div>
-          <p class="product-review-text">Gostei bastante, mas achei o tamanho um pouco pequeno.</p>
-          <span class="product-review-date">há 5 dias</span>
         </div>
 
-        <div class="product-review">
-          <div class="product-review-header">
-            <span class="product-review-author">Ana L.</span>
-            <div class="product-review-stars">
-              <ion-icon name="star"></ion-icon>
-              <ion-icon name="star"></ion-icon>
-              <ion-icon name="star"></ion-icon>
-              <ion-icon name="star"></ion-icon>
-              <ion-icon name="star"></ion-icon>
+        <!-- Avaliações -->
+        <div id="reviews" class="tab-panel">
+          <div class="product-reviews">
+            <h3>Avaliações dos Clientes</h3>
+            <div class="reviews-summary">
+              <div class="average-rating">
+                <span class="rating-number">{{ number_format($product->rating, 1) }}</span>
+                <div class="rating-stars">
+                  @for ($i = 1; $i <= 5; $i++)
+                    <ion-icon name="{{ $i <= $product->rating ? 'star' : 'star-outline' }}"></ion-icon>
+                  @endfor
+                </div>
+                <span class="rating-text">Baseado em {{ $product->rating_count }} avaliações</span>
+              </div>
+            </div>
+
+            <div class="reviews-list">
+              <!-- Reviews mockados -->
+              <div class="review-item">
+                <div class="review-header">
+                  <span class="review-author">Maria S.</span>
+                  <div class="review-stars">
+                    <ion-icon name="star"></ion-icon>
+                    <ion-icon name="star"></ion-icon>
+                    <ion-icon name="star"></ion-icon>
+                    <ion-icon name="star"></ion-icon>
+                    <ion-icon name="star"></ion-icon>
+                  </div>
+                </div>
+                <p class="review-text">Produto de ótima qualidade, chegou antes do prazo!</p>
+                <span class="review-date">há 2 dias</span>
+              </div>
+
+              <div class="review-item">
+                <div class="review-header">
+                  <span class="review-author">João P.</span>
+                  <div class="review-stars">
+                    <ion-icon name="star"></ion-icon>
+                    <ion-icon name="star"></ion-icon>
+                    <ion-icon name="star"></ion-icon>
+                    <ion-icon name="star"></ion-icon>
+                    <ion-icon name="star-outline"></ion-icon>
+                  </div>
+                </div>
+                <p class="review-text">Gostei bastante, mas achei o tamanho um pouco pequeno.</p>
+                <span class="review-date">há 5 dias</span>
+              </div>
+
+              <div class="review-item">
+                <div class="review-header">
+                  <span class="review-author">Ana L.</span>
+                  <div class="review-stars">
+                    <ion-icon name="star"></ion-icon>
+                    <ion-icon name="star"></ion-icon>
+                    <ion-icon name="star"></ion-icon>
+                    <ion-icon name="star"></ion-icon>
+                    <ion-icon name="star"></ion-icon>
+                  </div>
+                </div>
+                <p class="review-text">Super confortável e bonito. Recomendo!</p>
+                <span class="review-date">há 1 semana</span>
+              </div>
             </div>
           </div>
-          <p class="product-review-text">Super confortável e bonito. Recomendo!</p>
-          <span class="product-review-date">há 1 semana</span>
         </div>
       </div>
     </div>
@@ -222,6 +327,41 @@
 
   <!-- JavaScript para funcionalidades -->
   <script>
+    // Variáveis globais para seleções
+    let selectedColor = null;
+    let selectedSize = null;
+    let selectedQuantity = 1;
+
+    // Função para trocar imagem principal
+    function changeMainImage(imageSrc, thumbnail) {
+      document.getElementById('main-product-image').src = imageSrc;
+
+      // Remove seleção anterior
+      document.querySelectorAll('.product-thumbnail').forEach(thumb => {
+        thumb.classList.remove('active');
+      });
+
+      // Adiciona seleção ao thumbnail clicado
+      thumbnail.classList.add('active');
+    }
+
+    // Função para selecionar cor
+    function selectColor(element, colorId, colorName) {
+      // Remove seleção anterior
+      document.querySelectorAll('.product-color-circle').forEach(circle => {
+        circle.classList.remove('selected');
+      });
+
+      // Adiciona seleção ao elemento clicado
+      element.querySelector('.product-color-circle').classList.add('selected');
+
+      // Atualiza variável global
+      selectedColor = {
+        id: colorId,
+        name: colorName
+      };
+    }
+
     // Função para selecionar tamanho
     function selectSize(button) {
       // Remove seleção anterior
@@ -231,25 +371,48 @@
 
       // Adiciona seleção ao botão clicado
       button.classList.add('selected');
+
+      // Atualiza variável global
+      selectedSize = button.getAttribute('data-size');
+    }
+
+    // Função para alterar quantidade
+    function changeQuantity(delta) {
+      const quantityInput = document.getElementById('product-quantity');
+      let newQuantity = parseInt(quantityInput.value) + delta;
+
+      if (newQuantity >= 1 && newQuantity <= 99) {
+        quantityInput.value = newQuantity;
+        selectedQuantity = newQuantity;
+      }
     }
 
     // Função para adicionar ao carrinho
-    function addToCart(productId, productName, price, image) {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    function addToCart() {
+      const productId = {{ $product->id }};
+      const productName = '{{ $product->name }}';
+      const price = {{ $product->is_sale ? $product->sale_price : $product->price }};
+      const image = '{{ asset('products/' . $product->image) }}';
 
-      // Verifica se o produto já está no carrinho
-      const existingItem = cart.find(item => item.id === productId);
+      let cart = JSON.parse(localStorage.getItem('cart') || '{}');
 
-      if (existingItem) {
-        existingItem.quantity += 1;
+      // Criar chave única incluindo cor e tamanho
+      const variationKey = `${productId}_${selectedColor ? selectedColor.id : 'default'}_${selectedSize || 'default'}`;
+
+      if (cart[variationKey]) {
+        cart[variationKey].quantity += selectedQuantity;
       } else {
-        cart.push({
+        cart[variationKey] = {
           id: productId,
           name: productName,
           price: price,
           image: image,
-          quantity: 1
-        });
+          quantity: selectedQuantity,
+          color: selectedColor ? selectedColor.id : null,
+          colorName: selectedColor ? selectedColor.name : null,
+          size: selectedSize,
+          added_at: new Date().toISOString()
+        };
       }
 
       localStorage.setItem('cart', JSON.stringify(cart));
@@ -263,159 +426,75 @@
       // Dispara evento para sincronizar com navbar
       window.dispatchEvent(new CustomEvent('cartUpdated', {
         detail: {
-          totalItems: cart.reduce((sum, item) => sum + item.quantity, 0)
+          totalItems: Object.values(cart).reduce((sum, item) => sum + item.quantity, 0)
         }
       }));
     }
 
     // Função para comprar agora
-    function buyNow(productId, productName, price, image) {
-      // Limpa carrinho atual
-      localStorage.setItem('cart', JSON.stringify([]));
+    function buyNow() {
+      // Primeiro adiciona ao carrinho
+      addToCart();
 
-      // Adiciona apenas este produto
-      const cart = [{
-        id: productId,
-        name: productName,
-        price: price,
-        image: image,
-        quantity: 1
-      }];
-
-      localStorage.setItem('cart', JSON.stringify(cart));
-
-      // Atualiza badge do carrinho
-      updateCartBadge();
-
-      // Mostra feedback
-      showToast('Redirecionando para checkout...', 'buy');
-
-      // Dispara evento para sincronizar com navbar
-      window.dispatchEvent(new CustomEvent('cartUpdated', {
-        detail: {
-          totalItems: 1
-        }
-      }));
-
-      // Redireciona para checkout
+      // Depois redireciona para checkout
       setTimeout(() => {
-        window.location.href = '{{ route('shop.cart.index') }}';
-      }, 1000);
+        window.location.href = '{{ route('shop.checkout') }}';
+      }, 500);
     }
 
-    // Função para favoritar
-    function toggleFavorite(productId, productName, price, image) {
-      const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-      const existingIndex = favorites.findIndex(item => item.id === productId);
-
-      if (existingIndex > -1) {
-        favorites.splice(existingIndex, 1);
-        showToast('Removido dos favoritos!', 'info');
-      } else {
-        favorites.push({
-          id: productId,
-          name: productName,
-          price: price,
-          image: image
-        });
-        showToast('Adicionado aos favoritos!', 'success');
-      }
-
-      localStorage.setItem('favorites', JSON.stringify(favorites));
-
-      // Atualiza badge dos favoritos
-      updateFavoritesBadge();
-
-      // Atualiza visual do botão
-      const btn = event.target.closest('.product-favorite-btn');
-      if (existingIndex > -1) {
+    // Função para mostrar tabs
+    function showTab(tabName) {
+      // Remove active de todas as tabs
+      document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('active');
-        btn.querySelector('ion-icon').name = 'heart-outline';
-      } else {
-        btn.classList.add('active');
-        btn.querySelector('ion-icon').name = 'heart';
-      }
+      });
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.remove('active');
+      });
 
-      // Dispara evento para sincronizar com navbar
-      window.dispatchEvent(new CustomEvent('favoritesUpdated', {
-        detail: {
-          totalItems: favorites.length
-        }
-      }));
+      // Adiciona active à tab selecionada
+      event.target.classList.add('active');
+      document.getElementById(tabName).classList.add('active');
     }
 
     // Função para mostrar toast
     function showToast(message, type = 'success') {
       const toast = document.createElement('div');
-      toast.className = `product-toast product-toast--${type}`;
+      toast.className = `toast toast-${type}`;
       toast.innerHTML = `
-        <ion-icon name="${type === 'success' ? 'checkmark-circle' : type === 'buy' ? 'flash' : 'information-circle'}"></ion-icon>
-        <span>${message}</span>
+      <ion-icon name="${type === 'success' ? 'checkmark-circle' : 'alert-circle'}"></ion-icon>
+      <span>${message}</span>
     `;
 
       document.body.appendChild(toast);
 
       setTimeout(() => {
-        toast.remove();
+        toast.classList.add('show');
+      }, 100);
+
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
       }, 3000);
     }
 
     // Função para atualizar badge do carrinho
     function updateCartBadge() {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+      const totalItems = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
 
-      // Atualiza badge na navbar se existir
-      const cartBadge = document.querySelector('.cart-badge');
+      const cartBadge = document.querySelector('.navbar-cart-badge');
       if (cartBadge) {
         cartBadge.textContent = totalItems;
-        cartBadge.style.display = totalItems > 0 ? 'block' : 'none';
+        cartBadge.style.display = totalItems > 0 ? 'flex' : 'none';
       }
     }
 
-    // Função para atualizar badge dos favoritos
-    function updateFavoritesBadge() {
-      const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-
-      // Atualiza badge na navbar se existir
-      const favoritesBadge = document.querySelector('.favorites-badge');
-      if (favoritesBadge) {
-        favoritesBadge.textContent = favorites.length;
-        favoritesBadge.style.display = favorites.length > 0 ? 'block' : 'none';
-      }
-    }
-
-    // Inicializa badges ao carregar a página
+    // Inicializar badge do carrinho
     document.addEventListener('DOMContentLoaded', function() {
       updateCartBadge();
-      updateFavoritesBadge();
-
-      // Verifica se o produto está nos favoritos
-      const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-      const productId = {{ $product->id }};
-      const isFavorite = favorites.some(item => item.id === productId);
-
-      if (isFavorite) {
-        const btn = document.querySelector('.product-favorite-btn');
-        btn.classList.add('active');
-        btn.querySelector('ion-icon').name = 'heart';
-      }
-
-      // Sincroniza dark mode com o resto do site
-      const darkMode = localStorage.getItem('darkMode') === 'true';
-      if (darkMode) {
-        document.documentElement.classList.add('dark');
-      }
-
-      // Escuta mudanças no dark mode
-      window.addEventListener('darkModeChanged', function() {
-        const isDark = localStorage.getItem('darkMode') === 'true';
-        if (isDark) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-      });
     });
   </script>
 @endsection

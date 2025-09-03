@@ -1,29 +1,56 @@
 /* ===== NAVBAR CUSTOM CSS ===== */
 
-/* Variáveis específicas da navbar */
+/* Variáveis específicas da navbar - ISOLADAS DOS OUTROS CSS */
 :root {
     --navbar-height: 70px;
-    --navbar-bg: var(--bg-white);
-    --navbar-text: var(--text-dark);
-    --navbar-text-hover: var(--primary-color);
-    --navbar-border: var(--border-color);
-    --navbar-shadow: var(--shadow-light);
-    --navbar-dropdown-bg: var(--bg-white);
-    --navbar-dropdown-border: var(--border-color);
-    --navbar-dropdown-shadow: var(--shadow-medium);
+    --navbar-bg: #ffffff;
+    --navbar-text: #111827;
+    --navbar-text-hover: #8b5cf6;
+    --navbar-border: #e5e7eb;
+    --navbar-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+        0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --navbar-dropdown-bg: #ffffff;
+    --navbar-dropdown-border: #e5e7eb;
+    --navbar-dropdown-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --navbar-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --navbar-text-light: #f9fafb;
+    --navbar-text-gray: #6b7280;
+    --navbar-bg-dark: #111827;
+    --navbar-bg-dark-secondary: #1f2937;
+    --navbar-border-dark: #374151;
+    --navbar-shadow-dark: 0 10px 15px -3px rgba(0, 0, 0, 0.3),
+        0 4px 6px -2px rgba(0, 0, 0, 0.2);
 }
 
-/* Dark Mode para navbar */
+/* Dark Mode para navbar - VARIÁVEIS ISOLADAS */
 .dark {
-    --navbar-bg: var(--bg-white);
-    --navbar-text: var(--text-dark);
-    --navbar-text-hover: var(--primary-color);
-    --navbar-border: var(--border-color);
-    --navbar-shadow: var(--shadow-light);
-    --navbar-dropdown-bg: var(--bg-white);
-    --navbar-dropdown-border: var(--border-color);
-    --navbar-dropdown-shadow: var(--shadow-medium);
+    --navbar-bg: var(--navbar-bg-dark);
+    --navbar-text: var(--navbar-text-light);
+    --navbar-text-hover: #8b5cf6;
+    --navbar-border: var(--navbar-border-dark);
+    --navbar-shadow: var(--navbar-shadow-dark);
+    --navbar-dropdown-bg: var(--navbar-bg-dark-secondary);
+    --navbar-dropdown-border: var(--navbar-border-dark);
+    --navbar-dropdown-shadow: var(--navbar-shadow-dark);
+}
+
+/* Garantir que a navbar funcione em todas as páginas */
+.dark .navbar,
+.dark .navbar * {
+    color: var(--navbar-text) !important;
+}
+
+.dark .navbar-logo,
+.dark .navbar-link,
+.dark .navbar-dark-toggle,
+.dark .navbar-mobile-btn,
+.dark .navbar-search-input {
+    color: var(--navbar-text) !important;
+}
+
+.dark .navbar-search-input::placeholder {
+    color: var(--navbar-text-gray) !important;
 }
 
 /* ===== NAVBAR CONTAINER ===== */
@@ -103,7 +130,7 @@
 .navbar-search-form {
     display: flex;
     align-items: center;
-    background: var(--bg-white);
+    background: var(--navbar-dropdown-bg);
     border: 2px solid var(--navbar-border);
     border-radius: 2rem;
     overflow: hidden;
@@ -122,7 +149,7 @@
     outline: none;
     font-family: var(--font-primary);
     font-size: 0.875rem;
-    color: var(--text-dark);
+    color: var(--navbar-text);
     background: transparent;
 }
 
@@ -366,17 +393,19 @@
     border-radius: 1rem;
     box-shadow: var(--navbar-dropdown-shadow);
     min-width: 320px;
-    z-index: 50;
+    z-index: 1000;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
-    transition: var(--navbar-transition);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
 }
 
 .navbar-dropdown.show {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
+    pointer-events: auto;
 }
 
 .navbar-dropdown-header {
