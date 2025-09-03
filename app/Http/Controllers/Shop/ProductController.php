@@ -107,7 +107,7 @@ class ProductController extends Controller
             'html' => view('shop.products.partials.products-grid', compact('products'))->render(),
             'stats' => $stats,
             'hasActiveFilters' => $hasActiveFilters,
-            'pagination' => $products->links()->render(),
+            'pagination' => view('vendor.pagination.custom', ['paginator' => $products])->render(),
             'results_count' => "Mostrando {$products->firstItem()}-{$products->lastItem()} de {$products->total()} produtos" . ($hasActiveFilters ? ' (filtrados)' : '')
         ]);
     }

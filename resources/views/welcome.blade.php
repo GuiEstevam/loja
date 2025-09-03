@@ -99,35 +99,45 @@
     </div>
   </section>
 
-  <!-- Slider de Marcas -->
+  <!-- Seção de Marcas Premium -->
   <section class="brands-section">
-    <h2 class="brands-title">Marcas Premium</h2>
-    <p class="brands-subtitle">Descubra as melhores marcas de calçados esportivos e casuais, selecionadas especialmente
-      para você</p>
+    <div class="brands-header">
+      <h2 class="brands-title">MARCAS PREMIUM</h2>
+      <p class="brands-subtitle">Descubra as melhores marcas de calçados esportivos e casuais, selecionadas especialmente
+        para você</p>
+    </div>
+
     <div class="brands-container">
+      <!-- Botão de navegação anterior -->
       <div class="brands-button-prev custom-swiper-arrow">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
+        <ion-icon name="chevron-back-outline"></ion-icon>
       </div>
+
+      <!-- Carrossel de marcas -->
       <div class="swiper marcasSwiper brands-swiper">
         <div class="swiper-wrapper">
           @foreach ($brands as $brand)
             <div class="swiper-slide brand-slide">
               <a href="{{ route('shop.brands.show', $brand) }}" class="brand-card">
-                <img src="{{ asset('brands/' . $brand->logo) }}" alt="{{ $brand->name }}" class="brand-logo">
+                <div class="brand-logo-container">
+                  <img src="{{ asset('brands/' . $brand->logo) }}" alt="{{ $brand->name }}" class="brand-logo">
+                </div>
                 <div class="brand-name">{{ $brand->name }}</div>
               </a>
             </div>
           @endforeach
         </div>
-        <div class="brands-pagination"></div>
       </div>
+
+      <!-- Botão de navegação próximo -->
       <div class="brands-button-next custom-swiper-arrow">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
+        <ion-icon name="chevron-forward-outline"></ion-icon>
       </div>
+    </div>
+
+    <!-- Paginação -->
+    <div class="brands-pagination-container">
+      <div class="brands-pagination"></div>
     </div>
   </section>
 
@@ -176,9 +186,8 @@
 
                 <!-- Conteúdo do produto -->
                 <div class="product-content">
-                  <!-- Área superior -->
-                  <div class="product-content-top">
-                    <!-- Categoria -->
+                  <!-- Categoria e Nome -->
+                  <div class="product-header">
                     <div class="product-category">
                       @if ($product->categories->count() > 0)
                         {{ $product->categories->first()->name }}
@@ -186,38 +195,34 @@
                         Calçados
                       @endif
                     </div>
-
-                    <!-- Nome do produto -->
                     <h3 class="product-name" title="{{ $product->name }}">
                       <a href="{{ route('shop.products.show', $product) }}">
                         {{ $product->name }}
                       </a>
                     </h3>
-
-                    <!-- Rating (sempre mostrar) -->
-                    <div class="product-rating">
-                      <div class="product-stars">
-                        @for ($i = 1; $i <= 5; $i++)
-                          <ion-icon name="{{ $i <= $product->rating ? 'star' : 'star-outline' }}"></ion-icon>
-                        @endfor
-                      </div>
-                      <span class="product-rating-count">({{ $product->rating_count }})</span>
-                    </div>
                   </div>
 
-                  <!-- Área inferior -->
-                  <div class="product-content-bottom">
-                    <!-- Preços -->
-                    <div class="product-price-container">
-                      @if ($product->is_sale && $product->sale_price)
+                  <!-- Rating -->
+                  <div class="product-rating">
+                    <div class="product-stars">
+                      @for ($i = 1; $i <= 5; $i++)
+                        <ion-icon name="{{ $i <= $product->rating ? 'star' : 'star-outline' }}"></ion-icon>
+                      @endfor
+                    </div>
+                    <span class="product-rating-count">({{ $product->rating_count }})</span>
+                  </div>
+
+                  <!-- Preços e Parcelas -->
+                  <div class="product-pricing">
+                    @if ($product->is_sale && $product->sale_price)
+                      <div class="product-price-row">
                         <span class="product-old-price">€{{ number_format($product->price, 2, ',', '.') }}</span>
                         <span class="product-new-price">€{{ number_format($product->sale_price, 2, ',', '.') }}</span>
-                      @else
-                        <span class="product-price">€{{ number_format($product->price, 2, ',', '.') }}</span>
-                      @endif
-                    </div>
+                      </div>
+                    @else
+                      <span class="product-price">€{{ number_format($product->price, 2, ',', '.') }}</span>
+                    @endif
 
-                    <!-- Parcelas (sempre mostrar) -->
                     <div class="product-installments">
                       @if ($product->installments > 1 && $product->installment_value)
                         ou {{ $product->installments }}x de
@@ -227,21 +232,19 @@
                         €{{ number_format(($product->is_sale ? $product->sale_price : $product->price) / 10, 2, ',', '.') }}
                       @endif
                     </div>
+                  </div>
 
-                    <!-- Botão de adicionar ao carrinho -->
-                    <div class="product-actions">
-                      <div class="product-actions-row">
-                        <button class="product-add-cart-btn" title="Adicionar ao carrinho"
-                          onclick="addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
-                          <ion-icon name="bag-outline"></ion-icon>
-                        </button>
-                      </div>
-                      <button class="product-buy-now-btn" title="Comprar agora"
-                        onclick="buyNow({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
-                        <ion-icon name="flash-outline"></ion-icon>
-                        Comprar Agora
-                      </button>
-                    </div>
+                  <!-- Botões de ação -->
+                  <div class="product-actions">
+                    <button class="product-add-cart-btn" title="Adicionar ao carrinho"
+                      onclick="addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
+                      <ion-icon name="bag-outline"></ion-icon>
+                    </button>
+                    <button class="product-buy-now-btn" title="Comprar agora"
+                      onclick="buyNow({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
+                      <ion-icon name="flash-outline"></ion-icon>
+                      Comprar
+                    </button>
                   </div>
                 </div>
               </div>

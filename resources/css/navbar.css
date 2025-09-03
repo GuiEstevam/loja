@@ -136,7 +136,11 @@
     justify-content: center;
     width: 3rem;
     height: 3rem;
-    background: var(--primary-color);
+    background: linear-gradient(
+        135deg,
+        var(--primary-color),
+        var(--secondary-color)
+    );
     border: none;
     color: var(--bg-white);
     cursor: pointer;
@@ -145,11 +149,29 @@
 }
 
 .navbar-search-btn:hover {
-    background: var(--primary-dark);
+    transform: scale(1.05);
+    box-shadow: var(--shadow-md);
 }
 
 .navbar-search-btn ion-icon {
     font-size: 1.25rem;
+}
+
+/* Dark mode para botão de busca */
+.dark .navbar-search-btn {
+    background: linear-gradient(
+        135deg,
+        #6d28d9,
+        /* Purple mais escuro */ #1e40af /* Blue mais escuro */
+    );
+}
+
+.dark .navbar-search-btn:hover {
+    background: linear-gradient(
+        135deg,
+        #7c3aed,
+        /* Purple mais claro no hover */ #2563eb /* Blue mais claro no hover */
+    );
 }
 
 /* ===== MOBILE MENU BUTTON ===== */

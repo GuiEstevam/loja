@@ -218,7 +218,7 @@
         <!-- Paginação -->
         @if ($products->hasPages())
           <div class="products-pagination">
-            {{ $products->links() }}
+            {{ $products->links('vendor.pagination.custom') }}
           </div>
         @endif
       </div>

@@ -27,40 +27,37 @@
 
     <!-- Conteúdo -->
     <div class="product-content">
-      <div class="product-content-top">
-        <!-- Categoria -->
+      <!-- Categoria e Nome -->
+      <div class="product-header">
         <div class="product-category">
           {{ $product->categories->first()?->name ?? 'Calçados' }}
         </div>
-
-        <!-- Nome -->
         <h3 class="product-name">
           <a href="{{ route('shop.products.show', $product) }}">{{ $product->name }}</a>
         </h3>
-
-        <!-- Avaliação -->
-        <div class="product-rating">
-          <div class="product-stars">
-            @for ($i = 1; $i <= 5; $i++)
-              <ion-icon name="{{ $i <= $product->rating ? 'star' : 'star-outline' }}"></ion-icon>
-            @endfor
-          </div>
-          <span class="product-rating-count">({{ $product->rating_count }})</span>
-        </div>
       </div>
 
-      <div class="product-content-bottom">
-        <!-- Preço -->
-        <div class="product-price-container">
-          @if ($product->is_sale)
+      <!-- Rating -->
+      <div class="product-rating">
+        <div class="product-stars">
+          @for ($i = 1; $i <= 5; $i++)
+            <ion-icon name="{{ $i <= $product->rating ? 'star' : 'star-outline' }}"></ion-icon>
+          @endfor
+        </div>
+        <span class="product-rating-count">({{ $product->rating_count }})</span>
+      </div>
+
+      <!-- Preços e Parcelas -->
+      <div class="product-pricing">
+        @if ($product->is_sale)
+          <div class="product-price-row">
             <span class="product-old-price">€{{ number_format($product->price, 2, ',', '.') }}</span>
             <span class="product-new-price">€{{ number_format($product->sale_price, 2, ',', '.') }}</span>
-          @else
-            <span class="product-price">€{{ number_format($product->price, 2, ',', '.') }}</span>
-          @endif
-        </div>
+          </div>
+        @else
+          <span class="product-price">€{{ number_format($product->price, 2, ',', '.') }}</span>
+        @endif
 
-        <!-- Parcelas -->
         <div class="product-installments">
           @if ($product->installments > 1 && $product->installment_value)
             ou {{ $product->installments }}x de €{{ number_format($product->installment_value, 2, ',', '.') }}
@@ -69,33 +66,31 @@
             €{{ number_format(($product->is_sale ? $product->sale_price : $product->price) / 10, 2, ',', '.') }}
           @endif
         </div>
+      </div>
 
-        <!-- Tamanhos -->
-        @if ($product->sizes && $product->sizes->count())
-          <div class="product-sizes">
-            @foreach ($product->sizes->take(4) as $size)
-              <span class="product-size">{{ $size->name }}</span>
-            @endforeach
-            @if ($product->sizes->count() > 4)
-              <span class="product-size">+{{ $product->sizes->count() - 4 }}</span>
-            @endif
-          </div>
-        @endif
-
-        <!-- Ações -->
-        <div class="product-actions">
-          <div class="product-actions-row">
-            <button class="product-add-cart-btn" title="Adicionar ao carrinho"
-              onclick="addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
-              <ion-icon name="bag-outline"></ion-icon>
-            </button>
-            <button class="product-buy-now-btn" title="Comprar agora"
-              onclick="buyNow({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
-              <ion-icon name="flash-outline"></ion-icon>
-              Comprar Agora
-            </button>
-          </div>
+      <!-- Tamanhos -->
+      @if ($product->sizes && $product->sizes->count())
+        <div class="product-sizes">
+          @foreach ($product->sizes->take(4) as $size)
+            <span class="product-size">{{ $size->name }}</span>
+          @endforeach
+          @if ($product->sizes->count() > 4)
+            <span class="product-size">+{{ $product->sizes->count() - 4 }}</span>
+          @endif
         </div>
+      @endif
+
+      <!-- Botões de ação -->
+      <div class="product-actions">
+        <button class="product-add-cart-btn" title="Adicionar ao carrinho"
+          onclick="addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
+          <ion-icon name="bag-outline"></ion-icon>
+        </button>
+        <button class="product-buy-now-btn" title="Comprar agora"
+          onclick="buyNow({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
+          <ion-icon name="flash-outline"></ion-icon>
+          Comprar
+        </button>
       </div>
     </div>
   </div>

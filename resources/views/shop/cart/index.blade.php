@@ -2,114 +2,218 @@
 
 @section('title', 'Carrinho de Compras')
 
+@push('styles')
+  @vite(['resources/css/cart.css'])
+@endpush
+
 @section('content')
-  <div class="max-w-3xl mx-auto py-10 px-4">
-    <h1 class="text-2xl font-bold mb-6">Seu Carrinho</h1>
+  <div class="cart-container">
+    <div class="cart-header">
+      <h1 class="cart-title">Seu Carrinho</h1>
+      <p class="cart-subtitle">Revise seus itens antes de finalizar a compra</p>
+    </div>
 
     @if (session('success'))
-      <div class="mb-4 text-green-700 bg-green-100 border border-green-300 px-4 py-3 rounded">
+      <div class="cart-success">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
         {{ session('success') }}
       </div>
     @endif
 
-    @if (empty($cart))
-      <p class="text-gray-500">Seu carrinho está vazio.</p>
-    @else
-      <table class="w-full mb-6">
-        <thead>
-          <tr>
-            <th class="text-left">Produto</th>
-            <th>Qtd</th>
-            <th>Preço</th>
-            <th>Subtotal</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          @php $total = 0; @endphp
-          @foreach ($cart as $id => $item)
-            @php
-              $subtotal = $item['price'] * $item['quantity'];
-              $total += $subtotal;
-            @endphp
-            <tr>
-              <td class="py-2 flex flex-col sm:flex-row items-start sm:items-center gap-2">
-                <img src="{{ asset('products/' . $item['image']) }}" class="w-24 h-24 object-cover rounded border">
-                <div>
-                  <div class="font-semibold">{{ $item['name'] }}</div>
-                  <div class="text-xs text-gray-500">SKU: {{ $item['sku'] ?? '-' }}</div>
-                  @if (!empty($item['brand']))
-                    <div class="text-xs text-gray-500">Marca: {{ $item['brand'] }}</div>
-                  @endif
-                  @if (!empty($item['categories']))
-                    <div class="text-xs text-gray-500">Categorias: {{ implode(', ', $item['categories']) }}</div>
-                  @endif
-                  @if (!empty($item['color']))
-                    <div class="text-xs text-gray-500 flex items-center gap-1">
-                      Cor:
-                      <span class="inline-block w-4 h-4 rounded-full border"
-                        style="background: {{ $item['color_hex'] }}"></span>
-                      {{ $item['color'] }}
-                    </div>
-                  @endif
-                  @if (!empty($item['size']))
-                    <div class="text-xs text-gray-500">Tamanho: {{ $item['size'] }}</div>
-                  @endif
-                </div>
-              </td>
-              <td>
-                <input type="number" value="{{ $item['quantity'] }}" min="1"
-                  class="w-16 border rounded px-2 py-1 text-center"
-                  onchange="updateCartQuantity('{{ $id }}', this.value)">
-              </td>
-              <td>R$ {{ number_format($item['price'], 2, ',', '.') }}</td>
-              <td>R$ {{ number_format($subtotal, 2, ',', '.') }}</td>
-              <td>
-                <form action="{{ route('shop.cart.remove', $id) }}" method="POST" style="display:inline">
-                  @csrf
-                  <button type="submit" title="Remover" class="text-red-600 hover:text-red-800">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                      stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3m5 0H6" />
-                    </svg>
-                  </button>
-                </form>
-              </td>
-            </tr>
-          @endforeach
-        </tbody>
-      </table>
-      <div class="text-right font-bold text-lg mb-6">
-        Total: R$ {{ number_format($total, 2, ',', '.') }}
-      </div>
-      <a href="{{ route('shop.checkout') }}"
-        class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 font-bold">
-        Finalizar Compra
-      </a>
-    @endif
+    <div class="cart-content" id="cart-content">
+      <!-- Conteúdo será carregado via JavaScript -->
+    </div>
   </div>
-
-  <script>
-    function updateCartQuantity(productId, quantity) {
-      fetch("{{ url('/carrinho/atualizar') }}/" + productId, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": "{{ csrf_token() }}"
-          },
-          body: JSON.stringify({
-            quantity: quantity
-          })
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            location.reload();
-          } else {
-            alert('Erro ao atualizar carrinho!');
-          }
-        });
-    }
-  </script>
 @endsection
+
+@push('scripts')
+  <script>
+    // Função para carregar o carrinho
+    function loadCart() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const cartContent = document.getElementById('cart-content');
+
+      if (cart.length === 0) {
+        cartContent.innerHTML = `
+          <div class="cart-empty">
+            <ion-icon name="bag-outline" class="cart-empty-icon"></ion-icon>
+            <h3 class="cart-empty-title">Seu carrinho está vazio</h3>
+            <p class="cart-empty-text">Adicione alguns produtos para começar suas compras!</p>
+            <a href="/produtos" class="cart-empty-btn">
+              <ion-icon name="arrow-back-outline"></ion-icon>
+              Continuar Comprando
+            </a>
+          </div>
+        `;
+        return;
+      }
+
+      let total = 0;
+      let html = `
+        <div class="cart-items">
+          <div class="cart-items-header">
+            <h3 class="cart-items-title">Itens no Carrinho (${cart.length})</h3>
+          </div>
+          <div class="cart-items-list">
+      `;
+
+      cart.forEach((item, index) => {
+        const subtotal = item.price * item.quantity;
+        total += subtotal;
+
+        html += `
+          <div class="cart-item" data-product-id="${item.id}">
+            <div class="cart-item-image">
+              <img src="${item.image}" alt="${item.name}" class="item-image">
+            </div>
+            <div class="cart-item-info">
+              <h4 class="item-name">${item.name}</h4>
+              <div class="item-details">
+                <span class="item-price">€${item.price.toFixed(2).replace('.', ',')}</span>
+              </div>
+            </div>
+            <div class="cart-item-quantity">
+              <div class="quantity-controls">
+                <button class="quantity-btn" onclick="updateQuantity(${item.id}, ${item.quantity - 1})" ${item.quantity <= 1 ? 'disabled' : ''}>
+                  <ion-icon name="remove-outline"></ion-icon>
+                </button>
+                <span class="quantity-value">${item.quantity}</span>
+                <button class="quantity-btn" onclick="updateQuantity(${item.id}, ${item.quantity + 1})">
+                  <ion-icon name="add-outline"></ion-icon>
+                </button>
+              </div>
+            </div>
+            <div class="cart-item-subtotal">
+              <span class="subtotal-value">€${subtotal.toFixed(2).replace('.', ',')}</span>
+            </div>
+            <div class="cart-item-actions">
+              <button class="remove-btn" onclick="removeFromCart(${item.id})" title="Remover item">
+                <ion-icon name="trash-outline"></ion-icon>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      html += `
+          </div>
+        </div>
+        <div class="cart-summary">
+          <div class="summary-header">
+            <h3 class="summary-title">Resumo da Compra</h3>
+          </div>
+          <div class="summary-content">
+            <div class="summary-row">
+              <span class="summary-label">Subtotal (${cart.length} itens)</span>
+              <span class="summary-value">€${total.toFixed(2).replace('.', ',')}</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Frete</span>
+              <span class="summary-value">Grátis</span>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-row summary-total">
+              <span class="summary-label">Total</span>
+              <span class="summary-value">€${total.toFixed(2).replace('.', ',')}</span>
+            </div>
+          </div>
+          <div class="summary-actions">
+            <button class="checkout-btn" onclick="proceedToCheckout()">
+              <ion-icon name="card-outline"></ion-icon>
+              Finalizar Compra
+            </button>
+            <a href="/produtos" class="continue-shopping-btn">
+              <ion-icon name="arrow-back-outline"></ion-icon>
+              Continuar Comprando
+            </a>
+          </div>
+        </div>
+      `;
+
+      cartContent.innerHTML = html;
+    }
+
+    // Função para atualizar quantidade
+    function updateQuantity(productId, newQuantity) {
+      if (newQuantity < 1) return;
+
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const itemIndex = cart.findIndex(item => item.id === productId);
+
+      if (itemIndex !== -1) {
+        cart[itemIndex].quantity = newQuantity;
+        localStorage.setItem('cart', JSON.stringify(cart));
+
+        // Atualizar display
+        loadCart();
+
+        // Sincronizar com navbar
+        window.dispatchEvent(new CustomEvent('cartUpdated', {
+          detail: {
+            totalItems: cart.reduce((sum, item) => sum + item.quantity, 0)
+          }
+        }));
+
+        // Mostrar feedback
+        showCartFeedback('Quantidade atualizada!');
+      }
+    }
+
+    // Função para remover item
+    function removeFromCart(productId) {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      cart = cart.filter(item => item.id !== productId);
+      localStorage.setItem('cart', JSON.stringify(cart));
+
+      // Atualizar display
+      loadCart();
+
+      // Sincronizar com navbar
+      window.dispatchEvent(new CustomEvent('cartUpdated', {
+        detail: {
+          totalItems: cart.reduce((sum, item) => sum + item.quantity, 0)
+        }
+      }));
+
+      // Mostrar feedback
+      showCartFeedback('Item removido do carrinho!');
+    }
+
+    // Função para finalizar compra
+    function proceedToCheckout() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (cart.length === 0) {
+        showCartFeedback('Carrinho vazio!', 'error');
+        return;
+      }
+
+      // Redirecionar para checkout
+      window.location.href = '{{ route('shop.checkout') }}';
+    }
+
+    // Função para mostrar feedback
+    function showCartFeedback(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = `cart-toast cart-toast--${type}`;
+      toast.innerHTML = `
+        <ion-icon name="${type === 'success' ? 'checkmark-circle-outline' : 'alert-circle-outline'}"></ion-icon>
+        <span>${message}</span>
+      `;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
+
+    // Carregar carrinho ao inicializar
+    document.addEventListener('DOMContentLoaded', function() {
+      loadCart();
+    });
+
+    // Listener para mudanças no carrinho
+    window.addEventListener('cartUpdated', function() {
+      loadCart();
+    });
+  </script>
+@endpush

@@ -16,6 +16,7 @@
 
   @vite('resources/css/app.css')
   @vite('resources/css/navbar.css')
+  @vite('resources/css/footer.css')
   <script src="//unpkg.com/alpinejs" defer></script>
   @stack('styles')
   <script type="module" src="https://unpkg.com/ionicons@7.2.2/dist/ionicons/ionicons.esm.js"></script>

@@ -11,6 +11,8 @@ export default defineConfig({
                 "resources/css/favorites.css",
                 "resources/css/products.css",
                 "resources/css/product-detail.css",
+                "resources/css/footer.css",
+                "resources/css/cart.css",
                 "resources/js/app.js",
             ],
             refresh: true,
