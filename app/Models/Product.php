@@ -21,7 +21,27 @@ class Product extends Model
         'brand_id',
         'featured',
         'weight',
-        'dimensions'
+        'dimensions',
+        'free_shipping',
+        'rating',
+        'rating_count',
+        'installments',
+        'installment_value',
+        'is_new',
+        'is_sale',
+        'sale_price',
+        'sale_ends_at'
+    ];
+
+    protected $casts = [
+        'free_shipping' => 'boolean',
+        'featured' => 'boolean',
+        'is_new' => 'boolean',
+        'is_sale' => 'boolean',
+        'rating' => 'decimal:1',
+        'installment_value' => 'decimal:2',
+        'sale_price' => 'decimal:2',
+        'sale_ends_at' => 'date',
     ];
 
     // Relacionamento com itens de pedido

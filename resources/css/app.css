@@ -5,3 +5,366 @@
 [x-cloak] {
     display: none !important;
 }
+
+/* ===== LAYOUT GLOBAL CSS ===== */
+
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-white);
+    color: var(--text-dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark body {
+    background-color: var(--bg-white);
+    color: var(--text-dark);
+}
+
+main {
+    flex: 1;
+    background-color: var(--bg-white);
+    transition: background-color 0.3s ease;
+}
+
+.dark main {
+    background-color: var(--bg-white);
+}
+
+/* ===== DARK MODE TRANSITIONS ===== */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease,
+        border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Estilos para welcome.css - sliders e carrosséis do welcome.blade.php */
+
+/* ===== BANNER HERO ===== */
+.custom-swiper-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 9999px;
+    background: #fff;
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.1);
+    color: #1e293b;
+    font-size: 1.8rem;
+    z-index: 30;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.custom-swiper-arrow:hover {
+    background: #2563eb;
+    color: #fff;
+}
+
+.custom-swiper-arrow svg {
+    width: 2rem;
+    height: 2rem;
+    display: block;
+}
+
+/* ===== SEÇÃO MARCAS EM DESTAQUE ===== */
+
+/* Container do Carrossel */
+.brands-carousel {
+    overflow: visible;
+    position: relative;
+    padding: 0 0px;
+    margin: 0 40px;
+}
+
+.brands-wrapper {
+    display: flex;
+    transition: transform 0.3s ease;
+    gap: 24px;
+    padding: 20px 0;
+}
+
+.brand-slide {
+    flex: 0 0 auto;
+    width: 200px;
+}
+
+/* Cards de Marca */
+.brand-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: white;
+    border-radius: 16px;
+    padding: 24px 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f5f9;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    height: 180px;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+}
+
+.brand-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.brand-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    border-color: #3b82f6;
+}
+
+.brand-card:hover::before {
+    transform: scaleX(1);
+}
+
+.brand-card:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3),
+        0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* Container do Logo */
+.brand-logo-container {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* Imagem do Logo */
+.brand-logo-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    transition: transform 0.3s ease;
+}
+
+.brand-card:hover .brand-logo-image {
+    transform: scale(1.05);
+}
+
+/* Placeholder Circular */
+.brand-logo-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.brand-card:hover .brand-logo-placeholder {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    border-color: #3b82f6;
+    transform: scale(1.05);
+}
+
+.brand-initial {
+    font-size: 32px;
+    font-weight: 700;
+    color: #64748b;
+    transition: color 0.3s ease;
+}
+
+.brand-card:hover .brand-initial {
+    color: white;
+}
+
+/* Informações da Marca */
+.brand-info {
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.brand-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 4px;
+    line-height: 1.2;
+    transition: color 0.3s ease;
+}
+
+.brand-card:hover .brand-name {
+    color: #3b82f6;
+}
+
+.brand-product-count {
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 400;
+    line-height: 1.2;
+}
+
+/* Botões de Navegação */
+.brand-nav-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: white;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.brand-nav-btn:hover {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+    transform: scale(1.1);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+}
+
+.brand-nav-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3),
+        0 8px 24px rgba(59, 130, 246, 0.3);
+}
+
+.brand-nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Paginação */
+.brands-pagination {
+    margin-top: 32px;
+}
+
+.brands-pagination .swiper-pagination-bullet {
+    width: 8px;
+    height: 8px;
+    background: #cbd5e1;
+    opacity: 1;
+    transition: all 0.3s ease;
+}
+
+.brands-pagination .swiper-pagination-bullet-active {
+    background: #3b82f6;
+    transform: scale(1.2);
+}
+
+/* Botão Ver Todas */
+.brands-view-all-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.brands-view-all-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+}
+
+.brands-view-all-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3),
+        0 8px 24px rgba(59, 130, 246, 0.4);
+}
+
+/* Responsividade */
+@media (max-width: 640px) {
+    .brands-carousel {
+        padding: 0 60px;
+        margin: 0 -20px;
+    }
+
+    .brand-slide {
+        width: 160px;
+    }
+
+    .brand-card {
+        height: 160px;
+        padding: 20px 12px;
+    }
+
+    .brand-logo-container {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 12px;
+    }
+
+    .brand-initial {
+        font-size: 24px;
+    }
+
+    .brand-name {
+        font-size: 14px;
+    }
+
+    .brand-product-count {
+        font-size: 12px;
+    }
+
+    .brand-nav-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .brand-nav-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+@media (min-width: 1024px) {
+    /*
+    .brands-carousel {
+        padding: 0 80px;
+        margin: 0 -40px;
+    }*/
+
+    .brand-slide {
+        width: 200px;
+    }
+}
