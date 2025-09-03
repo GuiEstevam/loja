@@ -51,6 +51,9 @@ Route::get('/favoritos', [ShopFavoritesController::class, 'index'])->name('shop.
 // Listagem de produtos
 Route::get('/produtos', [ShopProductController::class, 'index'])->name('shop.products.index');
 
+// Busca AJAX de produtos
+Route::post('/produtos/buscar', [ShopProductController::class, 'search'])->name('shop.products.search');
+
 // Detalhe do produto
 Route::get('/produtos/{product}', [ShopProductController::class, 'show'])->name('shop.products.show');
 

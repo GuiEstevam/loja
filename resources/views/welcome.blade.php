@@ -223,16 +223,25 @@
                         ou {{ $product->installments }}x de
                         €{{ number_format($product->installment_value, 2, ',', '.') }}
                       @else
-                        ou 10x de €{{ number_format($product->price / 10, 2, ',', '.') }}
+                        ou 10x de
+                        €{{ number_format(($product->is_sale ? $product->sale_price : $product->price) / 10, 2, ',', '.') }}
                       @endif
                     </div>
 
                     <!-- Botão de adicionar ao carrinho -->
-                    <button class="product-add-cart-btn" title="Adicionar ao carrinho"
-                      onclick="addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
-                      <ion-icon name="bag-outline"></ion-icon>
-                      Adicionar
-                    </button>
+                    <div class="product-actions">
+                      <div class="product-actions-row">
+                        <button class="product-add-cart-btn" title="Adicionar ao carrinho"
+                          onclick="addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
+                          <ion-icon name="bag-outline"></ion-icon>
+                        </button>
+                      </div>
+                      <button class="product-buy-now-btn" title="Comprar agora"
+                        onclick="buyNow({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
+                        <ion-icon name="flash-outline"></ion-icon>
+                        Comprar Agora
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -503,6 +512,56 @@
       document.body.appendChild(toast);
 
       // Remover após 3 segundos
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
+
+    // Função para comprar agora
+    function buyNow(productId, productName, price, image) {
+      // Limpar carrinho atual
+      localStorage.setItem('cart', JSON.stringify([]));
+
+      // Adicionar apenas este produto
+      const cart = [{
+        id: productId,
+        name: productName,
+        price: price,
+        image: image,
+        quantity: 1
+      }];
+
+      localStorage.setItem('cart', JSON.stringify(cart));
+
+      // Atualizar badge do carrinho
+      updateCartBadge();
+
+      // Mostrar feedback
+      showBuyNowFeedback();
+
+      // Disparar evento para sincronizar com navbar
+      window.dispatchEvent(new CustomEvent('cartUpdated', {
+        detail: {
+          totalItems: 1
+        }
+      }));
+
+      // Redirecionar para checkout (você pode ajustar a rota)
+      setTimeout(() => {
+        window.location.href = '{{ route('shop.cart.index') }}';
+      }, 1000);
+    }
+
+    function showBuyNowFeedback() {
+      const toast = document.createElement('div');
+      toast.className = 'cart-toast cart-toast--buy';
+      toast.innerHTML = `
+        <ion-icon name="flash"></ion-icon>
+        <span>Redirecionando para checkout...</span>
+      `;
+
+      document.body.appendChild(toast);
+
       setTimeout(() => {
         toast.remove();
       }, 3000);

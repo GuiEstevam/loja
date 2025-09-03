@@ -9,6 +9,8 @@ export default defineConfig({
                 "resources/css/navbar.css",
                 "resources/css/welcome.css",
                 "resources/css/favorites.css",
+                "resources/css/products.css",
+                "resources/css/product-detail.css",
                 "resources/js/app.js",
             ],
             refresh: true,

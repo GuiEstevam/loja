@@ -8,9 +8,10 @@
 <nav class="navbar" x-data="navbarData()" :class="{ 'dark': darkMode }">
   <div class="navbar-container">
     <!-- Logo -->
-    <a href="{{ route('home') }}" class="navbar-logo">
-      <img src="{{ asset('images/logo.png') }}" alt="Logo">
-      <span>SkyFashion</span>
+    <a href="/" class="navbar-logo">
+      <img src="{{ asset('images/logo_light.png') }}" alt="Logo" class="navbar-logo-light">
+      <img src="{{ asset('images/logo_dark.png') }}" alt="Logo" class="navbar-logo-dark">
+      <span>SKYFASHION</span>
     </a>
 
     <!-- Botão Mobile -->

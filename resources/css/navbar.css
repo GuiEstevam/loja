@@ -71,6 +71,24 @@
     width: auto;
 }
 
+/* Controle das logos baseado no modo */
+.navbar-logo-light {
+    display: block;
+}
+
+.navbar-logo-dark {
+    display: none;
+}
+
+/* Dark mode - inverte a exibição */
+.dark .navbar-logo-light {
+    display: none;
+}
+
+.dark .navbar-logo-dark {
+    display: block;
+}
+
 .navbar-logo span {
     font-family: "Poppins", sans-serif;
 }

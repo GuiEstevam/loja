@@ -18,11 +18,103 @@ class ProductController extends Controller
         $query = Product::with(['brand', 'categories', 'colors', 'sizes'])
             ->where('active', true);
 
-        // Busca por nome
+        // Busca por nome, descrição ou categoria
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('description', 'like', '%' . $searchTerm . '%')
+                    ->orWhereHas('categories', function ($categoryQuery) use ($searchTerm) {
+                        $categoryQuery->where('name', 'like', '%' . $searchTerm . '%');
+                    })
+                    ->orWhereHas('brand', function ($brandQuery) use ($searchTerm) {
+                        $brandQuery->where('name', 'like', '%' . $searchTerm . '%');
+                    });
+            });
         }
 
+        // Aplicar todos os filtros
+        $this->applyFilters($query, $request);
+
+        // Ordenação
+        $this->applySorting($query, $request);
+
+        $products = $query->paginate(12)->withQueryString();
+
+        // Carrega subentidades para os filtros
+        $brands = Brand::where('active', 1)->orderBy('name')->get();
+        $categories = Category::where('active', 1)->orderBy('name')->get();
+        $colors = Color::where('active', 1)->orderBy('name')->get();
+        $sizes = Size::where('active', 1)->orderBy('name')->get();
+
+        // Estatísticas para os filtros
+        $stats = [
+            'total_products' => Product::where('active', true)->count(),
+            'new_products' => Product::where('active', true)->where('is_new', true)->count(),
+            'sale_products' => Product::where('active', true)->where('is_sale', true)->count(),
+            'free_shipping_products' => Product::where('active', true)->where('free_shipping', true)->count(),
+            'min_price' => Product::where('active', true)->min('price'),
+            'max_price' => Product::where('active', true)->max('price'),
+        ];
+
+        $hasActiveFilters = $this->hasActiveFilters($request);
+
+        return view('shop.products.index', compact('products', 'brands', 'categories', 'colors', 'sizes', 'stats', 'hasActiveFilters'));
+    }
+
+    // Busca AJAX de produtos
+    public function search(Request $request)
+    {
+        $query = Product::with(['brand', 'categories', 'colors', 'sizes'])
+            ->where('active', true);
+
+        // Busca por nome, descrição ou categoria
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('description', 'like', '%' . $searchTerm . '%')
+                    ->orWhereHas('categories', function ($categoryQuery) use ($searchTerm) {
+                        $categoryQuery->where('name', 'like', '%' . $searchTerm . '%');
+                    })
+                    ->orWhereHas('brand', function ($brandQuery) use ($searchTerm) {
+                        $brandQuery->where('name', 'like', '%' . $searchTerm . '%');
+                    });
+            });
+        }
+
+        // Aplicar todos os filtros
+        $this->applyFilters($query, $request);
+
+        // Ordenação
+        $this->applySorting($query, $request);
+
+        $products = $query->paginate(12);
+
+        // Estatísticas atualizadas
+        $stats = [
+            'total_products' => Product::where('active', true)->count(),
+            'new_products' => Product::where('active', true)->where('is_new', true)->count(),
+            'sale_products' => Product::where('active', true)->where('is_sale', true)->count(),
+            'free_shipping_products' => Product::where('active', true)->where('free_shipping', true)->count(),
+            'min_price' => Product::where('active', true)->min('price'),
+            'max_price' => Product::where('active', true)->max('price'),
+        ];
+
+        $hasActiveFilters = $this->hasActiveFilters($request);
+
+        return response()->json([
+            'html' => view('shop.products.partials.products-grid', compact('products'))->render(),
+            'stats' => $stats,
+            'hasActiveFilters' => $hasActiveFilters,
+            'pagination' => $products->links()->render(),
+            'results_count' => "Mostrando {$products->firstItem()}-{$products->lastItem()} de {$products->total()} produtos" . ($hasActiveFilters ? ' (filtrados)' : '')
+        ]);
+    }
+
+    // Helper para aplicar filtros
+    private function applyFilters($query, Request $request)
+    {
         // Filtro por marca
         if ($request->filled('brand')) {
             $query->where('brand_id', $request->brand);
@@ -35,7 +127,7 @@ class ProductController extends Controller
             });
         }
 
-        // Filtro por cores (array)
+        // Filtro por cores
         if ($request->filled('colors')) {
             $colors = is_array($request->colors) ? $request->colors : [$request->colors];
             $query->whereHas('colors', function ($q) use ($colors) {
@@ -43,7 +135,7 @@ class ProductController extends Controller
             });
         }
 
-        // Filtro por tamanhos (array)
+        // Filtro por tamanhos
         if ($request->filled('sizes')) {
             $sizes = is_array($request->sizes) ? $request->sizes : [$request->sizes];
             $query->whereHas('sizes', function ($q) use ($sizes) {
@@ -51,7 +143,38 @@ class ProductController extends Controller
             });
         }
 
-        // Ordenação
+        // Filtro por faixa de preço
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', $request->min_price);
+        }
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        // Filtro por produtos novos
+        if ($request->filled('is_new') && $request->is_new) {
+            $query->where('is_new', true);
+        }
+
+        // Filtro por produtos em promoção
+        if ($request->filled('is_sale') && $request->is_sale) {
+            $query->where('is_sale', true);
+        }
+
+        // Filtro por frete grátis
+        if ($request->filled('free_shipping') && $request->free_shipping) {
+            $query->where('free_shipping', true);
+        }
+
+        // Filtro por rating mínimo
+        if ($request->filled('min_rating')) {
+            $query->where('rating', '>=', $request->min_rating);
+        }
+    }
+
+    // Helper para aplicar ordenação
+    private function applySorting($query, Request $request)
+    {
         switch ($request->input('sort')) {
             case 'price_asc':
                 $query->orderBy('price', 'asc');
@@ -65,19 +188,18 @@ class ProductController extends Controller
             case 'name_desc':
                 $query->orderBy('name', 'desc');
                 break;
+            case 'rating_desc':
+                $query->orderBy('rating', 'desc');
+                break;
+            case 'newest':
+                $query->orderBy('created_at', 'desc');
+                break;
+            case 'oldest':
+                $query->orderBy('created_at', 'asc');
+                break;
             default:
                 $query->orderBy('id', 'desc');
         }
-
-        $products = $query->paginate(12)->withQueryString();
-
-        // Carrega subentidades para os filtros
-        $brands = Brand::where('active', 1)->orderBy('name')->get();
-        $categories = Category::where('active', 1)->orderBy('name')->get();
-        $colors = Color::where('active', 1)->orderBy('name')->get();
-        $sizes = Size::where('active', 1)->orderBy('name')->get();
-
-        return view('shop.products.index', compact('products', 'brands', 'categories', 'colors', 'sizes'));
     }
 
     // Mostra detalhes de um produto específico
@@ -88,5 +210,21 @@ class ProductController extends Controller
         }
 
         return view('shop.products.show', compact('product'));
+    }
+
+    // Helper para verificar se há filtros ativos
+    private function hasActiveFilters(Request $request): bool
+    {
+        return $request->filled('search') ||
+            $request->filled('brand') ||
+            $request->filled('category') ||
+            ($request->has('colors') && is_array($request->colors) && count($request->colors) > 0) ||
+            ($request->has('sizes') && is_array($request->sizes) && count($request->sizes) > 0) ||
+            $request->filled('min_price') ||
+            $request->filled('max_price') ||
+            $request->boolean('is_new') ||
+            $request->boolean('is_sale') ||
+            $request->boolean('free_shipping') ||
+            $request->filled('min_rating');
     }
 }
