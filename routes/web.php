@@ -112,6 +112,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Produtos
     Route::resource('products', AdminProductController::class);
+    Route::post('products/search', [AdminProductController::class, 'search'])->name('products.search');
 
     // Pedidos: apenas index, show e update (troca de status)
     Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'update']);

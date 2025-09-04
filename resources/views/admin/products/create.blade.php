@@ -2,261 +2,39 @@
 
 @section('title', 'Cadastrar Produto')
 
+@push('styles')
+  @vite(['resources/css/admin-products.css'])
+@endpush
+
 @section('content')
-  <div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8">
-      <!-- Cabeçalho e navegação -->
-      <div class="flex flex-col space-y-4 mb-8">
-        <nav class="flex items-center space-x-2 text-sm text-gray-600">
-          <a href="{{ route('admin.dashboard') }}" class="hover:text-gray-900 flex items-center">
-            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M3 12l2-2m0 0l7-7 7 7m-9 2v8m0 0h4m-4 0a2 2 0 01-2-2v-4a2 2 0 012-2h4a2 2 0 012 2v4a2 2 0 01-2 2h-4z" />
-            </svg>
-            Dashboard
-          </a>
-          <span class="text-gray-400">/</span>
-          <a href="{{ route('admin.products.index') }}" class="hover:text-gray-900">Produtos</a>
-          <span class="text-gray-400">/</span>
-          <span class="text-gray-900 font-medium">Cadastrar</span>
-        </nav>
-        <h1 class="text-3xl font-bold text-gray-900">Cadastrar Produto</h1>
+  <div class="admin-products-page">
+    <div class="admin-products-container">
+      <div class="admin-products-card">
+        <!-- Header -->
+        <div class="admin-products-header">
+          <nav class="admin-products-breadcrumb">
+            <a href="{{ route('admin.dashboard') }}">
+              <ion-icon name="home-outline"></ion-icon>
+              Dashboard
+            </a>
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+            <a href="{{ route('admin.products.index') }}">Produtos</a>
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+            <span>Cadastrar</span>
+          </nav>
+
+          <h1 class="admin-products-title">Cadastrar Produto</h1>
+          <p class="admin-products-subtitle">Adicione um novo produto ao catálogo da loja</p>
+        </div>
+
+        @include('admin.products._form', [
+            'formAction' => route('admin.products.store'),
+            'brands' => $brands,
+            'categories' => $categories,
+            'colors' => $colors,
+            'sizes' => $sizes,
+        ])
       </div>
-
-      @if ($errors->any())
-        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          <ul class="list-disc pl-5">
-            @foreach ($errors->all() as $error)
-              <li>{{ $error }}</li>
-            @endforeach
-          </ul>
-        </div>
-      @endif
-
-      <!-- Formulário -->
-      <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data" class="space-y-6">
-        @csrf
-
-        <div class="space-y-6 divide-y divide-gray-200">
-          <!-- Nome, Slug e SKU -->
-          <div class="grid grid-cols-1 gap-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Nome do Produto</label>
-              <input type="text" name="name" id="name" value="{{ old('name') }}"
-                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition duration-200"
-                required>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">URL Amigável (Slug)</label>
-              <input type="text" name="slug" id="slug" value="{{ old('slug') }}"
-                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-gray-50"
-                required>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">SKU</label>
-              <input type="text" name="sku" value="{{ old('sku') }}"
-                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition duration-200"
-                required>
-            </div>
-          </div>
-
-          <!-- Descrição -->
-          <div class="pt-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Descrição Detalhada</label>
-            <textarea name="description" rows="4"
-              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition duration-200"
-              required>{{ old('description') }}</textarea>
-          </div>
-
-          <!-- Preço e Estoque -->
-          <div class="pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Preço (R$)</label>
-              <input type="number" step="0.01" name="price" value="{{ old('price') }}"
-                class="block w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" required>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Estoque Disponível</label>
-              <input type="number" name="stock" value="{{ old('stock') }}"
-                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                required>
-            </div>
-          </div>
-
-          <!-- Seleções -->
-          <div class="pt-6 space-y-6">
-            <!-- Marcas -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Marca</label>
-              <select name="brand_id"
-                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white"
-                required>
-                <option value="">Selecione...</option>
-                @foreach ($brands as $brand)
-                  <option value="{{ $brand->id }}" {{ old('brand_id') == $brand->id ? 'selected' : '' }}>
-                    {{ $brand->name }}
-                  </option>
-                @endforeach
-              </select>
-            </div>
-            <!-- Categorias -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Categorias</label>
-              <select name="categories[]" multiple
-                class="select-multiple block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white"
-                required>
-                @foreach ($categories as $category)
-                  <option value="{{ $category->id }}"
-                    {{ collect(old('categories'))->contains($category->id) ? 'selected' : '' }}>
-                    {{ $category->name }}
-                  </option>
-                @endforeach
-              </select>
-            </div>
-            <!-- Cores -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Cores Disponíveis</label>
-              <div class="mt-1 grid grid-cols-2 md:grid-cols-4 gap-2">
-                @foreach ($colors as $color)
-                  <label
-                    class="flex items-center space-x-2 p-3 rounded-lg border border-gray-200 hover:border-blue-400 cursor-pointer">
-                    <input type="checkbox" name="colors[]" value="{{ $color->id }}"
-                      {{ collect(old('colors'))->contains($color->id) ? 'checked' : '' }}
-                      class="rounded text-blue-600 focus:ring-blue-500">
-                    <span class="flex items-center">
-                      <span class="inline-block w-4 h-4 rounded-full border mr-2"
-                        style="background: {{ $color->hex_code }}"></span>
-                      {{ $color->name }}
-                    </span>
-                  </label>
-                @endforeach
-              </div>
-            </div>
-            <!-- Tamanhos -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Tamanhos Oferecidos</label>
-              <div class="mt-1 flex flex-wrap gap-2">
-                @foreach ($sizes as $size)
-                  <label class="inline-flex items-center">
-                    <input type="checkbox" name="sizes[]" value="{{ $size->id }}"
-                      {{ collect(old('sizes'))->contains($size->id) ? 'checked' : '' }} class="hidden peer">
-                    <span
-                      class="px-4 py-2 rounded-full bg-gray-100 text-gray-700 peer-checked:bg-blue-600 peer-checked:text-white cursor-pointer transition-colors">
-                      {{ $size->name }}
-                    </span>
-                  </label>
-                @endforeach
-              </div>
-            </div>
-          </div>
-
-          <!-- Upload de Imagem com Preview -->
-          <div class="pt-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Imagem do Produto</label>
-            <div class="mt-1 flex items-center space-x-4">
-              <div class="shrink-0">
-                <img id="image-preview" src="" style="display:none"
-                  class="h-24 w-24 rounded-lg object-cover border-2 border-gray-200">
-              </div>
-              <label class="block">
-                <input type="file" name="image" id="image-upload" class="sr-only" onchange="previewImage(event)"
-                  required>
-                <span
-                  class="px-4 py-2 bg-white rounded-lg border border-gray-300 shadow-sm cursor-pointer hover:bg-gray-50 transition">
-                  Selecionar Imagem
-                </span>
-              </label>
-            </div>
-            <small class="text-gray-500">Formatos aceitos: jpg, jpeg, png. Máx: 2MB.</small>
-          </div>
-        </div>
-
-        <!-- Status -->
-        <div class="pt-6">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-          <select name="active"
-            class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-            <option value="1" {{ old('active', 1) == 1 ? 'selected' : '' }}>Ativo</option>
-            <option value="0" {{ old('active') == 0 ? 'selected' : '' }}>Inativo</option>
-          </select>
-        </div>
-
-        <!-- Ações -->
-        <div class="pt-6 flex justify-end space-x-4">
-          <a href="{{ route('admin.products.index') }}"
-            class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition">
-            Cancelar
-          </a>
-          <button type="submit"
-            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition">
-            Salvar Produto
-          </button>
-        </div>
-      </form>
     </div>
   </div>
-
-  <script>
-    // Preview de imagem
-    function previewImage(event) {
-      const preview = document.getElementById('image-preview');
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          preview.src = e.target.result;
-          preview.style.display = 'block';
-        }
-        reader.readAsDataURL(file);
-      } else {
-        preview.src = '';
-        preview.style.display = 'none';
-      }
-    }
-
-    // Slug automático
-    function slugify(str) {
-      return str
-        .toLowerCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)+/g, '');
-    }
-    const nameInput = document.getElementById('name');
-    const slugInput = document.getElementById('slug');
-    let slugTouched = false;
-    if (nameInput && slugInput) {
-      nameInput.addEventListener('input', function() {
-        if (!slugTouched) {
-          slugInput.value = slugify(this.value);
-        }
-      });
-      slugInput.addEventListener('input', function() {
-        slugTouched = this.value.length > 0;
-      });
-    }
-  </script>
-
-  <style>
-    .select-multiple {
-      background-image: none;
-      padding: 0.5rem 1rem;
-      min-height: 120px;
-    }
-
-    .select-multiple option {
-      padding: 0.5rem;
-      border-radius: 0.375rem;
-      margin: 2px 0;
-    }
-
-    .select-multiple option:hover {
-      background-color: #f3f4f6;
-    }
-
-    .select-multiple option:checked {
-      background-color: #3b82f6;
-      color: white;
-    }
-  </style>
 @endsection

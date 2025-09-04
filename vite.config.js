@@ -16,6 +16,7 @@ export default defineConfig({
                 "resources/css/confirmation.css",
                 "resources/css/dashboard.css",
                 "resources/css/admin-dashboard.css",
+                "resources/css/admin-products.css",
                 "resources/js/app.js",
             ],
             refresh: true,

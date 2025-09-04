@@ -181,8 +181,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 4rem;
-    height: 4rem;
+    width: 4.5rem;
+    height: 4.5rem;
     border-radius: var(--admin-radius);
     margin-bottom: var(--admin-spacing);
     transition: var(--admin-transition);
@@ -193,7 +193,7 @@
 }
 
 .admin-category-icon ion-icon {
-    font-size: 2rem;
+    font-size: 2.5rem;
     color: white;
 }
 
@@ -270,8 +270,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 3rem;
-    height: 3rem;
+    width: 3.5rem;
+    height: 3.5rem;
     border-radius: var(--admin-radius);
     margin-bottom: var(--admin-spacing);
     transition: var(--admin-transition);
@@ -282,7 +282,7 @@
 }
 
 .admin-stat-icon ion-icon {
-    font-size: 1.5rem;
+    font-size: 2rem;
     color: white;
 }
 
@@ -470,7 +470,7 @@
 
     .admin-category-icon ion-icon,
     .admin-stat-icon ion-icon {
-        font-size: 1.5rem;
+        font-size: 1.75rem;
     }
 
     .admin-category-title {

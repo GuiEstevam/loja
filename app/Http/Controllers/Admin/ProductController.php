@@ -10,6 +10,7 @@ use App\Models\Color;
 use App\Models\Size;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -28,9 +29,93 @@ class ProductController extends Controller
             });
         }
 
-        $products = $query->orderBy('created_at', 'desc')->paginate(15);
+        // Aplicar filtro de baixo estoque se especificado
+        if ($request->filled('filtro') && $request->input('filtro') === 'baixo_estoque') {
+            $query->where('stock', '<=', 10);
+        }
 
-        return view('admin.products.index', compact('products'));
+        // Quantidade de itens por página
+        $perPage = $request->get('per_page', 5);
+        $perPageOptions = [5, 10, 15, 25, 50];
+
+        $products = $query->orderBy('created_at', 'desc')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        // Se for uma requisição Ajax, retornar JSON
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('admin.products.partials.products-table', compact('products'))->render(),
+                'pagination' => view('admin.products.partials.pagination', compact('products'))->render(),
+                'info' => [
+                    'total' => $products->total(),
+                    'from' => $products->firstItem(),
+                    'to' => $products->lastItem(),
+                    'current_page' => $products->currentPage(),
+                    'last_page' => $products->lastPage(),
+                    'per_page' => $perPage
+                ]
+            ]);
+        }
+
+        return view('admin.products.index', compact('products', 'perPageOptions', 'perPage'));
+    }
+
+    public function search(Request $request)
+    {
+        $query = Product::with(['brand', 'categories', 'colors', 'sizes']);
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('sku', 'like', "%{$search}%")
+                    ->orWhereHas('categories', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // Aplicar filtro de baixo estoque se especificado
+        if ($request->filled('filtro') && $request->input('filtro') === 'baixo_estoque') {
+            $query->where('stock', '<=', 10);
+        }
+
+        // Quantidade de itens por página
+        $perPage = $request->get('per_page', 5);
+        $perPageOptions = [5, 10, 15, 25, 50];
+
+        $products = $query->orderBy('created_at', 'desc')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        // Se foi especificada uma página específica, ir para ela
+        if ($request->filled('page')) {
+            $page = $request->get('page');
+            $products = $query->orderBy('created_at', 'desc')
+                ->paginate($perPage, ['*'], 'page', $page)
+                ->withQueryString();
+        }
+
+        // Debug: verificar se os produtos têm SKU
+        foreach ($products as $product) {
+            if (empty($product->sku)) {
+                Log::warning("Produto {$product->id} não tem SKU definido");
+            }
+        }
+
+        return response()->json([
+            'html' => view('admin.products.partials.products-table', compact('products'))->render(),
+            'pagination' => view('admin.products.partials.pagination', compact('products'))->render(),
+            'info' => [
+                'total' => $products->total(),
+                'from' => $products->firstItem(),
+                'to' => $products->lastItem(),
+                'current_page' => $products->currentPage(),
+                'last_page' => $products->lastPage(),
+                'per_page' => $perPage
+            ]
+        ]);
     }
 
     public function create()

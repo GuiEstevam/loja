@@ -65,6 +65,20 @@ class DashboardController extends Controller
             $values[] = $order->total;
         }
 
+        // Produtos recentes (últimos 5)
+        $produtosRecentes = Product::with(['brand'])
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        // Produtos com baixo estoque
+        $produtosBaixoEstoqueList = Product::with(['brand'])
+            ->where('active', true)
+            ->where('stock', '<', 5)
+            ->orderBy('stock', 'asc')
+            ->limit(5)
+            ->get();
+
         return view('admin.dashboard', [
             'totalPedidos' => $totalPedidos,
             'totalReceita' => $totalReceita,
