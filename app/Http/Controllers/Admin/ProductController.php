@@ -145,7 +145,17 @@ class ProductController extends Controller
             'colors.*' => 'exists:colors,id',
             'sizes' => 'required|array',
             'sizes.*' => 'exists:sizes,id',
-            'active' => 'boolean'
+            'active' => 'boolean',
+            'featured' => 'boolean',
+            'weight' => 'nullable|numeric|min:0',
+            'dimensions' => 'nullable|string|max:255',
+            'free_shipping' => 'boolean',
+            'installments' => 'nullable|integer|min:1|max:12',
+            'installment_value' => 'nullable|numeric|min:0',
+            'is_new' => 'boolean',
+            'is_sale' => 'boolean',
+            'sale_price' => 'nullable|numeric|min:0',
+            'sale_ends_at' => 'nullable|date'
         ]);
 
         // Upload de imagem
@@ -195,7 +205,17 @@ class ProductController extends Controller
             'colors.*' => 'exists:colors,id',
             'sizes' => 'required|array',
             'sizes.*' => 'exists:sizes,id',
-            'active' => 'boolean'
+            'active' => 'boolean',
+            'featured' => 'boolean',
+            'weight' => 'nullable|numeric|min:0',
+            'dimensions' => 'nullable|string|max:255',
+            'free_shipping' => 'boolean',
+            'installments' => 'nullable|integer|min:1|max:12',
+            'installment_value' => 'nullable|numeric|min:0',
+            'is_new' => 'boolean',
+            'is_sale' => 'boolean',
+            'sale_price' => 'nullable|numeric|min:0',
+            'sale_ends_at' => 'nullable|date'
         ]);
 
         // Upload de nova imagem (se enviada)

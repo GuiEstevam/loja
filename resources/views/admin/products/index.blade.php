@@ -28,32 +28,36 @@
         <!-- Filtros -->
         <div class="admin-products-form" style="padding-bottom: 0;">
           <form method="GET" class="admin-filters">
-            <div>
-              <label class="admin-form-label">Buscar Produto</label>
-              <input type="text" name="search" value="{{ request('search') }}" placeholder="Nome, SKU ou categoria..."
-                class="admin-search-input">
+            <div class="admin-filters-main">
+              <div class="admin-search-group">
+                <label class="admin-form-label">Buscar Produto</label>
+                <input type="text" name="search" value="{{ request('search') }}"
+                  placeholder="Nome, SKU ou categoria..." class="admin-search-input">
+              </div>
+
+              <div class="admin-per-page-group">
+                <label class="admin-form-label">Itens por página</label>
+                <select name="per_page" class="admin-search-input">
+                  @foreach ($perPageOptions as $option)
+                    <option value="{{ $option }}" {{ $perPage == $option ? 'selected' : '' }}>
+                      {{ $option }} itens
+                    </option>
+                  @endforeach
+                </select>
+              </div>
             </div>
 
-            <div>
-              <label class="admin-form-label">Itens por página</label>
-              <select name="per_page" class="admin-search-input">
-                @foreach ($perPageOptions as $option)
-                  <option value="{{ $option }}" {{ $perPage == $option ? 'selected' : '' }}>
-                    {{ $option }} itens
-                  </option>
-                @endforeach
-              </select>
+            <div class="admin-filters-actions">
+              <button type="submit" class="admin-btn admin-btn-primary">
+                <ion-icon name="search-outline"></ion-icon>
+                Pesquisar
+              </button>
+
+              <a href="{{ route('admin.products.create') }}" class="admin-btn admin-btn-primary">
+                <ion-icon name="add-outline"></ion-icon>
+                Novo Produto
+              </a>
             </div>
-
-            <button type="submit" class="admin-btn admin-btn-primary">
-              <ion-icon name="search-outline"></ion-icon>
-              Pesquisar
-            </button>
-
-            <a href="{{ route('admin.products.create') }}" class="admin-btn admin-btn-primary">
-              <ion-icon name="add-outline"></ion-icon>
-              Novo Produto
-            </a>
           </form>
         </div>
 

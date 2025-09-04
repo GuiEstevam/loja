@@ -1,8 +1,7 @@
 @if ($errors->any())
   <div class="admin-form-section" style="margin: 0; padding: 0 var(--admin-products-spacing-xl);">
-    <div
-      style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: var(--admin-products-danger); padding: var(--admin-products-spacing); border-radius: var(--admin-products-radius);">
-      <ul style="list-style: disc; margin: 0; padding-left: var(--admin-products-spacing);">
+    <div class="admin-error-message">
+      <ul>
         @foreach ($errors->all() as $error)
           <li>{{ $error }}</li>
         @endforeach
@@ -27,35 +26,29 @@
 
     <div class="admin-form-grid">
       <div class="admin-form-group">
-        <label for="name" class="admin-form-label">Nome do Produto</label>
+        <label for="name" class="admin-form-label">Nome do Produto *</label>
         <input type="text" name="name" id="name" value="{{ old('name', $product->name ?? '') }}"
-          class="admin-form-input" required>
+          class="admin-form-input" placeholder="Ex: Nike Air Max 90" required>
       </div>
 
       <div class="admin-form-group">
-        <label for="slug" class="admin-form-label">URL Amigável (Slug)</label>
-        <input type="text" name="slug" id="slug" value="{{ old('slug', $product->slug ?? '') }}"
-          class="admin-form-input" required>
-      </div>
-
-      <div class="admin-form-group">
-        <label for="sku" class="admin-form-label">SKU</label>
+        <label for="sku" class="admin-form-label">SKU *</label>
         <input type="text" name="sku" id="sku" value="{{ old('sku', $product->sku ?? '') }}"
-          class="admin-form-input" required>
+          class="admin-form-input" placeholder="Ex: NIKE-AM90-001" required>
+      </div>
+
+      <div class="admin-form-group">
+        <label for="slug" class="admin-form-label">URL Amigável *</label>
+        <input type="text" name="slug" id="slug" value="{{ old('slug', $product->slug ?? '') }}"
+          class="admin-form-input" placeholder="Ex: nike-air-max-90" required>
+        <small class="admin-form-help">Será gerado automaticamente baseado no nome</small>
       </div>
     </div>
-  </div>
-
-  <!-- Descrição -->
-  <div class="admin-form-section">
-    <h2 class="admin-form-section-title">
-      <ion-icon name="document-text-outline"></ion-icon>
-      Descrição
-    </h2>
 
     <div class="admin-form-group">
-      <label for="description" class="admin-form-label">Descrição Detalhada</label>
-      <textarea name="description" id="description" class="admin-form-textarea" required>{{ old('description', $product->description ?? '') }}</textarea>
+      <label for="description" class="admin-form-label">Descrição Detalhada *</label>
+      <textarea name="description" id="description" class="admin-form-textarea"
+        placeholder="Descreva as características, benefícios e detalhes do produto..." required>{{ old('description', $product->description ?? '') }}</textarea>
     </div>
   </div>
 
@@ -68,15 +61,44 @@
 
     <div class="admin-form-grid">
       <div class="admin-form-group">
-        <label for="price" class="admin-form-label">Preço (€)</label>
+        <label for="price" class="admin-form-label">Preço Normal (€) *</label>
         <input type="number" step="0.01" name="price" id="price"
-          value="{{ old('price', $product->price ?? '') }}" class="admin-form-input" required>
+          value="{{ old('price', $product->price ?? '') }}" class="admin-form-input" placeholder="0.00" required>
       </div>
 
       <div class="admin-form-group">
-        <label for="stock" class="admin-form-label">Estoque Disponível</label>
+        <label for="stock" class="admin-form-label">Estoque Disponível *</label>
         <input type="number" name="stock" id="stock" value="{{ old('stock', $product->stock ?? '') }}"
-          class="admin-form-input" required>
+          class="admin-form-input" placeholder="0" required>
+      </div>
+
+      <div class="admin-form-group">
+        <label for="sale_price" class="admin-form-label">Preço de Promoção (€)</label>
+        <input type="number" step="0.01" name="sale_price" id="sale_price"
+          value="{{ old('sale_price', $product->sale_price ?? '') }}" class="admin-form-input" placeholder="0.00">
+      </div>
+
+      <div class="admin-form-group">
+        <label for="sale_ends_at" class="admin-form-label">Fim da Promoção</label>
+        <input type="date" name="sale_ends_at" id="sale_ends_at"
+          value="{{ old('sale_ends_at', isset($product) ? $product->sale_ends_at?->format('Y-m-d') : '') }}"
+          class="admin-form-input">
+      </div>
+    </div>
+
+    <div class="admin-form-grid">
+      <div class="admin-form-group">
+        <label for="installments" class="admin-form-label">Parcelas</label>
+        <input type="number" name="installments" id="installments"
+          value="{{ old('installments', $product->installments ?? 1) }}" class="admin-form-input" placeholder="1"
+          min="1" max="12">
+      </div>
+
+      <div class="admin-form-group">
+        <label for="installment_value" class="admin-form-label">Valor da Parcela (€)</label>
+        <input type="number" step="0.01" name="installment_value" id="installment_value"
+          value="{{ old('installment_value', $product->installment_value ?? '') }}" class="admin-form-input"
+          placeholder="0.00">
       </div>
     </div>
   </div>
@@ -90,7 +112,7 @@
 
     <div class="admin-form-grid">
       <div class="admin-form-group">
-        <label for="brand_id" class="admin-form-label">Marca</label>
+        <label for="brand_id" class="admin-form-label">Marca *</label>
         <select name="brand_id" id="brand_id" class="admin-form-select" required>
           <option value="">Selecione uma marca...</option>
           @foreach ($brands as $brand)
@@ -103,7 +125,7 @@
       </div>
 
       <div class="admin-form-group">
-        <label for="categories" class="admin-form-label">Categorias</label>
+        <label for="categories" class="admin-form-label">Categorias *</label>
         <select name="categories[]" id="categories" class="admin-form-select" multiple required>
           @foreach ($categories as $category)
             <option value="{{ $category->id }}"
@@ -112,6 +134,7 @@
             </option>
           @endforeach
         </select>
+        <small class="admin-form-help">Pressione Ctrl (ou Cmd) para selecionar múltiplas categorias</small>
       </div>
     </div>
   </div>
@@ -124,7 +147,7 @@
     </h2>
 
     <div class="admin-form-group">
-      <label class="admin-form-label">Cores Disponíveis</label>
+      <label class="admin-form-label">Cores Disponíveis *</label>
       <div class="admin-form-checkbox-group">
         @foreach ($colors as $color)
           <label class="admin-form-checkbox-item">
@@ -140,7 +163,7 @@
     </div>
 
     <div class="admin-form-group">
-      <label class="admin-form-label">Tamanhos Oferecidos</label>
+      <label class="admin-form-label">Tamanhos Oferecidos *</label>
       <div class="admin-form-checkbox-group">
         @foreach ($sizes as $size)
           <label class="admin-form-checkbox-item">
@@ -151,6 +174,29 @@
             </div>
           </label>
         @endforeach
+      </div>
+    </div>
+  </div>
+
+  <!-- Características Físicas -->
+  <div class="admin-form-section">
+    <h2 class="admin-form-section-title">
+      <ion-icon name="scale-outline"></ion-icon>
+      Características Físicas
+    </h2>
+
+    <div class="admin-form-grid">
+      <div class="admin-form-group">
+        <label for="weight" class="admin-form-label">Peso (kg)</label>
+        <input type="number" step="0.001" name="weight" id="weight"
+          value="{{ old('weight', $product->weight ?? '') }}" class="admin-form-input" placeholder="0.000">
+      </div>
+
+      <div class="admin-form-group">
+        <label for="dimensions" class="admin-form-label">Dimensões</label>
+        <input type="text" name="dimensions" id="dimensions"
+          value="{{ old('dimensions', $product->dimensions ?? '') }}" class="admin-form-input"
+          placeholder="Ex: 30x20x10cm">
       </div>
     </div>
   </div>
@@ -180,19 +226,55 @@
     </div>
   </div>
 
-  <!-- Status -->
+  <!-- Configurações Avançadas -->
   <div class="admin-form-section">
     <h2 class="admin-form-section-title">
       <ion-icon name="settings-outline"></ion-icon>
-      Status do Produto
+      Configurações Avançadas
     </h2>
 
-    <div class="admin-form-group">
-      <label for="active" class="admin-form-label">Status</label>
-      <select name="active" id="active" class="admin-form-select">
-        <option value="1" {{ old('active', $product->active ?? 1) == 1 ? 'selected' : '' }}>Ativo</option>
-        <option value="0" {{ old('active', $product->active ?? 1) == 0 ? 'selected' : '' }}>Inativo</option>
-      </select>
+    <div class="admin-form-grid">
+      <div class="admin-form-group">
+        <label for="active" class="admin-form-label">Status</label>
+        <select name="active" id="active" class="admin-form-select">
+          <option value="1" {{ old('active', $product->active ?? 1) == 1 ? 'selected' : '' }}>Ativo</option>
+          <option value="0" {{ old('active', $product->active ?? 1) == 0 ? 'selected' : '' }}>Inativo</option>
+        </select>
+      </div>
+
+      <div class="admin-form-group">
+        <label for="featured" class="admin-form-label">Produto em Destaque</label>
+        <select name="featured" id="featured" class="admin-form-select">
+          <option value="0" {{ old('featured', $product->featured ?? 0) == 0 ? 'selected' : '' }}>Não</option>
+          <option value="1" {{ old('featured', $product->featured ?? 0) == 1 ? 'selected' : '' }}>Sim</option>
+        </select>
+      </div>
+
+      <div class="admin-form-group">
+        <label for="is_new" class="admin-form-label">Produto Novo</label>
+        <select name="is_new" id="is_new" class="admin-form-select">
+          <option value="0" {{ old('is_new', $product->is_new ?? 0) == 0 ? 'selected' : '' }}>Não</option>
+          <option value="1" {{ old('is_new', $product->is_new ?? 0) == 1 ? 'selected' : '' }}>Sim</option>
+        </select>
+      </div>
+
+      <div class="admin-form-group">
+        <label for="is_sale" class="admin-form-label">Produto em Promoção</label>
+        <select name="is_sale" id="is_sale" class="admin-form-select">
+          <option value="0" {{ old('is_sale', $product->is_sale ?? 0) == 0 ? 'selected' : '' }}>Não</option>
+          <option value="1" {{ old('is_sale', $product->is_sale ?? 0) == 1 ? 'selected' : '' }}>Sim</option>
+        </select>
+      </div>
+
+      <div class="admin-form-group">
+        <label for="free_shipping" class="admin-form-label">Frete Grátis</label>
+        <select name="free_shipping" id="free_shipping" class="admin-form-select">
+          <option value="0" {{ old('free_shipping', $product->free_shipping ?? 0) == 0 ? 'selected' : '' }}>Não
+          </option>
+          <option value="1" {{ old('free_shipping', $product->free_shipping ?? 0) == 1 ? 'selected' : '' }}>Sim
+          </option>
+        </select>
+      </div>
     </div>
   </div>
 
@@ -236,19 +318,57 @@
       .replace(/(^-|-$)+/g, '');
   }
 
+  // SKU automático
+  function generateSKU(name) {
+    const base = name
+      .toUpperCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^A-Z0-9]+/g, '')
+      .substring(0, 8);
+    const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+    return base + '-' + random;
+  }
+
   const nameInput = document.getElementById('name');
   const slugInput = document.getElementById('slug');
+  const skuInput = document.getElementById('sku');
   let slugTouched = false;
+  let skuTouched = false;
 
   if (nameInput && slugInput) {
     nameInput.addEventListener('input', function() {
       if (!slugTouched) {
         slugInput.value = slugify(this.value);
       }
+      if (!skuTouched) {
+        skuInput.value = generateSKU(this.value);
+      }
     });
 
     slugInput.addEventListener('input', function() {
       slugTouched = this.value.length > 0;
     });
+
+    skuInput.addEventListener('input', function() {
+      skuTouched = this.value.length > 0;
+    });
+  }
+
+  // Cálculo automático do valor da parcela
+  const priceInput = document.getElementById('price');
+  const installmentsInput = document.getElementById('installments');
+  const installmentValueInput = document.getElementById('installment_value');
+
+  function calculateInstallmentValue() {
+    const price = parseFloat(priceInput.value) || 0;
+    const installments = parseInt(installmentsInput.value) || 1;
+    if (price > 0 && installments > 0) {
+      installmentValueInput.value = (price / installments).toFixed(2);
+    }
+  }
+
+  if (priceInput && installmentsInput && installmentValueInput) {
+    priceInput.addEventListener('input', calculateInstallmentValue);
+    installmentsInput.addEventListener('input', calculateInstallmentValue);
   }
 </script>

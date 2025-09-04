@@ -386,10 +386,84 @@
     display: none;
 }
 
+/* ===== MENSAGENS DE ERRO ===== */
+.admin-error-message {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: var(--admin-products-danger);
+    padding: var(--admin-products-spacing);
+    border-radius: var(--admin-products-radius);
+    margin-bottom: var(--admin-products-spacing-lg);
+}
+
+.admin-error-message ul {
+    list-style: disc;
+    margin: 0;
+    padding-left: var(--admin-products-spacing);
+}
+
+/* ===== AJUDAS DE FORMULÁRIO ===== */
+.admin-form-help {
+    font-size: 0.75rem;
+    color: var(--admin-products-text-secondary);
+    margin-top: calc(-1 * var(--admin-products-spacing));
+}
+
+/* ===== MELHORIAS NO UPLOAD ===== */
+.admin-image-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--admin-products-spacing-lg);
+    padding: var(--admin-products-spacing-xl);
+    border: 2px dashed var(--admin-products-border);
+    border-radius: var(--admin-products-radius);
+    background: var(--admin-products-input-bg);
+    transition: var(--admin-products-transition);
+}
+
+.admin-image-upload:hover {
+    border-color: var(--admin-products-primary);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.admin-image-preview {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: var(--admin-products-radius);
+    border: 1px solid var(--admin-products-border);
+    display: none;
+}
+
+.admin-image-preview.show {
+    display: block;
+}
+
+.admin-upload-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--admin-products-spacing);
+    padding: var(--admin-products-spacing-lg);
+    background: var(--admin-products-primary);
+    color: white;
+    border-radius: var(--admin-products-radius);
+    cursor: pointer;
+    transition: var(--admin-products-transition);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.admin-upload-button:hover {
+    background: var(--admin-products-primary-hover);
+    transform: translateY(-2px);
+}
+
 .admin-upload-help {
     font-size: 0.75rem;
     color: var(--admin-products-text-secondary);
-    margin-top: 0.5rem;
+    text-align: center;
 }
 
 /* ===== AÇÕES ===== */
@@ -679,13 +753,39 @@
 
 /* ===== FILTROS E CONTROLES ===== */
 .admin-filters {
-    display: grid;
-    grid-template-columns: 1fr 1fr auto auto;
-    gap: var(--admin-products-spacing);
+    display: flex;
+    flex-direction: column;
+    gap: var(--admin-products-spacing-lg);
     margin-bottom: var(--admin-products-spacing-xl);
-    align-items: end;
     padding-bottom: var(--admin-products-spacing-lg);
     border-bottom: 1px solid var(--admin-products-border);
+}
+
+.admin-filters-main {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--admin-products-spacing-lg);
+    align-items: end;
+}
+
+.admin-search-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--admin-products-spacing);
+}
+
+.admin-per-page-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--admin-products-spacing);
+    min-width: 150px;
+}
+
+.admin-filters-actions {
+    display: flex;
+    gap: var(--admin-products-spacing);
+    justify-content: flex-end;
+    align-items: end;
 }
 
 .admin-search-input {
@@ -892,8 +992,26 @@
     }
 
     .admin-filters {
+        gap: var(--admin-products-spacing);
+    }
+
+    .admin-filters-main {
         grid-template-columns: 1fr;
         gap: var(--admin-products-spacing);
+    }
+
+    .admin-per-page-group {
+        min-width: auto;
+    }
+
+    .admin-filters-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-filters-actions .admin-btn {
+        width: 100%;
+        justify-content: center;
     }
 
     .admin-form-actions {
