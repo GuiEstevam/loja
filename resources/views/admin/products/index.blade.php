@@ -2,91 +2,92 @@
 
 @section('title', 'Produtos')
 
-@push('styles')
-  @vite(['resources/css/admin-products.css'])
-@endpush
-
 @section('content')
-  <div class="admin-products-page">
-    <div class="admin-products-container">
-      <div class="admin-products-card">
-        <!-- Header -->
-        <div class="admin-products-header">
-          <nav class="admin-products-breadcrumb">
-            <a href="{{ route('admin.dashboard') }}">
-              <ion-icon name="home-outline"></ion-icon>
-              Dashboard
-            </a>
-            <ion-icon name="chevron-forward-outline"></ion-icon>
-            <span>Produtos</span>
-          </nav>
-
-          <h1 class="admin-products-title">Gerenciar Produtos</h1>
-          <p class="admin-products-subtitle">Visão geral e gestão de todos os produtos</p>
-        </div>
-
-        <!-- Filtros -->
-        <div class="admin-products-form" style="padding-bottom: 0;">
-          <form method="GET" class="admin-filters">
-            <div class="admin-filters-main">
-              <div class="admin-search-group">
-                <label class="admin-form-label">Buscar Produto</label>
-                <input type="text" name="search" value="{{ request('search') }}"
-                  placeholder="Nome, SKU ou categoria..." class="admin-search-input">
-              </div>
-
-              <div class="admin-per-page-group">
-                <label class="admin-form-label">Itens por página</label>
-                <select name="per_page" class="admin-search-input">
-                  @foreach ($perPageOptions as $option)
-                    <option value="{{ $option }}" {{ $perPage == $option ? 'selected' : '' }}>
-                      {{ $option }} itens
-                    </option>
-                  @endforeach
-                </select>
-              </div>
-            </div>
-
-            <div class="admin-filters-actions">
-              <button type="submit" class="admin-btn admin-btn-primary">
-                <ion-icon name="search-outline"></ion-icon>
-                Pesquisar
-              </button>
-
-              <a href="{{ route('admin.products.create') }}" class="admin-btn admin-btn-primary">
-                <ion-icon name="add-outline"></ion-icon>
-                Novo Produto
+  <div class="admin-page">
+    <div class="admin-content">
+      <div class="admin-container">
+        <div class="admin-card">
+          <!-- Header -->
+          <div class="admin-card-header">
+            <nav class="admin-breadcrumb">
+              <a href="{{ route('admin.dashboard') }}">
+                <ion-icon name="home-outline"></ion-icon>
+                Dashboard
               </a>
-            </div>
-          </form>
-        </div>
+              <ion-icon name="chevron-forward-outline" class="separator"></ion-icon>
+              <span>Produtos</span>
+            </nav>
 
-        <!-- Tabela -->
-        <div class="admin-table-container">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Imagem</th>
-                <th>Produto</th>
-                <th>Marca</th>
-                <th>Categorias</th>
-                <th>Cores</th>
-                <th>Tamanhos</th>
-                <th>Preço</th>
-                <th>Estoque</th>
-                <th>Status</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody id="products-table-body">
-              @include('admin.products.partials.products-table')
-            </tbody>
-          </table>
-        </div>
+            <h1 class="admin-card-title">
+              <ion-icon name="cube-outline"></ion-icon>
+              Gerenciar Produtos
+            </h1>
+            <p class="admin-card-subtitle">Visão geral e gestão de todos os produtos</p>
+          </div>
 
-        <!-- Paginação -->
-        <div id="products-pagination">
-          @include('admin.products.partials.pagination')
+          <!-- Filtros -->
+          <div class="admin-card-body">
+            <form method="GET" class="admin-filters">
+              <div class="admin-filters-main">
+                <div class="admin-form-group">
+                  <label class="admin-form-label">Buscar Produto</label>
+                  <input type="text" name="search" value="{{ request('search') }}"
+                    placeholder="Nome, SKU ou categoria..." class="admin-form-input">
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-form-label">Itens por página</label>
+                  <select name="per_page" class="admin-form-select">
+                    @foreach ($perPageOptions as $option)
+                      <option value="{{ $option }}" {{ $perPage == $option ? 'selected' : '' }}>
+                        {{ $option }} itens
+                      </option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
+
+              <div class="admin-filters-actions">
+                <button type="submit" class="admin-btn admin-btn-primary">
+                  <ion-icon name="search-outline"></ion-icon>
+                  Pesquisar
+                </button>
+
+                <a href="{{ route('admin.products.create') }}" class="admin-btn admin-btn-primary">
+                  <ion-icon name="add-outline"></ion-icon>
+                  Novo Produto
+                </a>
+              </div>
+            </form>
+          </div>
+
+          <!-- Tabela -->
+          <div class="admin-table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Imagem</th>
+                  <th>Produto</th>
+                  <th>Marca</th>
+                  <th>Categorias</th>
+                  <th>Cores</th>
+                  <th>Tamanhos</th>
+                  <th>Preço</th>
+                  <th>Estoque</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="products-table-body">
+                @include('admin.products.partials.products-table')
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Paginação -->
+          <div id="products-pagination">
+            @include('admin.products.partials.pagination')
+          </div>
         </div>
       </div>
     </div>

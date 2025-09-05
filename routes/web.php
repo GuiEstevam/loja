@@ -64,6 +64,11 @@ Route::post('/carrinho/remover/{product}', [ShopCartController::class, 'remove']
 Route::post('/carrinho/atualizar/{product}', [ShopCartController::class, 'update'])->name('shop.cart.update');
 Route::post('/comprar/{product}', [ShopCartController::class, 'buy'])->name('shop.cart.buy');
 
+// Sincronização de dados (acesso público para usuários não logados)
+Route::post('/api/sync/cart', [App\Http\Controllers\Api\SyncController::class, 'syncCart'])->name('api.sync.cart');
+Route::post('/api/sync/favorites', [App\Http\Controllers\Api\SyncController::class, 'syncFavorites'])->name('api.sync.favorites');
+Route::get('/api/sync/load', [App\Http\Controllers\Api\SyncController::class, 'loadData'])->name('api.sync.load');
+
 // -------------------
 // Rotas Privadas (usuário autenticado)
 // -------------------

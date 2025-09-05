@@ -312,9 +312,11 @@
         if (newQuantity < 1) return;
 
         let cart = JSON.parse(localStorage.getItem('cart') || '{}');
-        const cartKey = productId.toString();
 
-        if (cart[cartKey]) {
+        // Encontrar a chave correta do item (pode ser produto-id, produto-id-c1, produto-id-c1-s2, etc.)
+        const cartKey = Object.keys(cart).find(key => key.startsWith(productId.toString()));
+
+        if (cartKey) {
           cart[cartKey].quantity = newQuantity;
           localStorage.setItem('cart', JSON.stringify(cart));
 
@@ -326,9 +328,11 @@
 
       async removeFromCart(productId) {
         let cart = JSON.parse(localStorage.getItem('cart') || '{}');
-        const cartKey = productId.toString();
 
-        if (cart[cartKey]) {
+        // Encontrar a chave correta do item (pode ser produto-id, produto-id-c1, produto-id-c1-s2, etc.)
+        const cartKey = Object.keys(cart).find(key => key.startsWith(productId.toString()));
+
+        if (cartKey) {
           delete cart[cartKey];
           localStorage.setItem('cart', JSON.stringify(cart));
 

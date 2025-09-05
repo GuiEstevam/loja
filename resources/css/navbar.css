@@ -154,7 +154,8 @@
 }
 
 .navbar-search-input::placeholder {
-    color: #9ca3af;
+    color: var(--navbar-text-gray);
+    opacity: 1;
 }
 
 .navbar-search-btn {
@@ -182,6 +183,15 @@
 
 .navbar-search-btn ion-icon {
     font-size: 1.25rem;
+}
+
+/* Dark mode para input de busca */
+.dark .navbar-search-input {
+    color: var(--navbar-text);
+}
+
+.dark .navbar-search-input::placeholder {
+    color: var(--navbar-text-gray);
 }
 
 /* Dark mode para botão de busca */
@@ -255,15 +265,40 @@
     transition: var(--navbar-transition);
     white-space: nowrap;
     position: relative;
+    background: transparent;
+    border: none;
+    cursor: pointer;
 }
 
 .navbar-link:hover {
     color: var(--navbar-text-hover);
-    background: rgba(59, 130, 246, 0.1);
+    background: rgba(139, 92, 246, 0.1);
 }
 
 .navbar-link ion-icon {
     font-size: 1.125rem;
+}
+
+/* ===== ADMIN USER BUTTON ===== */
+.navbar-menu-item .navbar-link {
+    background: transparent;
+    border: none;
+    color: var(--navbar-text);
+}
+
+.navbar-menu-item .navbar-link:hover {
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--navbar-text-hover);
+}
+
+/* Dark mode específico para o botão do admin */
+.dark .navbar-menu-item .navbar-link {
+    color: var(--navbar-text);
+}
+
+.dark .navbar-menu-item .navbar-link:hover {
+    background: rgba(139, 92, 246, 0.15);
+    color: var(--navbar-text-hover);
 }
 
 /* ===== DARK MODE TOGGLE ===== */
@@ -288,28 +323,6 @@
 }
 
 .navbar-dark-toggle ion-icon {
-    font-size: 1.25rem;
-}
-
-.navbar-link {
-    color: var(--navbar-text);
-    text-decoration: none;
-    font-size: 1.125rem;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    transition: var(--navbar-transition);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.navbar-link:hover {
-    color: var(--navbar-text-hover);
-    background: rgba(59, 130, 246, 0.1);
-}
-
-.navbar-link ion-icon {
     font-size: 1.25rem;
 }
 
@@ -873,10 +886,6 @@
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-.navbar-dropdown.show {
-    animation: slideDown 0.3s ease-out;
 }
 
 /* ===== SCROLL EFFECT ===== */

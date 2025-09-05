@@ -3,31 +3,30 @@
     <td>
       <img src="{{ asset('products/' . $product->image) }}" alt="{{ $product->name }}" class="admin-product-image">
     </td>
-    <td>
+    <td class="admin-product-cell">
       <div class="admin-product-name">{{ $product->name }}</div>
       <div class="admin-product-sku">SKU: {{ $product->sku }}</div>
     </td>
     <td>{{ $product->brand->name ?? '-' }}</td>
     <td>
-      <div style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+      <div class="admin-badges-container">
         @foreach ($product->categories as $category)
           <span class="admin-badge admin-badge-category">{{ $category->name }}</span>
         @endforeach
       </div>
     </td>
     <td>
-      <div style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+      <div class="admin-badges-container">
         @foreach ($product->colors as $color)
           <span class="admin-badge admin-badge-color">
-            <span
-              style="width: 0.5rem; height: 0.5rem; border-radius: 50%; background: {{ $color->hex_code ?? '#eee' }}; display: inline-block; margin-right: 0.25rem;"></span>
+            <span class="admin-color-indicator" style="background: {{ $color->hex_code ?? '#eee' }};"></span>
             {{ $color->name }}
           </span>
         @endforeach
       </div>
     </td>
     <td>
-      <div style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+      <div class="admin-badges-container">
         @foreach ($product->sizes as $size)
           <span class="admin-badge admin-badge-size">{{ $size->name }}</span>
         @endforeach

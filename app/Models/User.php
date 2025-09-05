@@ -13,6 +13,8 @@ use App\Models\Order;
 use App\Models\Address;
 use App\Models\LoyaltyPoint;
 use App\Models\Discount;
+use App\Models\CartItem;
+use App\Models\Favorite;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -93,5 +95,17 @@ class User extends Authenticatable
     public function discounts()
     {
         return $this->belongsToMany(Discount::class, 'user_discount');
+    }
+
+    // Relacionamento: um usuário pode ter vários itens no carrinho
+    public function cartItems()
+    {
+        return $this->hasMany(CartItem::class);
+    }
+
+    // Relacionamento: um usuário pode ter vários favoritos
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
     }
 }

@@ -464,7 +464,9 @@
     // Funções reutilizadas do welcome.blade.php
     function addToCart(productId, productName, price, image) {
       let cart = JSON.parse(localStorage.getItem('cart') || '{}'); // Mudado de '[]' para '{}'
-      const cartKey = productId.toString();
+
+      // Encontrar a chave correta do item (pode ser produto-id, produto-id-c1, produto-id-c1-s2, etc.)
+      const cartKey = Object.keys(cart).find(key => key.startsWith(productId.toString())) || productId.toString();
 
       if (cart[cartKey]) {
         cart[cartKey].quantity += 1;

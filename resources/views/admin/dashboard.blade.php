@@ -2,167 +2,179 @@
 
 @section('title', 'Painel Administrativo')
 
-@push('styles')
-  @vite(['resources/css/admin-dashboard.css'])
-@endpush
-
 @section('content')
-  <div class="admin-dashboard-page">
-    <div class="admin-dashboard-container">
-      <!-- Header da Página -->
-      <div class="admin-dashboard-header">
-        <h1 class="admin-dashboard-title">
-          <ion-icon name="settings-outline"></ion-icon>
-          Painel Administrativo
-        </h1>
-        <p class="admin-dashboard-subtitle">Gerencie produtos, pedidos e configurações da loja</p>
-      </div>
-
-      <!-- Cards de Estatísticas Principais -->
-      <div class="admin-stats-grid">
-        <a href="{{ route('admin.orders.index') }}" class="admin-stat-card orders">
-          <div class="admin-stat-icon">
-            <ion-icon name="receipt-outline"></ion-icon>
-          </div>
-          <div class="admin-stat-value">{{ $totalPedidos }}</div>
-          <div class="admin-stat-label">Pedidos ({{ $dias }} dias)</div>
-        </a>
-
-        <div class="admin-stat-card revenue">
-          <div class="admin-stat-icon">
-            <ion-icon name="cash-outline"></ion-icon>
-          </div>
-          <div class="admin-stat-value">€{{ number_format($totalReceita, 2, ',', '.') }}</div>
-          <div class="admin-stat-label">Receita ({{ $dias }} dias)</div>
-        </div>
-
-        <div class="admin-stat-card ticket">
-          <div class="admin-stat-icon">
-            <ion-icon name="pricetag-outline"></ion-icon>
-          </div>
-          <div class="admin-stat-value">€{{ number_format($ticketMedio, 2, ',', '.') }}</div>
-          <div class="admin-stat-label">Ticket Médio</div>
-        </div>
-
-        <a href="{{ route('admin.products.index') }}" class="admin-stat-card products">
-          <div class="admin-stat-icon">
-            <ion-icon name="cube-outline"></ion-icon>
-          </div>
-          <div class="admin-stat-value">{{ $totalProdutos }}</div>
-          <div class="admin-stat-label">Produtos ativos</div>
-        </a>
-
-        <a href="{{ route('admin.products.index', ['filtro' => 'baixo_estoque']) }}" class="admin-stat-card low-stock">
-          <div class="admin-stat-icon">
-            <ion-icon name="warning-outline"></ion-icon>
-          </div>
-          <div class="admin-stat-value">{{ $produtosBaixoEstoque }}</div>
-          <div class="admin-stat-label">Baixo estoque</div>
-        </a>
-
-        <div class="admin-stat-card new-customers">
-          <div class="admin-stat-icon">
-            <ion-icon name="person-add-outline"></ion-icon>
-          </div>
-          <div class="admin-stat-value">{{ $novosClientes }}</div>
-          <div class="admin-stat-label">Novos clientes ({{ $dias }} dias)</div>
-        </div>
-
-        <div class="admin-stat-card total-customers">
-          <div class="admin-stat-icon">
-            <ion-icon name="people-outline"></ion-icon>
-          </div>
-          <div class="admin-stat-value">{{ $totalClientes }}</div>
-          <div class="admin-stat-label">Clientes totais</div>
-        </div>
-
-        <div class="admin-stat-card coupons {{ is_null($cuponsAtivos) ? 'disabled' : '' }}">
-          <div class="admin-stat-icon">
-            <ion-icon name="pricetags-outline"></ion-icon>
-          </div>
-          <div class="admin-stat-value">
-            {{ is_null($cuponsAtivos) ? '—' : $cuponsAtivos }}
-          </div>
-          <div class="admin-stat-label">
-            Cupons ativos {{ is_null($cuponsAtivos) ? '(em breve)' : '' }}
+  <div class="admin-page">
+    <div class="admin-content">
+      <div class="admin-container">
+        <!-- Header da Página -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h1 class="admin-card-title">
+              <ion-icon name="settings-outline"></ion-icon>
+              Painel Administrativo
+            </h1>
+            <p class="admin-card-subtitle">Gerencie produtos, pedidos e configurações da loja</p>
           </div>
         </div>
 
-        <div class="admin-stat-card loyalty {{ is_null($totalPontosFidelidade) ? 'disabled' : '' }}">
-          <div class="admin-stat-icon">
-            <ion-icon name="star-outline"></ion-icon>
-          </div>
-          <div class="admin-stat-value">
-            {{ is_null($totalPontosFidelidade) ? '—' : $totalPontosFidelidade }}
-          </div>
-          <div class="admin-stat-label">
-            Pontos distribuídos {{ is_null($totalPontosFidelidade) ? '(em breve)' : '' }}
-          </div>
-        </div>
-      </div>
+        <!-- Layout Principal -->
+        <div class="admin-dashboard-layout">
+          <!-- Seção de Gerenciamento -->
+          <div class="admin-dashboard-header-section">
+            <!-- Seção de Gerenciamento -->
+            <div class="admin-management-section">
+              <div class="admin-card">
+                <div class="admin-card-header">
+                  <h2 class="admin-card-title">
+                    <ion-icon name="settings-outline"></ion-icon>
+                    Gerenciamento da Loja
+                  </h2>
+                  <p class="admin-card-subtitle">Acesse as principais funcionalidades administrativas</p>
+                </div>
+                <div class="admin-card-body">
+                  <div class="admin-category-cards">
+                    <a href="{{ route('admin.products.index') }}" class="admin-category-card products">
+                      <div class="admin-category-icon">
+                        <ion-icon name="cube-outline"></ion-icon>
+                      </div>
+                      <h3 class="admin-category-title">Produtos</h3>
+                      <p class="admin-category-description">Gerencie o catálogo de produtos</p>
+                    </a>
 
-      <!-- Seção de Gerenciamento -->
-      <div class="admin-management-section">
-        <div class="admin-section-header">
-          <h2 class="admin-section-title">
-            <ion-icon name="settings-outline"></ion-icon>
-            Gerenciamento da Loja
-          </h2>
-          <p class="admin-section-subtitle">Configure categorias, marcas, cores e tamanhos dos produtos</p>
-        </div>
+                    <a href="{{ route('admin.orders.index') }}" class="admin-category-card orders">
+                      <div class="admin-category-icon">
+                        <ion-icon name="receipt-outline"></ion-icon>
+                      </div>
+                      <h3 class="admin-category-title">Pedidos</h3>
+                      <p class="admin-category-description">Gerencie os pedidos dos clientes</p>
+                    </a>
 
-        <div class="admin-category-cards">
-          <a href="{{ route('admin.categories.index') }}" class="admin-category-card categories">
-            <div class="admin-category-icon">
-              <ion-icon name="pricetags-outline"></ion-icon>
+                    <a href="{{ route('admin.categories.index') }}" class="admin-category-card categories">
+                      <div class="admin-category-icon">
+                        <ion-icon name="pricetags-outline"></ion-icon>
+                      </div>
+                      <h3 class="admin-category-title">Categorias</h3>
+                      <p class="admin-category-description">Gerencie as categorias dos produtos</p>
+                    </a>
+
+                    <a href="{{ route('admin.brands.index') }}" class="admin-category-card brands">
+                      <div class="admin-category-icon">
+                        <ion-icon name="business-outline"></ion-icon>
+                      </div>
+                      <h3 class="admin-category-title">Marcas</h3>
+                      <p class="admin-category-description">Gerencie as marcas dos produtos</p>
+                    </a>
+
+                    <a href="{{ route('admin.colors.index') }}" class="admin-category-card colors">
+                      <div class="admin-category-icon">
+                        <ion-icon name="color-palette-outline"></ion-icon>
+                      </div>
+                      <h3 class="admin-category-title">Cores</h3>
+                      <p class="admin-category-description">Gerencie as cores disponíveis</p>
+                    </a>
+
+                    <a href="{{ route('admin.sizes.index') }}" class="admin-category-card sizes">
+                      <div class="admin-category-icon">
+                        <ion-icon name="resize-outline"></ion-icon>
+                      </div>
+                      <h3 class="admin-category-title">Tamanhos</h3>
+                      <p class="admin-category-description">Gerencie os tamanhos disponíveis</p>
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
-            <h3 class="admin-category-title">Categorias</h3>
-            <p class="admin-category-description">Gerencie as categorias dos produtos</p>
-          </a>
+          </div>
 
-          <a href="{{ route('admin.brands.index') }}" class="admin-category-card brands">
-            <div class="admin-category-icon">
-              <ion-icon name="ribbon-outline"></ion-icon>
+          <!-- Seção de Estatísticas -->
+          <div class="admin-dashboard-stats-section">
+            <!-- Container das Estatísticas -->
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <h2 class="admin-card-title">
+                  <ion-icon name="analytics-outline"></ion-icon>
+                  Visão Geral da Loja
+                </h2>
+                <p class="admin-card-subtitle">Métricas principais de desempenho</p>
+              </div>
+              <div class="admin-card-body">
+                <!-- Cards de Estatísticas Principais -->
+                <div class="admin-stats-grid">
+                  <div class="admin-stat-card revenue">
+                    <div class="admin-stat-header">
+                      <div class="admin-stat-icon">
+                        <ion-icon name="cash-outline"></ion-icon>
+                      </div>
+                    </div>
+                    <div class="admin-stat-content">
+                      <div class="admin-stat-value">€{{ number_format($totalReceita, 2, ',', '.') }}</div>
+                      <div class="admin-stat-label">Receita ({{ $dias }} dias)</div>
+                    </div>
+                  </div>
+
+                  <div class="admin-stat-card ticket">
+                    <div class="admin-stat-header">
+                      <div class="admin-stat-icon">
+                        <ion-icon name="pricetag-outline"></ion-icon>
+                      </div>
+                    </div>
+                    <div class="admin-stat-content">
+                      <div class="admin-stat-value">€{{ number_format($ticketMedio, 2, ',', '.') }}</div>
+                      <div class="admin-stat-label">Ticket Médio</div>
+                    </div>
+                  </div>
+
+                  <div class="admin-stat-card low-stock">
+                    <div class="admin-stat-header">
+                      <div class="admin-stat-icon">
+                        <ion-icon name="warning-outline"></ion-icon>
+                      </div>
+                    </div>
+                    <div class="admin-stat-content">
+                      <div class="admin-stat-value">{{ $produtosBaixoEstoque }}</div>
+                      <div class="admin-stat-label">Baixo estoque</div>
+                    </div>
+                  </div>
+
+                  <div class="admin-stat-card new-customers">
+                    <div class="admin-stat-header">
+                      <div class="admin-stat-icon">
+                        <ion-icon name="person-add-outline"></ion-icon>
+                      </div>
+                    </div>
+                    <div class="admin-stat-content">
+                      <div class="admin-stat-value">{{ $novosClientes }}</div>
+                      <div class="admin-stat-label">Novos clientes ({{ $dias }} dias)</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <h3 class="admin-category-title">Marcas</h3>
-            <p class="admin-category-description">Configure as marcas disponíveis</p>
-          </a>
-
-          <a href="{{ route('admin.colors.index') }}" class="admin-category-card colors">
-            <div class="admin-category-icon">
-              <ion-icon name="color-palette-outline"></ion-icon>
-            </div>
-            <h3 class="admin-category-title">Cores</h3>
-            <p class="admin-category-description">Gerencie as cores dos produtos</p>
-          </a>
-
-          <a href="{{ route('admin.sizes.index') }}" class="admin-category-card sizes">
-            <div class="admin-category-icon">
-              <ion-icon name="resize-outline"></ion-icon>
-            </div>
-            <h3 class="admin-category-title">Tamanhos</h3>
-            <p class="admin-category-description">Configure os tamanhos disponíveis</p>
-          </a>
-        </div>
-      </div>
-
-      <!-- Gráfico de Pedidos -->
-      <div class="admin-chart-section">
-        <div class="admin-chart-header">
-          <h2 class="admin-chart-title">Pedidos nos últimos {{ $dias }} dias</h2>
-          <div class="admin-chart-controls">
-            <form method="GET" class="flex items-center gap-2">
-              <label for="dias" class="admin-chart-label">Período:</label>
-              <select name="dias" id="dias" class="admin-chart-select" onchange="this.form.submit()">
-                <option value="7" {{ $dias == 7 ? 'selected' : '' }}>7 dias</option>
-                <option value="15" {{ $dias == 15 ? 'selected' : '' }}>15 dias</option>
-                <option value="30" {{ $dias == 30 ? 'selected' : '' }}>30 dias</option>
-              </select>
-            </form>
           </div>
         </div>
-        <div class="admin-chart-content">
-          <canvas id="ordersChart" height="80"></canvas>
+
+        <!-- Gráfico de Pedidos -->
+        <div class="admin-chart-section">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h2 class="admin-card-title">Pedidos nos últimos {{ $dias }} dias</h2>
+              <div class="admin-chart-controls">
+                <form method="GET" class="flex items-center gap-2">
+                  <label for="dias" class="admin-chart-label">Período:</label>
+                  <select name="dias" id="dias" class="admin-chart-select" onchange="this.form.submit()">
+                    <option value="7" {{ $dias == 7 ? 'selected' : '' }}>7 dias</option>
+                    <option value="15" {{ $dias == 15 ? 'selected' : '' }}>15 dias</option>
+                    <option value="30" {{ $dias == 30 ? 'selected' : '' }}>30 dias</option>
+                  </select>
+                </form>
+              </div>
+            </div>
+            <div class="admin-card-body">
+              <div class="admin-chart-content">
+                <canvas id="ordersChart" height="80"></canvas>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

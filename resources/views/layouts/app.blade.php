@@ -166,17 +166,79 @@
           }, 100);
         },
 
-        loadCart() {
+        async loadCart() {
           const cart = JSON.parse(localStorage.getItem('cart') || '{}');
           this.cartItems = Object.values(cart);
           this.cartItemCount = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
           this.cartTotal = Object.values(cart).reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+          // Sincronizar com banco se usuário estiver logado
+          if (window.userAuthenticated) {
+            await this.syncCartToDatabase();
+          }
         },
 
-        loadFavorites() {
+        async loadFavorites() {
           const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
           this.favoritesItems = favorites;
           this.favoritesItemCount = favorites.length;
+
+          // Sincronizar com banco se usuário estiver logado
+          if (window.userAuthenticated) {
+            await this.syncFavoritesToDatabase();
+          }
+        },
+
+        async syncCartToDatabase() {
+          try {
+            const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+            const response = await fetch('/api/sync/cart', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+              },
+              body: JSON.stringify({
+                cart
+              })
+            });
+
+            if (response.ok) {
+              const data = await response.json();
+              if (data.success && data.cart) {
+                localStorage.setItem('cart', JSON.stringify(data.cart));
+                this.loadCart();
+              }
+            }
+          } catch (error) {
+            console.error('Erro ao sincronizar carrinho:', error);
+          }
+        },
+
+        async syncFavoritesToDatabase() {
+          try {
+            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+            const response = await fetch('/api/sync/favorites', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+              },
+              body: JSON.stringify({
+                favorites
+              })
+            });
+
+            if (response.ok) {
+              const data = await response.json();
+              if (data.success && data.favorites) {
+                localStorage.setItem('favorites', JSON.stringify(data.favorites));
+                this.loadFavorites();
+              }
+            }
+          } catch (error) {
+            console.error('Erro ao sincronizar favoritos:', error);
+          }
         },
 
         updateCartDisplay() {
@@ -197,10 +259,23 @@
 
         removeFromCart(productId) {
           let cart = JSON.parse(localStorage.getItem('cart') || '{}');
-          delete cart[productId.toString()];
-          localStorage.setItem('cart', JSON.stringify(cart));
-          this.loadCart();
-          this.updateCartDisplay();
+
+          // Encontrar a chave correta do item (pode ser produto-id, produto-id-c1, produto-id-c1-s2, etc.)
+          const cartKey = Object.keys(cart).find(key => key.startsWith(productId.toString()));
+
+          if (cartKey) {
+            delete cart[cartKey];
+            localStorage.setItem('cart', JSON.stringify(cart));
+            this.loadCart();
+            this.updateCartDisplay();
+
+            // Disparar evento para sincronizar com outras páginas
+            window.dispatchEvent(new CustomEvent('cartUpdated', {
+              detail: {
+                totalItems: Object.values(cart).reduce((sum, item) => sum + item.quantity, 0)
+              }
+            }));
+          }
         },
 
         removeFromFavorites(productId) {
@@ -220,7 +295,9 @@
 
         addToCartFromFavorites(productId, productName, price, image) {
           let cart = JSON.parse(localStorage.getItem('cart') || '{}');
-          const cartKey = productId.toString();
+
+          // Encontrar a chave correta do item (pode ser produto-id, produto-id-c1, produto-id-c1-s2, etc.)
+          const cartKey = Object.keys(cart).find(key => key.startsWith(productId.toString())) || productId.toString();
 
           if (cart[cartKey]) {
             cart[cartKey].quantity += 1;
@@ -272,6 +349,12 @@
           darkMode: darkMode
         }
       }));
+
+      // Definir se usuário está autenticado
+      window.userAuthenticated = @auth true
+    @else
+      false
+    @endauth ;
     });
 
     // Listener para mudanças de dark mode

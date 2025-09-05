@@ -8,258 +8,249 @@
 @endpush
 
 @section('content')
-  <!-- Banner Hero Carrossel -->
-  <section class="banner-section">
-    <div class="swiper bannerSwiper banner-swiper">
-      <div class="swiper-wrapper">
-        <!-- Banner 1 -->
-        <div class="swiper-slide banner-slide">
-          <div class="banner-background" style="background-image: url('{{ asset('images/banner_1.jpg') }}');">
-          </div>
-          <div class="banner-overlay"></div>
-          <div class="banner-content">
-            <h1 class="banner-title">
-              FRETE GRÁTIS PARA TODO O BRASIL
-            </h1>
-            <p class="banner-subtitle">
-              Aproveite condições especiais por tempo limitado!
-            </p>
-            <div class="banner-buttons">
-              <a href="{{ route('shop.products.index') }}" class="banner-btn banner-btn-primary">
-                <ion-icon name="bag-outline" class="banner-btn-icon"></ion-icon>
-                Comprar Agora
-              </a>
-              <a href="{{ route('shop.products.index') }}" class="banner-btn banner-btn-secondary">
-                <ion-icon name="eye-outline" class="banner-btn-icon"></ion-icon>
-                Ver Produtos
-              </a>
-            </div>
-          </div>
-        </div>
-        <!-- Banner 2 -->
-        <div class="swiper-slide banner-slide">
-          <div class="banner-background" style="background-image: url('{{ asset('images/banner_2.jpg') }}');">
-          </div>
-          <div class="banner-overlay"></div>
-          <div class="banner-content">
-            <h1 class="banner-title">
-              NOVA COLEÇÃO CHEGOU
-            </h1>
-            <p class="banner-subtitle">
-              Descubra as tendências do ano com exclusividade
-            </p>
-            <div class="banner-buttons">
-              <a href="{{ route('shop.products.index') }}" class="banner-btn banner-btn-primary">
-                <ion-icon name="star-outline" class="banner-btn-icon"></ion-icon>
-                Ver Novidades
-              </a>
-              <a href="{{ route('shop.products.index') }}" class="banner-btn banner-btn-secondary">
-                <ion-icon name="trending-up-outline" class="banner-btn-icon"></ion-icon>
-                Tendências
-              </a>
-            </div>
-          </div>
-        </div>
-        <!-- Banner 3 -->
-        <div class="swiper-slide banner-slide">
-          <div class="banner-background" style="background-image: url('{{ asset('images/banner_3.jpg') }}');">
-          </div>
-          <div class="banner-overlay"></div>
-          <div class="banner-content">
-            <h1 class="banner-title">
-              MAIS DO QUE APENAS "UMA LOJA"
-            </h1>
-            <p class="banner-subtitle">
-              Um estilo de vida com qualidade e equilíbrio
-            </p>
-            <div class="banner-buttons">
-              <a href="{{ route('shop.products.index') }}" class="banner-btn banner-btn-primary">
-                <ion-icon name="heart-outline" class="banner-btn-icon"></ion-icon>
-                Descobrir
-              </a>
-              <a href="{{ route('shop.products.index') }}" class="banner-btn banner-btn-secondary">
-                <ion-icon name="information-circle-outline" class="banner-btn-icon"></ion-icon>
-                Saiba Mais
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="banner-pagination"></div>
-      <div class="banner-button-prev custom-swiper-arrow">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-      </div>
-      <div class="banner-button-next custom-swiper-arrow">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
-      </div>
-    </div>
-  </section>
-
-  <!-- Seção de Marcas Premium -->
-  <section class="brands-section">
-    <div class="brands-header">
-      <h2 class="brands-title">MARCAS PREMIUM</h2>
-      <p class="brands-subtitle">Descubra as melhores marcas de calçados esportivos e casuais, selecionadas especialmente
-        para você</p>
-    </div>
-
-    <div class="brands-container">
-      <!-- Botão de navegação anterior -->
-      <div class="brands-button-prev custom-swiper-arrow">
-        <ion-icon name="chevron-back-outline"></ion-icon>
-      </div>
-
-      <!-- Carrossel de marcas -->
-      <div class="swiper marcasSwiper brands-swiper">
+  <div class="welcome-page">
+    <!-- Banner Hero Carrossel -->
+    <section class="welcome-banner-section">
+      <div class="swiper bannerSwiper welcome-banner-swiper">
         <div class="swiper-wrapper">
-          @foreach ($brands as $brand)
-            <div class="swiper-slide brand-slide">
-              <a href="{{ route('shop.brands.show', $brand) }}" class="brand-card">
-                <div class="brand-logo-container">
-                  <img src="{{ asset('brands/' . $brand->logo) }}" alt="{{ $brand->name }}" class="brand-logo">
-                </div>
-                <div class="brand-name">{{ $brand->name }}</div>
-              </a>
+          <!-- Banner 1 -->
+          <div class="swiper-slide welcome-banner-slide">
+            <div class="welcome-banner-background" style="background-image: url('{{ asset('images/banner_1.jpg') }}');">
             </div>
-          @endforeach
-        </div>
-      </div>
-
-      <!-- Botão de navegação próximo -->
-      <div class="brands-button-next custom-swiper-arrow">
-        <ion-icon name="chevron-forward-outline"></ion-icon>
-      </div>
-    </div>
-
-    <!-- Paginação -->
-    <div class="brands-pagination-container">
-      <div class="brands-pagination"></div>
-    </div>
-  </section>
-
-  <!-- Carrossel de produtos em destaque -->
-  <section class="products-section">
-    <h2 class="products-title">Produtos em Destaque</h2>
-    <p class="products-subtitle">Os produtos mais vendidos e queridos pelos nossos clientes. Qualidade e estilo em cada
-      escolha</p>
-    <div class="products-container">
-      <div class="product-button-prev custom-swiper-arrow">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-      </div>
-      <div class="swiper productSwiper products-swiper">
-        <div class="swiper-wrapper">
-          @foreach ($products as $product)
-            <div class="swiper-slide product-slide">
-              <div class="product-card" data-product-id="{{ $product->id }}">
-                <!-- Badges e botões de ação -->
-                <div class="product-badges">
-                  @if ($product->is_new)
-                    <span class="product-badge product-badge--new">Novo</span>
-                  @endif
-                  @if ($product->is_sale)
-                    <span class="product-badge product-badge--sale">
-                      {{ round((($product->price - $product->sale_price) / $product->price) * 100) }}% OFF
-                    </span>
-                  @endif
-                  @if ($product->free_shipping)
-                    <span class="product-badge product-badge--shipping">Frete Grátis</span>
-                  @endif
-                </div>
-
-                <!-- Botão de favorito -->
-                <button class="product-favorite-btn" title="Adicionar aos favoritos"
-                  onclick="toggleFavorite({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
-                  <ion-icon name="heart-outline"></ion-icon>
-                </button>
-
-                <!-- Imagem do produto -->
-                <a href="{{ route('shop.products.show', $product) }}" class="product-image-link">
-                  <img src="{{ asset('products/' . $product->image) }}" alt="{{ $product->name }}"
-                    class="product-image">
+            <div class="welcome-banner-overlay"></div>
+            <div class="welcome-banner-content">
+              <h1 class="welcome-banner-title">FRETE GRÁTIS PARA TODO O BRASIL</h1>
+              <p class="welcome-banner-subtitle">Aproveite condições especiais por tempo limitado!</p>
+              <div class="welcome-banner-buttons">
+                <a href="{{ route('shop.products.index') }}" class="welcome-btn welcome-btn-primary">
+                  <ion-icon name="bag-outline" class="welcome-btn-icon"></ion-icon>
+                  Comprar Agora
                 </a>
+                <a href="{{ route('shop.products.index') }}" class="welcome-btn welcome-btn-secondary">
+                  <ion-icon name="eye-outline" class="welcome-btn-icon"></ion-icon>
+                  Ver Produtos
+                </a>
+              </div>
+            </div>
+          </div>
+          <!-- Banner 2 -->
+          <div class="swiper-slide welcome-banner-slide">
+            <div class="welcome-banner-background" style="background-image: url('{{ asset('images/banner_2.jpg') }}');">
+            </div>
+            <div class="welcome-banner-overlay"></div>
+            <div class="welcome-banner-content">
+              <h1 class="welcome-banner-title">NOVA COLEÇÃO CHEGOU</h1>
+              <p class="welcome-banner-subtitle">Descubra as tendências do ano com exclusividade</p>
+              <div class="welcome-banner-buttons">
+                <a href="{{ route('shop.products.index') }}" class="welcome-btn welcome-btn-primary">
+                  <ion-icon name="star-outline" class="welcome-btn-icon"></ion-icon>
+                  Ver Novidades
+                </a>
+                <a href="{{ route('shop.products.index') }}" class="welcome-btn welcome-btn-secondary">
+                  <ion-icon name="trending-up-outline" class="welcome-btn-icon"></ion-icon>
+                  Tendências
+                </a>
+              </div>
+            </div>
+          </div>
+          <!-- Banner 3 -->
+          <div class="swiper-slide welcome-banner-slide">
+            <div class="welcome-banner-background" style="background-image: url('{{ asset('images/banner_3.jpg') }}');">
+            </div>
+            <div class="welcome-banner-overlay"></div>
+            <div class="welcome-banner-content">
+              <h1 class="welcome-banner-title">MAIS DO QUE APENAS "UMA LOJA"</h1>
+              <p class="welcome-banner-subtitle">Um estilo de vida com qualidade e equilíbrio</p>
+              <div class="welcome-banner-buttons">
+                <a href="{{ route('shop.products.index') }}" class="welcome-btn welcome-btn-primary">
+                  <ion-icon name="heart-outline" class="welcome-btn-icon"></ion-icon>
+                  Descobrir
+                </a>
+                <a href="{{ route('shop.products.index') }}" class="welcome-btn welcome-btn-secondary">
+                  <ion-icon name="information-circle-outline" class="welcome-btn-icon"></ion-icon>
+                  Saiba Mais
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="welcome-banner-pagination"></div>
+        <div class="welcome-banner-button-prev welcome-nav-arrow">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </div>
+        <div class="welcome-banner-button-next welcome-nav-arrow">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </div>
+    </section>
 
-                <!-- Conteúdo do produto -->
-                <div class="product-content">
-                  <!-- Categoria e Nome -->
-                  <div class="product-header">
-                    <div class="product-category">
-                      @if ($product->categories->count() > 0)
-                        {{ $product->categories->first()->name }}
-                      @else
-                        Calçados
-                      @endif
-                    </div>
-                    <h3 class="product-name" title="{{ $product->name }}">
-                      <a href="{{ route('shop.products.show', $product) }}">
-                        {{ $product->name }}
-                      </a>
-                    </h3>
+    <!-- Seção de Marcas Premium -->
+    <section class="welcome-brands-section">
+      <div class="welcome-section-header">
+        <h2 class="welcome-section-title">MARCAS PREMIUM</h2>
+        <p class="welcome-section-subtitle">Descubra as melhores marcas de calçados esportivos e casuais, selecionadas
+          especialmente para você</p>
+      </div>
+
+      <div class="welcome-brands-container">
+        <div class="welcome-brands-button-prev welcome-nav-arrow">
+          <ion-icon name="chevron-back-outline"></ion-icon>
+        </div>
+
+        <div class="swiper marcasSwiper welcome-brands-swiper">
+          <div class="swiper-wrapper">
+            @foreach ($brands as $brand)
+              <div class="swiper-slide welcome-brand-slide">
+                <a href="{{ route('shop.brands.show', $brand) }}" class="welcome-brand-card">
+                  <div class="welcome-brand-logo-container">
+                    <img src="{{ asset('brands/' . $brand->logo) }}" alt="{{ $brand->name }}"
+                      class="welcome-brand-logo">
                   </div>
+                  <div class="welcome-brand-name">{{ $brand->name }}</div>
+                </a>
+              </div>
+            @endforeach
+          </div>
+        </div>
 
-                  <!-- Rating -->
-                  <div class="product-rating">
-                    <div class="product-stars">
-                      @for ($i = 1; $i <= 5; $i++)
-                        <ion-icon name="{{ $i <= $product->rating ? 'star' : 'star-outline' }}"></ion-icon>
-                      @endfor
-                    </div>
-                    <span class="product-rating-count">({{ $product->rating_count }})</span>
-                  </div>
+        <div class="welcome-brands-button-next welcome-nav-arrow">
+          <ion-icon name="chevron-forward-outline"></ion-icon>
+        </div>
+      </div>
 
-                  <!-- Preços e Parcelas -->
-                  <div class="product-pricing">
-                    @if ($product->is_sale && $product->sale_price)
-                      <div class="product-price-row">
-                        <span class="product-old-price">€{{ number_format($product->price, 2, ',', '.') }}</span>
-                        <span class="product-new-price">€{{ number_format($product->sale_price, 2, ',', '.') }}</span>
-                      </div>
-                    @else
-                      <span class="product-price">€{{ number_format($product->price, 2, ',', '.') }}</span>
+      <div class="welcome-brands-pagination-container">
+        <div class="welcome-brands-pagination"></div>
+      </div>
+    </section>
+
+    <!-- Carrossel de produtos em destaque -->
+    <section class="welcome-products-section">
+      <div class="welcome-section-header">
+        <h2 class="welcome-section-title">Produtos em Destaque</h2>
+        <p class="welcome-section-subtitle">Os produtos mais vendidos e queridos pelos nossos clientes. Qualidade e estilo
+          em cada escolha</p>
+      </div>
+
+      <div class="welcome-products-container">
+        <div class="welcome-product-button-prev welcome-nav-arrow">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </div>
+
+        <div class="swiper productSwiper welcome-products-swiper">
+          <div class="swiper-wrapper">
+            @foreach ($products as $product)
+              <div class="swiper-slide welcome-product-slide">
+                <div class="welcome-product-card" data-product-id="{{ $product->id }}">
+                  <!-- Badges -->
+                  <div class="welcome-product-badges">
+                    @if ($product->is_new)
+                      <span class="welcome-badge welcome-badge--new">Novo</span>
                     @endif
-
-                    <div class="product-installments">
-                      @if ($product->installments > 1 && $product->installment_value)
-                        ou {{ $product->installments }}x de
-                        €{{ number_format($product->installment_value, 2, ',', '.') }}
-                      @else
-                        ou 10x de
-                        €{{ number_format(($product->is_sale ? $product->sale_price : $product->price) / 10, 2, ',', '.') }}
-                      @endif
-                    </div>
+                    @if ($product->is_sale)
+                      <span class="welcome-badge welcome-badge--sale">
+                        {{ round((($product->price - $product->sale_price) / $product->price) * 100) }}% OFF
+                      </span>
+                    @endif
+                    @if ($product->free_shipping)
+                      <span class="welcome-badge welcome-badge--shipping">Frete Grátis</span>
+                    @endif
                   </div>
 
-                  <!-- Botões de ação -->
-                  <div class="product-actions">
-                    <button class="product-add-cart-btn" title="Adicionar ao carrinho"
-                      onclick="addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
-                      <ion-icon name="bag-outline"></ion-icon>
-                    </button>
-                    <button class="product-buy-now-btn" title="Comprar agora"
-                      onclick="buyNow({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
-                      <ion-icon name="flash-outline"></ion-icon>
-                      Comprar
-                    </button>
+                  <!-- Botão de favorito -->
+                  <button class="welcome-product-favorite-btn" title="Adicionar aos favoritos"
+                    onclick="toggleFavorite({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
+                    <ion-icon name="heart-outline"></ion-icon>
+                  </button>
+
+                  <!-- Imagem do produto -->
+                  <a href="{{ route('shop.products.show', $product) }}" class="welcome-product-image-link">
+                    <img src="{{ asset('products/' . $product->image) }}" alt="{{ $product->name }}"
+                      class="welcome-product-image">
+                  </a>
+
+                  <!-- Conteúdo do produto -->
+                  <div class="welcome-product-content">
+                    <div class="welcome-product-header">
+                      <div class="welcome-product-category">
+                        @if ($product->categories->count() > 0)
+                          {{ $product->categories->first()->name }}
+                        @else
+                          Calçados
+                        @endif
+                      </div>
+                      <h3 class="welcome-product-name" title="{{ $product->name }}">
+                        <a href="{{ route('shop.products.show', $product) }}">{{ $product->name }}</a>
+                      </h3>
+                    </div>
+
+                    <!-- Rating -->
+                    <div class="welcome-product-rating">
+                      <div class="welcome-product-stars">
+                        @for ($i = 1; $i <= 5; $i++)
+                          <ion-icon name="{{ $i <= $product->rating ? 'star' : 'star-outline' }}"></ion-icon>
+                        @endfor
+                      </div>
+                      <span class="welcome-product-rating-count">({{ $product->rating_count }})</span>
+                    </div>
+
+                    <!-- Preços -->
+                    <div class="welcome-product-pricing">
+                      @if ($product->is_sale && $product->sale_price)
+                        <div class="welcome-product-price-row">
+                          <span
+                            class="welcome-product-old-price">€{{ number_format($product->price, 2, ',', '.') }}</span>
+                          <span
+                            class="welcome-product-new-price">€{{ number_format($product->sale_price, 2, ',', '.') }}</span>
+                        </div>
+                      @else
+                        <span class="welcome-product-price">€{{ number_format($product->price, 2, ',', '.') }}</span>
+                      @endif
+
+                      <div class="welcome-product-installments">
+                        @if ($product->installments > 1 && $product->installment_value)
+                          ou {{ $product->installments }}x de
+                          €{{ number_format($product->installment_value, 2, ',', '.') }}
+                        @else
+                          ou 10x de
+                          €{{ number_format(($product->is_sale ? $product->sale_price : $product->price) / 10, 2, ',', '.') }}
+                        @endif
+                      </div>
+                    </div>
+
+                    <!-- Botões de ação -->
+                    <div class="welcome-product-actions">
+                      <button class="welcome-product-add-cart-btn" title="Adicionar ao carrinho"
+                        onclick="addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
+                        <ion-icon name="bag-outline"></ion-icon>
+                      </button>
+                      <button class="welcome-product-buy-now-btn" title="Comprar agora"
+                        onclick="buyNow({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
+                        <ion-icon name="flash-outline"></ion-icon>
+                        Comprar
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          @endforeach
+            @endforeach
+          </div>
+          <div class="welcome-product-pagination"></div>
         </div>
-        <div class="product-pagination"></div>
+
+        <div class="welcome-product-button-next welcome-nav-arrow">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
       </div>
-      <div class="product-button-next custom-swiper-arrow">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
-      </div>
-    </div>
-  </section>
+    </section>
+  </div>
 @endsection
 
 @push('scripts')
@@ -271,12 +262,12 @@
       loop: true,
       speed: 900,
       pagination: {
-        el: '.banner-pagination',
+        el: '.welcome-banner-pagination',
         clickable: true,
       },
       navigation: {
-        nextEl: '.banner-button-next',
-        prevEl: '.banner-button-prev',
+        nextEl: '.welcome-banner-button-next',
+        prevEl: '.welcome-banner-button-prev',
       },
       autoplay: {
         delay: 5000,
@@ -290,11 +281,11 @@
       spaceBetween: 16,
       loop: true,
       navigation: {
-        nextEl: '.brands-button-next',
-        prevEl: '.brands-button-prev',
+        nextEl: '.welcome-brands-button-next',
+        prevEl: '.welcome-brands-button-prev',
       },
       pagination: {
-        el: '.brands-pagination',
+        el: '.welcome-brands-pagination',
         clickable: true,
       },
       breakpoints: {
@@ -319,12 +310,12 @@
       spaceBetween: 16,
       loop: true,
       pagination: {
-        el: '.product-pagination',
+        el: '.welcome-product-pagination',
         clickable: true
       },
       navigation: {
-        nextEl: '.product-button-next',
-        prevEl: '.product-button-prev'
+        nextEl: '.welcome-product-button-next',
+        prevEl: '.welcome-product-button-prev'
       },
       breakpoints: {
         640: {
@@ -432,7 +423,7 @@
 
     // Função para atualizar visual do botão de favorito
     function updateFavoriteButton(productId, isFavorite) {
-      const button = document.querySelector(`[data-product-id="${productId}"] .product-favorite-btn`);
+      const button = document.querySelector(`[data-product-id="${productId}"] .welcome-product-favorite-btn`);
       if (button) {
         const icon = button.querySelector('ion-icon');
         if (isFavorite) {
@@ -450,8 +441,8 @@
       // Obter carrinho atual do localStorage (novo formato de objeto)
       let cart = JSON.parse(localStorage.getItem('cart') || '{}');
 
-      // Criar chave única para o produto (sem variações para produtos da home)
-      const cartKey = productId.toString();
+      // Encontrar a chave correta do item (pode ser produto-id, produto-id-c1, produto-id-c1-s2, etc.)
+      const cartKey = Object.keys(cart).find(key => key.startsWith(productId.toString())) || productId.toString();
 
       // Verificar se o produto já está no carrinho
       if (cart[cartKey]) {

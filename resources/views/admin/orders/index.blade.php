@@ -1,205 +1,359 @@
 @extends('layouts.app')
 
-@section('title', 'Gerenciar Pedidos')
+@section('title', 'Pedidos')
 
 @section('content')
-  <div class="max-w-7xl mx-auto py-8 px-2 md:px-0">
-    <div class="bg-white shadow rounded-lg p-6 md:p-8">
-      <h1 class="text-3xl font-bold mb-2">Gerenciar Pedidos</h1>
-      <p class="text-gray-600 mb-6">Visão geral e gestão de todos os pedidos</p>
+  <div class="admin-page">
+    <div class="admin-content">
+      <div class="admin-container">
+        <div class="admin-card">
+          <!-- Header -->
+          <div class="admin-card-header">
+            <nav class="admin-breadcrumb">
+              <a href="{{ route('admin.dashboard') }}">
+                <ion-icon name="home-outline"></ion-icon>
+                Dashboard
+              </a>
+              <ion-icon name="chevron-forward-outline" class="separator"></ion-icon>
+              <span>Pedidos</span>
+            </nav>
 
-      <!-- Estatísticas rápidas -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div class="bg-blue-50 rounded-lg p-4 flex items-center gap-4">
-          <div class="bg-blue-100 rounded-full p-2">
-            <ion-icon name="receipt-outline" class="text-blue-600 text-2xl"></ion-icon>
+            <h1 class="admin-card-title">
+              <ion-icon name="receipt-outline"></ion-icon>
+              Gerenciar Pedidos
+            </h1>
+            <p class="admin-card-subtitle">Visão geral e gestão de todos os pedidos</p>
           </div>
-          <div>
-            <div class="text-xs text-gray-500">Total de Pedidos</div>
-            <div class="font-bold text-2xl text-blue-700">{{ $stats['total'] }}</div>
-          </div>
-        </div>
-        <div class="bg-green-50 rounded-lg p-4 flex items-center gap-4">
-          <div class="bg-green-100 rounded-full p-2">
-            <ion-icon name="cash-outline" class="text-green-600 text-2xl"></ion-icon>
-          </div>
-          <div>
-            <div class="text-xs text-gray-500">Receita Total</div>
-            <div class="font-bold text-2xl text-green-700">R$ {{ number_format($stats['revenue'], 2, ',', '.') }}</div>
-          </div>
-        </div>
-        <div class="bg-purple-50 rounded-lg p-4 flex items-center gap-4">
-          <div class="bg-purple-100 rounded-full p-2">
-            <ion-icon name="pricetag-outline" class="text-purple-600 text-2xl"></ion-icon>
-          </div>
-          <div>
-            <div class="text-xs text-gray-500">Ticket Médio</div>
-            <div class="font-bold text-2xl text-purple-700">R$ {{ number_format($stats['average'], 2, ',', '.') }}</div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Filtros -->
-      <form method="GET" class="grid grid-cols-1 md:grid-cols-5 gap-2 md:gap-4 items-end mb-6">
-        <div>
-          <label class="block text-xs text-gray-500 mb-1">Buscar:</label>
-          <input type="text" name="search" value="{{ request('search') }}" placeholder="ID ou cliente"
-            class="border rounded-lg px-3 py-2 text-sm w-full" />
-        </div>
-        <div>
-          <label class="block text-xs text-gray-500 mb-1">Status:</label>
-          <select name="status" class="border rounded-lg px-3 py-2 text-sm w-full">
-            <option value="Todos">Todos</option>
-            <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Aguardando</option>
-            <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Pago</option>
-            <option value="shipped" {{ request('status') == 'shipped' ? 'selected' : '' }}>Enviado</option>
-            <option value="delivered" {{ request('status') == 'delivered' ? 'selected' : '' }}>Entregue</option>
-            <option value="canceled" {{ request('status') == 'canceled' ? 'selected' : '' }}>Cancelado</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-xs text-gray-500 mb-1">De:</label>
-          <input type="date" name="date_from" value="{{ request('date_from') }}"
-            class="border rounded-lg px-3 py-2 text-sm w-full" />
-        </div>
-        <div>
-          <label class="block text-xs text-gray-500 mb-1">Até:</label>
-          <input type="date" name="date_to" value="{{ request('date_to') }}"
-            class="border rounded-lg px-3 py-2 text-sm w-full" />
-        </div>
-        <div class="flex gap-2">
-          <button type="submit"
-            class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-sm w-full">Filtrar</button>
-          @if (request()->hasAny(['search', 'status', 'date_from', 'date_to']))
-            <a href="{{ route('admin.orders.index') }}"
-              class="text-sm text-gray-500 underline flex items-center">Limpar</a>
-          @endif
-        </div>
-      </form>
-
-      <!-- Tabela responsiva -->
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 text-sm">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-4 py-3 text-left font-semibold">ID</th>
-              <th class="px-4 py-3 text-left font-semibold">Cliente</th>
-              <th class="px-4 py-3 text-left font-semibold">Data</th>
-              <th class="px-4 py-3 text-left font-semibold">Status</th>
-              <th class="px-4 py-3 text-left font-semibold">Produtos</th>
-              <th class="px-4 py-3 text-right font-semibold">Total</th>
-              <th class="px-4 py-3 text-center font-semibold">Ações</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-100">
-            @forelse($orders as $order)
-              <tr class="hover:bg-gray-50 transition">
-                <td class="px-4 py-3 font-semibold">#{{ $order->id }}</td>
-                <td class="px-4 py-3">
-                  <div class="flex items-center gap-2">
-                    <div
-                      class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-600">
-                      {{ strtoupper(mb_substr($order->user->name ?? $order->name, 0, 2)) }}
-                    </div>
-                    <div>
-                      <div class="font-medium text-gray-900">{{ $order->user->name ?? $order->name }}</div>
-                      <div class="text-xs text-gray-500">{{ $order->user->email ?? '' }}</div>
+          <!-- Estatísticas -->
+          <div class="admin-card-body">
+            <div class="admin-stats-container">
+              <h2 class="admin-stats-title">Visão Geral da Loja</h2>
+              <div class="admin-stats-grid">
+                <div class="admin-stat-card">
+                  <div class="admin-stat-header">
+                    <div class="admin-stat-icon">
+                      <ion-icon name="receipt-outline"></ion-icon>
                     </div>
                   </div>
-                </td>
-                <td class="px-4 py-3">
-                  {{ $order->created_at->format('d/m/Y') }}<br>
-                  <span class="text-xs text-gray-400">{{ $order->created_at->format('H:i') }}</span>
-                </td>
-                <td class="px-4 py-3 relative">
-                  <div class="inline-block">
-                    <button type="button"
-                      class="status-badge px-2 py-1 rounded text-xs font-medium focus:outline-none transition flex items-center gap-1
-                      @if ($order->status === 'pending') bg-yellow-100 text-yellow-700
-                      @elseif($order->status === 'paid') bg-green-100 text-green-700
-                      @elseif($order->status === 'shipped') bg-blue-100 text-blue-700
-                      @elseif($order->status === 'delivered') bg-gray-200 text-gray-700
-                      @elseif($order->status === 'canceled') bg-red-100 text-red-700
-                      @else bg-gray-100 text-gray-700 @endif"
-                      data-order-id="{{ $order->id }}" data-current-status="{{ $order->status }}">
-                      {{ [
-                          'pending' => 'Aguardando',
-                          'paid' => 'Pago',
-                          'shipped' => 'Enviado',
-                          'delivered' => 'Entregue',
-                          'canceled' => 'Cancelado',
-                      ][$order->status] ?? ucfirst($order->status) }}
-                      <svg class="inline w-3 h-3 ml-1 text-gray-400 pointer-events-none" fill="none"
-                        viewBox="0 0 20 20">
-                        <path d="M6 8l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                          stroke-linejoin="round" />
-                      </svg>
-                    </button>
-                    <!-- Dropdown -->
-                    <div class="hidden absolute z-20 mt-1 w-32 bg-white border rounded shadow status-dropdown">
-                      @foreach (['pending' => 'Aguardando', 'paid' => 'Pago', 'shipped' => 'Enviado', 'delivered' => 'Entregue', 'canceled' => 'Cancelado'] as $value => $label)
-                        <a href="#" class="block px-4 py-2 text-xs hover:bg-gray-100 status-option"
-                          data-status="{{ $value }}">{{ $label }}</a>
-                      @endforeach
+                  <div class="admin-stat-content">
+                    <div class="admin-stat-value">{{ $stats['total'] }}</div>
+                    <div class="admin-stat-label">Total de Pedidos</div>
+                  </div>
+                </div>
+
+                <div class="admin-stat-card">
+                  <div class="admin-stat-header">
+                    <div class="admin-stat-icon">
+                      <ion-icon name="cash-outline"></ion-icon>
                     </div>
                   </div>
-                </td>
-                <td class="px-4 py-3">
-                  <div class="flex flex-wrap gap-1">
-                    @foreach ($order->items->take(2) as $item)
-                      <img src="{{ asset('products/' . ($item->product->image ?? '')) }}"
-                        class="w-8 h-8 object-cover rounded border" alt="{{ $item->product->name ?? $item->name }}"
-                        title="{{ $item->product->name ?? $item->name }} (x{{ $item->quantity }})">
+                  <div class="admin-stat-content">
+                    <div class="admin-stat-value">€{{ number_format($stats['revenue'], 2, ',', '.') }}</div>
+                    <div class="admin-stat-label">Receita Total</div>
+                  </div>
+                </div>
+
+                <div class="admin-stat-card">
+                  <div class="admin-stat-header">
+                    <div class="admin-stat-icon">
+                      <ion-icon name="pricetag-outline"></ion-icon>
+                    </div>
+                  </div>
+                  <div class="admin-stat-content">
+                    <div class="admin-stat-value">€{{ number_format($stats['average'], 2, ',', '.') }}</div>
+                    <div class="admin-stat-label">Ticket Médio</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Filtros -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h2 class="admin-card-title">
+              <ion-icon name="funnel-outline"></ion-icon>
+              Filtros de Busca
+            </h2>
+          </div>
+          <div class="admin-card-body">
+            <form method="GET" class="admin-filters">
+              <div class="admin-form-grid">
+                <div class="admin-form-group">
+                  <label class="admin-form-label">Buscar Pedido</label>
+                  <input type="text" name="search" value="{{ request('search') }}"
+                    placeholder="ID do pedido ou nome do cliente..." class="admin-form-input">
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-form-label">Status</label>
+                  <select name="status" class="admin-form-select">
+                    <option value="">Todos os status</option>
+                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Aguardando</option>
+                    <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Pago</option>
+                    <option value="shipped" {{ request('status') == 'shipped' ? 'selected' : '' }}>Enviado</option>
+                    <option value="delivered" {{ request('status') == 'delivered' ? 'selected' : '' }}>Entregue</option>
+                    <option value="canceled" {{ request('status') == 'canceled' ? 'selected' : '' }}>Cancelado</option>
+                  </select>
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-form-label">Itens por página</label>
+                  <select name="per_page" class="admin-form-select">
+                    @foreach ($perPageOptions as $option)
+                      <option value="{{ $option }}" {{ $perPage == $option ? 'selected' : '' }}>
+                        {{ $option }} itens
+                      </option>
                     @endforeach
-                    @if ($order->items->count() > 2)
-                      <span
-                        class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded border text-xs text-gray-500">+{{ $order->items->count() - 2 }}</span>
-                    @endif
-                  </div>
-                </td>
-                <td class="px-4 py-3 text-right font-semibold">R$ {{ number_format($order->total, 2, ',', '.') }}</td>
-                <td class="px-4 py-3 text-center">
-                  <a href="{{ route('admin.orders.show', $order) }}"
-                    class="text-blue-600 hover:text-blue-800 font-bold underline">Ver detalhes</a>
-                </td>
-              </tr>
-            @empty
-              <tr>
-                <td colspan="7" class="py-8 text-center text-gray-500">Nenhum pedido encontrado.</td>
-              </tr>
-            @endforelse
-          </tbody>
-        </table>
-      </div>
-      <div class="mt-6 flex justify-center">
-        {{ $orders->links() }}
+                  </select>
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-form-label">Data Inicial</label>
+                  <input type="date" name="date_from" value="{{ request('date_from') }}" class="admin-form-input">
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-form-label">Data Final</label>
+                  <input type="date" name="date_to" value="{{ request('date_to') }}" class="admin-form-input">
+                </div>
+              </div>
+
+              <div class="admin-form-actions">
+                <button type="submit" class="admin-btn admin-btn-primary">
+                  <ion-icon name="search-outline"></ion-icon>
+                  Filtrar
+                </button>
+
+                @if (request()->hasAny(['search', 'status', 'date_from', 'date_to']))
+                  <a href="{{ route('admin.orders.index') }}" class="admin-btn admin-btn-secondary">
+                    <ion-icon name="refresh-outline"></ion-icon>
+                    Limpar Filtros
+                  </a>
+                @endif
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Tabela -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h2 class="admin-card-title">
+              <ion-icon name="list-outline"></ion-icon>
+              Lista de Pedidos
+            </h2>
+          </div>
+          <div class="admin-card-body">
+
+            <div class="admin-table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Data</th>
+                    <th>Status</th>
+                    <th>Produtos</th>
+                    <th>Total</th>
+                    <th>Pagamento</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @forelse($orders as $order)
+                    <tr>
+                      <td>
+                        <div class="admin-order-id">#{{ $order->id }}</div>
+                      </td>
+                      <td>
+                        <div class="admin-customer-info">
+                          <div class="admin-customer-avatar">
+                            {{ strtoupper(mb_substr($order->user->name ?? $order->name, 0, 2)) }}
+                          </div>
+                          <div class="admin-customer-details">
+                            <div class="admin-customer-name">{{ $order->user->name ?? $order->name }}</div>
+                            <div class="admin-customer-email">{{ $order->user->email ?? '' }}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="admin-order-date">
+                          <div class="admin-order-date-main">{{ $order->created_at->format('d/m/Y') }}</div>
+                          <div class="admin-order-date-time">{{ $order->created_at->format('H:i') }}</div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="admin-status-dropdown">
+                          <button type="button" class="admin-status-badge admin-status-{{ $order->status }}"
+                            data-order-id="{{ $order->id }}" data-current-status="{{ $order->status }}">
+                            {{ [
+                                'pending' => 'Aguardando',
+                                'paid' => 'Pago',
+                                'shipped' => 'Enviado',
+                                'delivered' => 'Entregue',
+                                'canceled' => 'Cancelado',
+                            ][$order->status] ?? ucfirst($order->status) }}
+                            <ion-icon name="chevron-down-outline"></ion-icon>
+                          </button>
+                          <div class="admin-status-options">
+                            @foreach (['pending' => 'Aguardando', 'paid' => 'Pago', 'shipped' => 'Enviado', 'delivered' => 'Entregue', 'canceled' => 'Cancelado'] as $value => $label)
+                              <button type="button" class="admin-status-option"
+                                data-status="{{ $value }}">{{ $label }}</button>
+                            @endforeach
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="admin-order-products">
+                          @foreach ($order->items->take(3) as $item)
+                            <img src="{{ asset('products/' . ($item->product->image ?? '')) }}"
+                              class="admin-product-thumbnail" alt="{{ $item->product->name ?? $item->name }}"
+                              title="{{ $item->product->name ?? $item->name }} (x{{ $item->quantity }})">
+                          @endforeach
+                          @if ($order->items->count() > 3)
+                            <div class="admin-product-more">+{{ $order->items->count() - 3 }}</div>
+                          @endif
+                        </div>
+                      </td>
+                      <td>
+                        <div class="admin-order-total">€{{ number_format($order->total, 2, ',', '.') }}</div>
+                      </td>
+                      <td>
+                        <div class="admin-payment-status">
+                          <span class="admin-payment-badge admin-payment-{{ $order->payment_status ?? 'pending' }}">
+                            <ion-icon
+                              name="{{ $order->payment_status == 'paid' ? 'checkmark-circle' : 'time-outline' }}"></ion-icon>
+                            {{ $order->payment_status == 'paid' ? 'Pago' : 'Pendente' }}
+                          </span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="admin-actions">
+                          <a href="{{ route('admin.orders.show', $order) }}" class="admin-icon-btn admin-icon-btn-view"
+                            title="Ver Detalhes">
+                            <ion-icon name="eye-outline"></ion-icon>
+                          </a>
+                          <button class="admin-icon-btn admin-icon-btn-print" title="Imprimir Pedido"
+                            onclick="printOrder({{ $order->id }})">
+                            <ion-icon name="print-outline"></ion-icon>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  @empty
+                    <tr>
+                      <td colspan="8">
+                        <div class="admin-empty-state">
+                          <ion-icon name="receipt-outline"></ion-icon>
+                          <p>Nenhum pedido encontrado</p>
+                        </div>
+                      </td>
+                    </tr>
+                  @endforelse
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Paginação -->
+            <div class="admin-pagination">
+              {{ $orders->links() }}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- AJAX e Dropdown para atualização de status -->
   <script>
-    document.querySelectorAll('.status-badge').forEach(function(btn) {
+    // Dropdown de status
+    document.querySelectorAll('.admin-status-badge').forEach(function(btn) {
       btn.addEventListener('click', function(e) {
         e.stopPropagation();
+
         // Fecha outros dropdowns
-        document.querySelectorAll('.status-dropdown').forEach(d => d.classList.add('hidden'));
+        document.querySelectorAll('.admin-status-options').forEach(d => d.classList.remove('show'));
+
         // Abre o dropdown deste
-        btn.parentElement.querySelector('.status-dropdown').classList.toggle('hidden');
+        const dropdown = this.parentElement.querySelector('.admin-status-options');
+
+        // Calcula a posição do botão
+        const rect = this.getBoundingClientRect();
+
+        // Posiciona o dropdown
+        dropdown.style.left = rect.left + 'px';
+        dropdown.style.top = (rect.bottom + 5) + 'px';
+        dropdown.style.minWidth = rect.width + 'px';
+
+        dropdown.classList.toggle('show');
       });
     });
 
+    // Fecha dropdowns ao clicar fora
     document.addEventListener('click', function() {
-      document.querySelectorAll('.status-dropdown').forEach(d => d.classList.add('hidden'));
+      document.querySelectorAll('.admin-status-options').forEach(d => d.classList.remove('show'));
     });
 
-    document.querySelectorAll('.status-option').forEach(function(opt) {
+    // Reposiciona dropdowns quando a página rola
+    window.addEventListener('scroll', function() {
+      document.querySelectorAll('.admin-status-options.show').forEach(dropdown => {
+        const badge = dropdown.parentElement.querySelector('.admin-status-badge');
+        if (badge) {
+          const rect = badge.getBoundingClientRect();
+          dropdown.style.left = rect.left + 'px';
+          dropdown.style.top = (rect.bottom + 5) + 'px';
+          dropdown.style.minWidth = rect.width + 'px';
+        }
+      });
+    });
+
+    // Reposiciona dropdowns quando a janela é redimensionada
+    window.addEventListener('resize', function() {
+      document.querySelectorAll('.admin-status-options.show').forEach(dropdown => {
+        const badge = dropdown.parentElement.querySelector('.admin-status-badge');
+        if (badge) {
+          const rect = badge.getBoundingClientRect();
+          dropdown.style.left = rect.left + 'px';
+          dropdown.style.top = (rect.bottom + 5) + 'px';
+          dropdown.style.minWidth = rect.width + 'px';
+        }
+      });
+    });
+
+    // Atualização de status
+    document.querySelectorAll('.admin-status-option').forEach(function(opt) {
       opt.addEventListener('click', function(e) {
         e.preventDefault();
         const newStatus = this.dataset.status;
-        const btn = this.closest('td').querySelector('.status-badge');
+        const btn = this.closest('.admin-status-dropdown').querySelector('.admin-status-badge');
         const orderId = btn.dataset.orderId;
         const csrfToken = '{{ csrf_token() }}';
+
+        // Atualiza visualmente primeiro
+        const labels = {
+          'pending': 'Aguardando',
+          'paid': 'Pago',
+          'shipped': 'Enviado',
+          'delivered': 'Entregue',
+          'canceled': 'Cancelado'
+        };
+
+        btn.textContent = labels[newStatus] + ' ';
+        btn.className = `admin-status-badge admin-status-${newStatus}`;
+        btn.dataset.currentStatus = newStatus;
+
+        // Adiciona o ícone de volta
+        const icon = document.createElement('ion-icon');
+        icon.name = 'chevron-down-outline';
+        btn.appendChild(icon);
+
+        // Fecha o dropdown
+        btn.parentElement.querySelector('.admin-status-options').classList.remove('show');
+
+        // Faz a requisição AJAX
         fetch(`/admin/orders/${orderId}`, {
             method: 'PATCH',
             headers: {
@@ -214,18 +368,78 @@
           .then(response => response.json())
           .then(data => {
             if (data.success) {
-              btn.innerHTML = data.label +
-                '<svg class="inline w-3 h-3 ml-1 text-gray-400 pointer-events-none" fill="none" viewBox="0 0 20 20"><path d="M6 8l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-              btn.className =
-                'status-badge px-2 py-1 rounded text-xs font-medium focus:outline-none transition flex items-center gap-1 ' +
-                data.class;
-              btn.parentElement.querySelector('.status-dropdown').classList.add('hidden');
+              // Atualiza as estatísticas automaticamente
+              updateStats();
             } else {
               alert('Erro ao atualizar status.');
+              // Reverte a mudança visual em caso de erro
+              location.reload();
             }
           })
-          .catch(() => alert('Erro ao atualizar status.'));
+          .catch(() => {
+            alert('Erro ao atualizar status.');
+            location.reload();
+          });
       });
     });
+
+    // Função para imprimir pedido
+    function printOrder(orderId) {
+      const printWindow = window.open(`/admin/orders/${orderId}/print`, '_blank');
+      printWindow.onload = function() {
+        printWindow.print();
+      };
+    }
+
+    // Função para atualizar as estatísticas
+    function updateStats() {
+      fetch('{{ route('admin.orders.index') }}', {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.stats) {
+            // Atualiza os valores das estatísticas
+            const statCards = document.querySelectorAll('.admin-stat-card');
+
+            // Total de Pedidos
+            if (statCards[0]) {
+              const totalValue = statCards[0].querySelector('.admin-stat-value');
+              if (totalValue) {
+                totalValue.textContent = data.stats.total;
+              }
+            }
+
+            // Receita Total
+            if (statCards[1]) {
+              const revenueValue = statCards[1].querySelector('.admin-stat-value');
+              if (revenueValue) {
+                revenueValue.textContent = '€' + parseFloat(data.stats.revenue).toLocaleString('pt-BR', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                });
+              }
+            }
+
+            // Ticket Médio
+            if (statCards[2]) {
+              const averageValue = statCards[2].querySelector('.admin-stat-value');
+              if (averageValue) {
+                averageValue.textContent = '€' + parseFloat(data.stats.average).toLocaleString('pt-BR', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                });
+              }
+            }
+          }
+        })
+        .catch(error => {
+          console.error('Erro ao atualizar estatísticas:', error);
+        });
+    }
   </script>
 @endsection

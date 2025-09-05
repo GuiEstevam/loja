@@ -32,16 +32,27 @@ class OrderController extends Controller
             $query->whereDate('created_at', '<=', $request->date_to);
         }
 
-        $orders = $query->paginate(10)->withQueryString();
+        // Itens por página
+        $perPage = $request->get('per_page', 10);
+        $perPageOptions = [5, 10, 15, 20, 25];
+
+        $orders = $query->paginate($perPage)->withQueryString();
 
         // Estatísticas rápidas
         $stats = [
             'total' => Order::count(),
-            'revenue' => Order::whereIn('status', ['paid', 'delivered'])->sum('total'),
-            'average' => Order::whereIn('status', ['paid', 'delivered'])->avg('total') ?: 0,
+            'revenue' => Order::whereIn('status', ['paid', 'shipped', 'delivered'])->sum('total'),
+            'average' => Order::whereIn('status', ['paid', 'shipped', 'delivered'])->avg('total') ?: 0,
         ];
 
-        return view('admin.orders.index', compact('orders', 'stats'));
+        // Se for uma requisição AJAX, retorna apenas as estatísticas
+        if ($request->ajax() && $request->header('X-Requested-With') === 'XMLHttpRequest') {
+            return response()->json([
+                'stats' => $stats
+            ]);
+        }
+
+        return view('admin.orders.index', compact('orders', 'stats', 'perPage', 'perPageOptions'));
     }
 
     public function show(Order $order)
