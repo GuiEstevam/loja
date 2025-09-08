@@ -64,12 +64,12 @@
                   </div>
                 </div>
                 <div class="navbar-dropdown-item-actions">
-                  <button @click.stop="removeFromFavorites(item.id)" class="action-btn action-btn--remove"
+                  <button @click.stop="removeFromFavorites(item.id)" class="navbar-action-btn navbar-action-btn--remove"
                     title="Remover dos favoritos">
                     <ion-icon name="heart-dislike-outline"></ion-icon>
                   </button>
                   <button @click.stop="addToCartFromFavorites(item.id, item.name, item.price, item.image)"
-                    class="action-btn action-btn--add" title="Adicionar ao carrinho">
+                    class="navbar-action-btn navbar-action-btn--add" title="Adicionar ao carrinho">
                     <ion-icon name="bag-add-outline"></ion-icon>
                   </button>
                 </div>
@@ -114,14 +114,15 @@
                   <img :src="item.image" :alt="item.name">
                   <div class="navbar-dropdown-item-info">
                     <h4 x-text="item.name"></h4>
-                    <div class="item-details">
+                    <div class="navbar-dropdown-item-details">
                       <span x-text="'Qtd: ' + item.quantity"></span>
-                      <span x-text="'€' + item.price.toFixed(2).replace('.', ',')" class="item-price"></span>
+                      <span x-text="'€' + item.price.toFixed(2).replace('.', ',')" class="navbar-item-price"></span>
                     </div>
                   </div>
                 </div>
                 <div class="navbar-dropdown-item-actions">
-                  <button @click.stop="removeFromCart(item.id)" class="action-btn action-btn--remove" title="Remover">
+                  <button @click.stop="removeFromCart(item.id)" class="navbar-action-btn navbar-action-btn--remove"
+                    title="Remover">
                     <ion-icon name="trash-outline"></ion-icon>
                   </button>
                 </div>
@@ -184,7 +185,7 @@
               <li class="navbar-user-item">
                 <form action="{{ route('logout') }}" method="POST">
                   @csrf
-                  <button type="submit" class="navbar-user-link logout">
+                  <button type="submit" class="navbar-user-link navbar-user-link--logout">
                     <ion-icon name="log-out-outline"></ion-icon>
                     <span>Sair</span>
                   </button>
@@ -261,9 +262,9 @@
     window.addEventListener('scroll', function() {
       const navbar = document.querySelector('.navbar');
       if (window.scrollY > 50) {
-        navbar.classList.add('scrolled');
+        navbar.classList.add('navbar--scrolled');
       } else {
-        navbar.classList.remove('scrolled');
+        navbar.classList.remove('navbar--scrolled');
       }
     });
   });
