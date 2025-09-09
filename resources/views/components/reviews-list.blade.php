@@ -249,6 +249,7 @@
     background: #f9fafb;
     border-radius: 8px;
     flex-wrap: wrap;
+    align-items: flex-end;
 }
 
 .filter-group {
@@ -270,6 +271,8 @@
     border-radius: 6px;
     background: white;
     font-size: 0.875rem;
+    height: 32px;
+    box-sizing: border-box;
 }
 
 .checkbox-label {
@@ -279,6 +282,8 @@
     cursor: pointer;
     font-size: 0.875rem;
     padding: 8px 0;
+    height: 32px;
+    box-sizing: border-box;
 }
 
 .checkbox-label input[type="checkbox"] {

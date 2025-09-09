@@ -112,9 +112,9 @@
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
             </svg>
             <div class="alert-content">
-                <h4>Faça login para avaliar</h4>
-                <p>Entre com sua conta para compartilhar sua experiência com este produto.</p>
-                <a href="{{ route('login') }}" class="btn btn-primary">Fazer Login</a>
+                <h4>Compre para avaliar este produto</h4>
+                <p>Adquira este produto e compartilhe sua experiência com outros clientes. Sua avaliação ajudará na decisão de compra de outras pessoas.</p>
+                <a href="{{ route('shop.cart.index') }}" class="btn btn-primary">Adicionar ao Carrinho</a>
             </div>
         </div>
     </div>
@@ -427,9 +427,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('title-count').textContent = '0';
                     document.getElementById('comment-count').textContent = '0';
                     
-                    // Recarregar página após 2 segundos
+                    // Atualizar lista de reviews sem reload
+                    updateReviewsList();
+                    
+                    // Esconder formulário após envio bem-sucedido
                     setTimeout(() => {
-                        location.reload();
+                        form.closest('.review-form-container').style.display = 'none';
                     }, 2000);
                 } else {
                     showAlert(data.error || 'Erro ao enviar avaliação', 'error');
@@ -443,6 +446,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
             });
+        });
+    }
+
+    // Função para atualizar lista de reviews
+    function updateReviewsList() {
+        // Buscar a seção de reviews
+        const reviewsSection = document.querySelector('.reviews-section');
+        if (!reviewsSection) return;
+        
+        // Fazer requisição para atualizar a lista
+        const productId = document.querySelector('input[name="product_id"]').value;
+        fetch(`/produtos/${productId}/reviews`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            // Criar elemento temporário para parsear o HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            
+            // Substituir a seção de reviews
+            const newReviewsSection = tempDiv.querySelector('.reviews-section');
+            if (newReviewsSection) {
+                reviewsSection.innerHTML = newReviewsSection.innerHTML;
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao atualizar reviews:', error);
         });
     }
 
