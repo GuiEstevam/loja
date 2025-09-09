@@ -457,7 +457,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Fazer requisição para atualizar a lista
         const productId = document.querySelector('input[name="product_id"]').value;
-        fetch(`/produtos/${productId}/reviews`, {
+        const currentUrl = window.location.href;
+        
+        fetch(currentUrl, {
             method: 'GET',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
@@ -473,10 +475,22 @@ document.addEventListener('DOMContentLoaded', function() {
             const newReviewsSection = tempDiv.querySelector('.reviews-section');
             if (newReviewsSection) {
                 reviewsSection.innerHTML = newReviewsSection.innerHTML;
+                
+                // Re-executar scripts se necessário
+                const scripts = newReviewsSection.querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    newScript.textContent = script.textContent;
+                    document.head.appendChild(newScript);
+                });
             }
         })
         .catch(error => {
             console.error('Erro ao atualizar reviews:', error);
+            // Fallback: recarregar a página
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
         });
     }
 

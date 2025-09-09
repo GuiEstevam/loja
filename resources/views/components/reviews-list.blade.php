@@ -243,20 +243,22 @@
 
 .reviews-filters {
     display: flex;
-    gap: 16px;
+    gap: 20px;
     margin-bottom: 24px;
-    padding: 16px;
+    padding: 20px;
     background: #f9fafb;
     border-radius: 8px;
     flex-wrap: wrap;
     align-items: flex-end;
+    min-width: 100%;
 }
 
 .filter-group {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    min-width: 120px;
+    min-width: 150px;
+    flex: 1;
 }
 
 .filter-group label {
@@ -533,7 +535,13 @@
     
     .reviews-filters {
         flex-direction: column;
-        gap: 12px;
+        gap: 16px;
+        padding: 16px;
+    }
+    
+    .filter-group {
+        min-width: 100%;
+        flex: none;
     }
     
     .review-header {
