@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Payment;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -31,6 +35,7 @@ class OrderController extends Controller
 
         return view('shop.orders.show', compact('order'));
     }
+
     public function checkout()
     {
         // Verificar se há dados do carrinho na sessão (fallback)
@@ -43,6 +48,51 @@ class OrderController extends Controller
     }
 
     public function process(Request $request)
+    {
+        return DB::transaction(function () use ($request) {
+            try {
+                // 1. Validar e obter dados do carrinho
+                $cart = $this->validateAndGetCart($request);
+                
+                // 2. Validar dados do formulário
+                $data = $this->validateCheckoutData($request);
+                
+                // 3. Validar estoque de todos os produtos
+                $this->validateStock($cart);
+                
+                // 4. Criar pedido
+                $order = $this->createOrder($data, $cart);
+                
+                // 5. Criar registro de pagamento
+                $payment = $this->createPayment($order, $data);
+                
+                // 6. Processar pagamento (simulado por enquanto)
+                $this->processPayment($payment);
+                
+                // 7. Atualizar estoque
+                $this->updateStock($order);
+                
+                // 8. Limpar carrinho
+                $this->clearCart();
+                
+                return redirect()->route('shop.confirmation', $order)->with('success', 'Pedido realizado com sucesso!');
+                
+            } catch (\Exception $e) {
+                Log::error('Erro no checkout: ' . $e->getMessage(), [
+                    'user_id' => Auth::id(),
+                    'cart' => $cart ?? null,
+                    'request_data' => $request->all()
+                ]);
+                
+                return redirect()->back()->with('error', 'Erro ao processar pedido: ' . $e->getMessage());
+            }
+        });
+    }
+
+    /**
+     * Valida e obtém dados do carrinho
+     */
+    private function validateAndGetCart(Request $request): array
     {
         // Verificar se há dados do carrinho na sessão (fallback)
         $cart = session()->get('cart', []);
@@ -57,10 +107,18 @@ class OrderController extends Controller
         }
 
         if (empty($cart)) {
-            return redirect()->route('shop.cart.index')->with('error', 'Seu carrinho está vazio.');
+            throw new \Exception('Seu carrinho está vazio.');
         }
 
-        $data = $request->validate([
+        return $cart;
+    }
+
+    /**
+     * Valida dados do formulário de checkout
+     */
+    private function validateCheckoutData(Request $request): array
+    {
+        return $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email',
             'phone' => 'nullable|string|max:20',
@@ -77,7 +135,35 @@ class OrderController extends Controller
             'notes' => 'nullable|string',
             'save_address' => 'nullable|boolean',
         ]);
+    }
 
+    /**
+     * Valida estoque de todos os produtos no carrinho
+     */
+    private function validateStock(array $cart): void
+    {
+        foreach ($cart as $item) {
+            $product = Product::find($item['id']);
+            
+            if (!$product) {
+                throw new \Exception("Produto '{$item['name']}' não encontrado.");
+            }
+            
+            if (!$product->active) {
+                throw new \Exception("Produto '{$item['name']}' não está disponível.");
+            }
+            
+            if ($product->stock < $item['quantity']) {
+                throw new \Exception("Estoque insuficiente para '{$item['name']}'. Disponível: {$product->stock}, Solicitado: {$item['quantity']}");
+            }
+        }
+    }
+
+    /**
+     * Cria o pedido
+     */
+    private function createOrder(array $data, array $cart): Order
+    {
         $user = Auth::user();
 
         // Salvar dados do usuário para persistência
@@ -120,7 +206,7 @@ class OrderController extends Controller
         }
 
         // Cria o pedido
-        $order = \App\Models\Order::create([
+        $order = Order::create([
             'user_id' => $user->id,
             'name' => $data['name'],
             'email' => $data['email'],
@@ -159,10 +245,75 @@ class OrderController extends Controller
             ]);
         }
 
-        // Limpa o carrinho (session e localStorage via JavaScript)
-        session()->forget('cart');
+        return $order;
+    }
 
-        return redirect()->route('shop.confirmation', $order)->with('success', 'Pedido realizado com sucesso!');
+    /**
+     * Cria registro de pagamento
+     */
+    private function createPayment(Order $order, array $data): Payment
+    {
+        return Payment::create([
+            'order_id' => $order->id,
+            'method' => $data['payment_method'],
+            'status' => Payment::STATUS_PENDING,
+            'amount' => $order->total,
+            'transaction_id' => null,
+            'gateway_response' => null,
+            'processed_at' => null,
+            'failed_at' => null,
+            'failure_reason' => null,
+        ]);
+    }
+
+    /**
+     * Processa pagamento (simulado por enquanto)
+     */
+    private function processPayment(Payment $payment): void
+    {
+        // Por enquanto, simular aprovação do pagamento
+        // Em produção, aqui seria feita a integração com gateway de pagamento
+        
+        $payment->markAsApproved(
+            transactionId: 'TXN_' . time() . '_' . $payment->id,
+            gatewayResponse: [
+                'status' => 'approved',
+                'transaction_id' => 'TXN_' . time() . '_' . $payment->id,
+                'processed_at' => now()->toISOString(),
+                'gateway' => 'simulated'
+            ]
+        );
+
+        // Atualizar status do pedido para 'paid'
+        $payment->order->update(['status' => 'paid']);
+    }
+
+    /**
+     * Atualiza estoque após pedido aprovado
+     */
+    private function updateStock(Order $order): void
+    {
+        foreach ($order->items as $item) {
+            $product = $item->product;
+            $product->decrement('stock', $item->quantity);
+            
+            // Log de movimentação de estoque
+            Log::info('Estoque atualizado', [
+                'product_id' => $product->id,
+                'product_name' => $product->name,
+                'quantity_sold' => $item->quantity,
+                'remaining_stock' => $product->fresh()->stock,
+                'order_id' => $order->id
+            ]);
+        }
+    }
+
+    /**
+     * Limpa carrinho após pedido
+     */
+    private function clearCart(): void
+    {
+        session()->forget('cart');
     }
 
     public function confirmation(Order $order)
@@ -172,7 +323,7 @@ class OrderController extends Controller
             abort(403);
         }
 
-        $order->load('items.product');
+        $order->load('items.product', 'payment');
 
         return view('shop.confirmation', compact('order'));
     }

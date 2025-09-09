@@ -10,7 +10,7 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Order::with(['user', 'items.product'])->orderBy('id', 'desc');
+        $query = Order::with(['user', 'items.product', 'payment'])->orderBy('id', 'desc');
 
         // Filtros
         if ($request->filled('search')) {

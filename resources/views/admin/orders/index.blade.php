@@ -224,10 +224,10 @@
                       </td>
                       <td>
                         <div class="admin-payment-status">
-                          <span class="admin-payment-badge admin-payment-{{ $order->payment_status ?? 'pending' }}">
+                          <span class="admin-payment-badge admin-payment-{{ $order->payment?->status ?? 'pending' }}">
                             <ion-icon
-                              name="{{ $order->payment_status == 'paid' ? 'checkmark-circle' : 'time-outline' }}"></ion-icon>
-                            {{ $order->payment_status == 'paid' ? 'Pago' : 'Pendente' }}
+                              name="{{ ($order->payment?->status ?? 'pending') == 'approved' ? 'checkmark-circle' : 'time-outline' }}"></ion-icon>
+                            {{ ($order->payment?->status ?? 'pending') == 'approved' ? 'Pago' : 'Pendente' }}
                           </span>
                         </div>
                       </td>
