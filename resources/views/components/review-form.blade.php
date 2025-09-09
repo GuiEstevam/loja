@@ -112,8 +112,8 @@
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
             </svg>
             <div class="alert-content">
-                <h4>Compre para avaliar este produto</h4>
-                <p>Adquira este produto e compartilhe sua experiência com outros clientes. Sua avaliação ajudará na decisão de compra de outras pessoas.</p>
+                <h4>Apenas compradores podem avaliar</h4>
+                <p>Compre este produto e compartilhe sua experiência com outros clientes. Sua avaliação é valiosa para a comunidade!</p>
                 <a href="{{ route('shop.cart.index') }}" class="btn btn-primary">Adicionar ao Carrinho</a>
             </div>
         </div>
