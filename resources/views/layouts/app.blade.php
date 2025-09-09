@@ -493,6 +493,7 @@
       document.documentElement.classList.toggle('dark', darkMode);
     });
   </script>
+  @stack('scripts')
 </body>
 
 </html>

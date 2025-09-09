@@ -1,0 +1,262 @@
+/* ========================================
+   REVIEW FORM STYLES
+   ======================================== */
+
+/* Review Form Container */
+.review-form-container {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1px solid #e5e7eb;
+}
+
+.review-form-header {
+    margin-bottom: 24px;
+}
+
+.review-form-header h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 8px 0;
+}
+
+.review-form-header p {
+    color: #6b7280;
+    margin: 0;
+}
+
+/* Form Styles */
+.review-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.form-input,
+.form-textarea {
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: border-color 0.2s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Rating Input */
+.rating-input {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.rating-input input[type="radio"] {
+    display: none;
+}
+
+.rating-star {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.rating-star:hover {
+    transform: scale(1.1);
+}
+
+.rating-star .star-icon {
+    width: 32px;
+    height: 32px;
+    color: #d1d5db;
+    transition: color 0.2s ease;
+}
+
+/* Correção: Seleção da esquerda para direita */
+.rating-input input[type="radio"]:checked ~ .rating-star .star-icon {
+    color: #fbbf24;
+}
+
+/* Estrelas após a selecionada ficam cinzas */
+.rating-input input[type="radio"]:checked ~ .rating-star ~ .rating-star .star-icon {
+    color: #d1d5db;
+}
+
+/* Classe JavaScript para controle de seleção */
+.rating-star.selected .star-icon {
+    color: #fbbf24;
+}
+
+.rating-input:hover .rating-star .star-icon {
+    color: #fbbf24;
+}
+
+.rating-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+.rating-label {
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.rating-input input[type="radio"]:checked ~ .rating-label {
+    color: #3b82f6;
+    font-weight: 500;
+}
+
+/* Character Count */
+.char-count {
+    text-align: right;
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.char-count.warning {
+    color: #f59e0b;
+}
+
+.char-count.error {
+    color: #dc2626;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.btn-primary {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+}
+
+.btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.btn-secondary:hover {
+    background: #e5e7eb;
+}
+
+.btn-icon {
+    width: 16px;
+    height: 16px;
+}
+
+/* Alert Styles */
+.alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.alert-info {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e40af;
+}
+
+.alert-warning {
+    background: #fffbeb;
+    border: 1px solid #fed7aa;
+    color: #92400e;
+}
+
+.alert-success {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+}
+
+.alert-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+}
+
+.alert-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.alert-content h4 {
+    margin: 0 0 4px 0;
+    font-weight: 600;
+}
+
+.alert-content p {
+    margin: 0 0 8px 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .review-form-container {
+        padding: 16px;
+        margin: 16px 0;
+    }
+    
+    .rating-input {
+        justify-content: center;
+    }
+    
+    .rating-labels {
+        font-size: 0.75rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+}
