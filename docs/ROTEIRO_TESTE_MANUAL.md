@@ -10,39 +10,39 @@ Validar manualmente todas as funcionalidades refatoradas no Sprint 0, garantindo
 ### **Cenário 1: Fluxo Completo de Checkout**
 
 #### **Pré-requisitos**
-- [ ] Usuário cadastrado e logado
+- [] Usuário cadastrado e logado
 - [ ] Produtos cadastrados com estoque disponível
 - [ ] Carrinho com itens
 
 #### **Passos do Teste**
 1. **Acessar a loja**
-   - [ ] Navegar para `/`
-   - [ ] Verificar se a página carrega corretamente
-   - [ ] Verificar se produtos são exibidos
+   - [x] Navegar para `/`
+   - [x] Verificar se a página carrega corretamente
+   - [x] Verificar se produtos são exibidos
 
 2. **Adicionar produtos ao carrinho**
-   - [ ] Clicar em "Adicionar ao Carrinho" em um produto
-   - [ ] Selecionar cor e tamanho (se aplicável)
-   - [ ] Definir quantidade
-   - [ ] Confirmar adição
-   - [ ] Verificar se produto aparece no carrinho
+   - [x] Clicar em "Adicionar ao Carrinho" em um produto
+   - [x] Selecionar cor e tamanho (se aplicável)
+   - [x] Definir quantidade
+   - [x] Confirmar adição
+   - [x] Verificar se produto aparece no carrinho
 
 3. **Acessar carrinho**
-   - [ ] Clicar no ícone do carrinho
-   - [ ] Verificar se produtos estão listados
-   - [ ] Verificar se totais estão corretos
-   - [ ] Clicar em "Finalizar Compra"
+   - [x] Clicar no ícone do carrinho
+   - [x] Verificar se produtos estão listados
+   - [x] Verificar se totais estão corretos
+   - [x] Clicar em "Finalizar Compra"
 
 4. **Preencher dados de checkout**
-   - [ ] Preencher dados pessoais (nome, email, telefone)
-   - [ ] Preencher endereço completo
-   - [ ] Selecionar método de pagamento
-   - [ ] Adicionar observações (opcional)
-   - [ ] Clicar em "Finalizar Pedido"
+   - [x] Preencher dados pessoais (nome, email, telefone)
+   - [x] Preencher endereço completo
+   - [x] Selecionar método de pagamento
+   - [x] Adicionar observações (opcional)
+   - [x] Clicar em "Finalizar Pedido"
 
 5. **Verificar criação do pedido**
-   - [ ] Verificar se redirecionou para página de confirmação
-   - [ ] Verificar se pedido foi criado com status "paid"
+   - [x] Verificar se redirecionou para página de confirmação
+   - [x] Verificar se pedido foi criado com status "paid"
    - [ ] Verificar se pagamento foi registrado
    - [ ] Verificar se estoque foi atualizado
 

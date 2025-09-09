@@ -60,7 +60,7 @@
                   <img :src="item.image" :alt="item.name">
                   <div class="navbar-dropdown-item-info">
                     <h4 x-text="item.name"></h4>
-                    <p x-text="'€' + item.price.toFixed(2).replace('.', ',')"></p>
+                    <p x-text="'€' + (parseFloat(item.price) || 0).toFixed(2).replace('.', ',')"></p>
                   </div>
                 </div>
                 <div class="navbar-dropdown-item-actions">
@@ -115,8 +115,8 @@
                   <div class="navbar-dropdown-item-info">
                     <h4 x-text="item.name"></h4>
                     <div class="navbar-dropdown-item-details">
-                      <span x-text="'Qtd: ' + item.quantity"></span>
-                      <span x-text="'€' + item.price.toFixed(2).replace('.', ',')" class="navbar-item-price"></span>
+                      <span x-text="'Qtd: ' + (parseInt(item.quantity) || 1)"></span>
+                      <span x-text="'€' + (parseFloat(item.price) || 0).toFixed(2).replace('.', ',')" class="navbar-item-price"></span>
                     </div>
                   </div>
                 </div>
@@ -130,7 +130,7 @@
             </template>
             <div class="navbar-dropdown-total" x-show="cartItems.length > 0">
               <span>Total:</span>
-              <span x-text="'€' + cartTotal.toFixed(2).replace('.', ',')"></span>
+              <span x-text="'€' + (parseFloat(cartTotal) || 0).toFixed(2).replace('.', ',')"></span>
             </div>
           </div>
 

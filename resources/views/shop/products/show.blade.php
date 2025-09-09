@@ -258,68 +258,15 @@
 
         <!-- Avaliações -->
         <div id="reviews" class="tab-panel">
-          <div class="product-reviews">
-            <h3>Avaliações dos Clientes</h3>
-            <div class="reviews-summary">
-              <div class="average-rating">
-                <span class="rating-number">{{ number_format($product->rating, 1) }}</span>
-                <div class="rating-stars">
-                  @for ($i = 1; $i <= 5; $i++)
-                    <ion-icon name="{{ $i <= $product->rating ? 'star' : 'star-outline' }}"></ion-icon>
-                  @endfor
-                </div>
-                <span class="rating-text">Baseado em {{ $product->rating_count }} avaliações</span>
-              </div>
-            </div>
-
-            <div class="reviews-list">
-              <!-- Reviews mockados -->
-              <div class="review-item">
-                <div class="review-header">
-                  <span class="review-author">Maria S.</span>
-                  <div class="review-stars">
-                    <ion-icon name="star"></ion-icon>
-                    <ion-icon name="star"></ion-icon>
-                    <ion-icon name="star"></ion-icon>
-                    <ion-icon name="star"></ion-icon>
-                    <ion-icon name="star"></ion-icon>
-                  </div>
-                </div>
-                <p class="review-text">Produto de ótima qualidade, chegou antes do prazo!</p>
-                <span class="review-date">há 2 dias</span>
-              </div>
-
-              <div class="review-item">
-                <div class="review-header">
-                  <span class="review-author">João P.</span>
-                  <div class="review-stars">
-                    <ion-icon name="star"></ion-icon>
-                    <ion-icon name="star"></ion-icon>
-                    <ion-icon name="star"></ion-icon>
-                    <ion-icon name="star"></ion-icon>
-                    <ion-icon name="star-outline"></ion-icon>
-                  </div>
-                </div>
-                <p class="review-text">Gostei bastante, mas achei o tamanho um pouco pequeno.</p>
-                <span class="review-date">há 5 dias</span>
-              </div>
-
-              <div class="review-item">
-                <div class="review-header">
-                  <span class="review-author">Ana L.</span>
-                  <div class="review-stars">
-                    <ion-icon name="star"></ion-icon>
-                    <ion-icon name="star"></ion-icon>
-                    <ion-icon name="star"></ion-icon>
-                    <ion-icon name="star"></ion-icon>
-                    <ion-icon name="star"></ion-icon>
-                  </div>
-                </div>
-                <p class="review-text">Super confortável e bonito. Recomendo!</p>
-                <span class="review-date">há 1 semana</span>
-              </div>
-            </div>
-          </div>
+          @php
+              $reviews = $product->approvedReviews()->with(['user:id,name'])->orderBy('created_at', 'desc')->paginate(10);
+          @endphp
+          
+          <!-- Formulário de Avaliação -->
+          <x-review-form :product="$product" />
+          
+          <!-- Lista de Avaliações -->
+          <x-reviews-list :product="$product" :reviews="$reviews" />
         </div>
       </div>
     </div>

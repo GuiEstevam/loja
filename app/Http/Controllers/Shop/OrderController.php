@@ -18,7 +18,7 @@ class OrderController extends Controller
     {
         $user = Auth::user();
 
-        $orders = $user->orders()->with('items.product')->orderBy('created_at', 'desc')->paginate(10);
+        $orders = $user->orders()->with(['items.product', 'payment'])->orderBy('created_at', 'desc')->paginate(10);
 
         return view('shop.orders.index', compact('orders'));
     }
@@ -31,13 +31,21 @@ class OrderController extends Controller
             abort(403);
         }
 
-        $order->load('items.product');
+        $order->load(['items.product', 'payment']);
 
         return view('shop.orders.show', compact('order'));
     }
 
     public function checkout()
     {
+        // Verificar se o usuário está logado
+        if (!Auth::check()) {
+            // Salvar URL de destino para redirecionar após login
+            session(['intended_url' => route('shop.checkout')]);
+            
+            return redirect()->route('login')->with('message', 'Você precisa estar logado para finalizar a compra.');
+        }
+
         // Verificar se há dados do carrinho na sessão (fallback)
         $cart = session()->get('cart', []);
 

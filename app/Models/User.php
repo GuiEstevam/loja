@@ -108,4 +108,33 @@ class User extends Authenticatable
     {
         return $this->hasMany(Favorite::class);
     }
+
+    // Relacionamento: um usuário pode ter várias reviews
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function approvedReviews()
+    {
+        return $this->hasMany(Review::class)->approved();
+    }
+
+    /**
+     * Métodos para estatísticas de reviews do usuário
+     */
+    public function getTotalReviewsAttribute(): int
+    {
+        return $this->reviews()->count();
+    }
+
+    public function getApprovedReviewsAttribute(): int
+    {
+        return $this->approvedReviews()->count();
+    }
+
+    public function getAverageRatingGivenAttribute(): float
+    {
+        return $this->reviews()->avg('rating') ?? 0;
+    }
 }

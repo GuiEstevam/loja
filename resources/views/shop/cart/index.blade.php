@@ -98,6 +98,9 @@
         const cart = JSON.parse(localStorage.getItem('cart') || '{}');
         const cartItems = Object.values(cart);
 
+        // Limpar itens inválidos do carrinho
+        this.cleanInvalidCartItems(cart);
+
         if (cartItems.length === 0) {
           this.renderEmptyCart();
         } else {
@@ -105,6 +108,65 @@
         }
 
         this.hideLoading();
+      }
+
+      cleanInvalidCartItems(cart) {
+        let hasInvalidItems = false;
+        const cleanedCart = {};
+
+        Object.keys(cart).forEach(key => {
+          const item = cart[key];
+          
+          // Verificar se o item tem as propriedades necessárias
+          if (!item || typeof item !== 'object') {
+            hasInvalidItems = true;
+            console.warn('Item inválido removido do carrinho (não é objeto):', item);
+            return;
+          }
+
+          // Converter e validar preço
+          const price = parseFloat(item.price);
+          const quantity = parseInt(item.quantity);
+
+          // Verificar se o item tem propriedades essenciais
+          const hasValidPrice = !isNaN(price) && price > 0;
+          const hasValidQuantity = !isNaN(quantity) && quantity > 0;
+          const hasValidId = item.id && !isNaN(parseInt(item.id));
+          const hasValidName = item.name && typeof item.name === 'string' && item.name.trim() !== '';
+
+          // Manter apenas itens válidos
+          if (hasValidPrice && hasValidQuantity && hasValidId && hasValidName) {
+            // Garantir que price e quantity sejam números
+            cleanedCart[key] = {
+              ...item,
+              price: price,
+              quantity: quantity,
+              name: item.name.trim()
+            };
+          } else {
+            hasInvalidItems = true;
+            console.warn('Item inválido removido do carrinho:', {
+              item,
+              priceValid: hasValidPrice,
+              quantityValid: hasValidQuantity,
+              idValid: hasValidId,
+              nameValid: hasValidName
+            });
+          }
+        });
+
+        // Atualizar localStorage se houve itens inválidos
+        if (hasInvalidItems) {
+          localStorage.setItem('cart', JSON.stringify(cleanedCart));
+          this.showToast('Itens inválidos foram removidos do carrinho', 'warning');
+          
+          // Forçar recarregamento do navbar também
+          window.dispatchEvent(new CustomEvent('cartUpdated', {
+            detail: {
+              totalItems: Object.values(cleanedCart).reduce((sum, item) => sum + item.quantity, 0)
+            }
+          }));
+        }
       }
 
       renderEmptyCart() {
@@ -126,8 +188,23 @@
       }
 
       renderCart(cartItems) {
-        const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+        // Filtrar itens válidos e calcular totais de forma segura
+        const validItems = cartItems.filter(item => {
+          const price = parseFloat(item.price);
+          const quantity = parseInt(item.quantity);
+          return !isNaN(price) && !isNaN(quantity) && price > 0 && quantity > 0;
+        });
+
+        const total = validItems.reduce((sum, item) => {
+          const price = parseFloat(item.price) || 0;
+          const quantity = parseInt(item.quantity) || 1;
+          return sum + (price * quantity);
+        }, 0);
+        
+        const itemCount = validItems.reduce((sum, item) => {
+          const quantity = parseInt(item.quantity) || 1;
+          return sum + quantity;
+        }, 0);
 
         this.cartContent.innerHTML = `
       <div class="cart-layout">
@@ -138,11 +215,19 @@
               <ion-icon name="list-outline"></ion-icon>
               Itens no Carrinho
             </h2>
-            <span class="cart-items-count">${cartItems.length} ${cartItems.length === 1 ? 'item' : 'itens'}</span>
+            <div class="cart-items-actions">
+              <span class="cart-items-count">${validItems.length} ${validItems.length === 1 ? 'item' : 'itens'}</span>
+              ${validItems.length > 0 ? `
+                <button class="btn btn-danger btn-sm" onclick="cartPage.clearCart()" title="Limpar carrinho">
+                  <ion-icon name="trash-outline"></ion-icon>
+                  Limpar
+                </button>
+              ` : ''}
+            </div>
           </div>
 
                     <div class="cart-items-list">
-            ${cartItems.map(item => this.renderCartItem(item)).join('')}
+            ${validItems.map(item => this.renderCartItem(item)).join('')}
           </div>
 
           <!-- Opções Adicionais -->
@@ -253,7 +338,10 @@
       }
 
       renderCartItem(item) {
-        const subtotal = item.price * item.quantity;
+        // Validar e converter preço para número
+        const price = parseFloat(item.price) || 0;
+        const quantity = parseInt(item.quantity) || 1;
+        const subtotal = price * quantity;
 
         // Extrair informações de variação da chave do item
         let variationInfo = '';
@@ -269,28 +357,28 @@
         return `
       <div class="cart-item" data-product-id="${item.id}">
         <div class="cart-item-image">
-          <img src="${item.image}" alt="${item.name}" class="item-image">
+          <img src="${item.image || '/images/default-product.jpg'}" alt="${item.name || 'Produto'}" class="item-image">
         </div>
 
         <div class="cart-item-details">
           <div class="cart-item-info">
-            <h4 class="item-name">${item.name}</h4>
+            <h4 class="item-name">${item.name || 'Produto sem nome'}</h4>
             ${variationInfo}
-            <div class="item-price">€${item.price.toFixed(2).replace('.', ',')}</div>
+            <div class="item-price">€${price.toFixed(2).replace('.', ',')}</div>
           </div>
 
           <div class="cart-item-controls">
             <div class="quantity-controls">
               <button class="quantity-btn quantity-btn--decrease"
-                onclick="cartPage.updateQuantity(${item.id}, ${item.quantity - 1})"
-                ${item.quantity <= 1 ? 'disabled' : ''}>
+                onclick="cartPage.updateQuantity(${item.id}, ${quantity - 1})"
+                ${quantity <= 1 ? 'disabled' : ''}>
                 <ion-icon name="remove-outline"></ion-icon>
               </button>
 
-              <span class="quantity-value">${item.quantity}</span>
+              <span class="quantity-value">${quantity}</span>
 
               <button class="quantity-btn quantity-btn--increase"
-                onclick="cartPage.updateQuantity(${item.id}, ${item.quantity + 1})">
+                onclick="cartPage.updateQuantity(${item.id}, ${quantity + 1})">
                 <ion-icon name="add-outline"></ion-icon>
               </button>
             </div>
@@ -340,6 +428,14 @@
           this.dispatchCartUpdate(cart);
           this.showToast('Item removido do carrinho!', 'success');
         }
+      }
+
+      clearCart() {
+        localStorage.removeItem('cart');
+        localStorage.removeItem('appliedCoupon');
+        this.loadCart();
+        this.dispatchCartUpdate({});
+        this.showToast('Carrinho limpo!', 'success');
       }
 
       proceedToCheckout() {
@@ -413,7 +509,13 @@
 
         const cart = JSON.parse(localStorage.getItem('cart') || '{}');
         const cartItems = Object.values(cart);
-        const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
+        // Calcular subtotal de forma segura
+        const subtotal = cartItems.reduce((sum, item) => {
+          const price = parseFloat(item.price) || 0;
+          const quantity = parseInt(item.quantity) || 1;
+          return sum + (price * quantity);
+        }, 0);
 
         let discount = 0;
         if (appliedCoupon.type === 'percentage') {
@@ -445,8 +547,13 @@
       showToast(message, type = 'success') {
         const toast = document.createElement('div');
         toast.className = `cart-page-toast cart-page-toast--${type}`;
+        
+        let iconName = 'checkmark-circle-outline';
+        if (type === 'error') iconName = 'alert-circle-outline';
+        if (type === 'warning') iconName = 'warning-outline';
+        
         toast.innerHTML = `
-        <ion-icon name="${type === 'success' ? 'checkmark-circle-outline' : 'alert-circle-outline'}"></ion-icon>
+        <ion-icon name="${iconName}"></ion-icon>
         <span>${message}</span>
       `;
 
@@ -478,4 +585,55 @@
       cartPage = new CartPage();
     });
   </script>
+
+  <style>
+    /* Toast de Warning */
+    .cart-page-toast--warning {
+      background: #fef3c7;
+      color: #d97706;
+      border: 1px solid #fde68a;
+    }
+    
+    .cart-page-toast--warning ion-icon {
+      color: #d97706;
+    }
+
+    /* Botão de Limpar Carrinho */
+    .cart-items-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-danger {
+      background: #dc2626;
+      color: white;
+      border: 1px solid #dc2626;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-danger:hover {
+      background: #b91c1c;
+      border-color: #b91c1c;
+    }
+
+    .btn-danger:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    }
+
+    .btn-sm {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.75rem;
+    }
+
+  </style>
 @endpush

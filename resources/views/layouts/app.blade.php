@@ -5,6 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>@yield('title', 'Loja Dropshipping')</title>
 
   <!-- Google Fonts -->
@@ -102,6 +103,7 @@
           this.loadFavorites();
           this.updateCartDisplay();
           this.updateFavoritesDisplay();
+          this.setupGlobalCartValidation();
 
           // Listener para atualizações do carrinho
           window.addEventListener('cartUpdated', (event) => {
@@ -168,14 +170,109 @@
 
         async loadCart() {
           const cart = JSON.parse(localStorage.getItem('cart') || '{}');
-          this.cartItems = Object.values(cart);
-          this.cartItemCount = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
-          this.cartTotal = Object.values(cart).reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-          // Sincronizar com banco se usuário estiver logado
-          if (window.userAuthenticated) {
-            await this.syncCartToDatabase();
+          
+          // Validação global e limpeza automática
+          const cleanedCart = this.validateAndCleanCart(cart);
+          
+          // Atualizar localStorage se houve limpeza
+          if (JSON.stringify(cleanedCart) !== JSON.stringify(cart)) {
+            localStorage.setItem('cart', JSON.stringify(cleanedCart));
+            console.warn('Carrinho limpo automaticamente - itens inválidos removidos');
           }
+          
+          // Filtrar apenas itens válidos
+          const validItems = Object.values(cleanedCart).filter(item => {
+            const price = parseFloat(item.price);
+            const quantity = parseInt(item.quantity);
+            return !isNaN(price) && !isNaN(quantity) && price > 0 && quantity > 0 && item.id && item.name;
+          });
+          
+          this.cartItems = validItems;
+          this.cartItemCount = validItems.reduce((sum, item) => {
+            const quantity = parseInt(item.quantity) || 1;
+            return sum + quantity;
+          }, 0);
+          this.cartTotal = validItems.reduce((sum, item) => {
+            const price = parseFloat(item.price) || 0;
+            const quantity = parseInt(item.quantity) || 1;
+            return sum + (price * quantity);
+          }, 0);
+
+          // Sincronizar com banco se usuário estiver logado (desabilitado temporariamente)
+          // if (window.userAuthenticated) {
+          //   await this.syncCartToDatabase();
+          // }
+        },
+
+        validateAndCleanCart(cart) {
+          const cleanedCart = {};
+          
+          Object.keys(cart).forEach(key => {
+            const item = cart[key];
+            
+            // Verificar se o item tem as propriedades necessárias
+            if (!item || typeof item !== 'object') {
+              console.warn('Item inválido removido (não é objeto):', item);
+              return;
+            }
+
+            // Converter e validar preço
+            const price = parseFloat(item.price);
+            const quantity = parseInt(item.quantity);
+
+            // Verificar se o item tem propriedades essenciais
+            const hasValidPrice = !isNaN(price) && price > 0;
+            const hasValidQuantity = !isNaN(quantity) && quantity > 0;
+            const hasValidId = item.id && !isNaN(parseInt(item.id));
+            const hasValidName = item.name && typeof item.name === 'string' && item.name.trim() !== '';
+
+            // Manter apenas itens válidos
+            if (hasValidPrice && hasValidQuantity && hasValidId && hasValidName) {
+              cleanedCart[key] = {
+                ...item,
+                price: price,
+                quantity: quantity,
+                name: item.name.trim()
+              };
+            } else {
+              console.warn('Item inválido removido:', {
+                item,
+                priceValid: hasValidPrice,
+                quantityValid: hasValidQuantity,
+                idValid: hasValidId,
+                nameValid: hasValidName
+              });
+            }
+          });
+          
+          return cleanedCart;
+        },
+
+        setupGlobalCartValidation() {
+          // Interceptar mudanças no localStorage
+          const originalSetItem = localStorage.setItem;
+          const self = this;
+          
+          localStorage.setItem = function(key, value) {
+            if (key === 'cart') {
+              try {
+                const cart = JSON.parse(value);
+                const cleanedCart = self.validateAndCleanCart(cart);
+                
+                // Se houve limpeza, usar o carrinho limpo
+                if (JSON.stringify(cleanedCart) !== JSON.stringify(cart)) {
+                  console.warn('Carrinho validado automaticamente - itens inválidos removidos');
+                  value = JSON.stringify(cleanedCart);
+                }
+              } catch (error) {
+                console.error('Erro ao validar carrinho:', error);
+                // Se não conseguir parsear, limpar completamente
+                value = '{}';
+              }
+            }
+            
+            return originalSetItem.call(this, key, value);
+          };
         },
 
         async loadFavorites() {
@@ -192,6 +289,23 @@
         async syncCartToDatabase() {
           try {
             const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+            
+            // Filtrar apenas itens válidos antes de enviar
+            const validCart = {};
+            Object.keys(cart).forEach(key => {
+              const item = cart[key];
+              const price = parseFloat(item.price);
+              const quantity = parseInt(item.quantity);
+              
+              if (!isNaN(price) && !isNaN(quantity) && price > 0 && quantity > 0 && item.id && item.name) {
+                validCart[key] = {
+                  ...item,
+                  price: price,
+                  quantity: quantity
+                };
+              }
+            });
+            
             const response = await fetch('/api/sync/cart', {
               method: 'POST',
               headers: {
@@ -199,14 +313,30 @@
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
               },
               body: JSON.stringify({
-                cart
+                cart: validCart
               })
             });
 
             if (response.ok) {
               const data = await response.json();
               if (data.success && data.cart) {
-                localStorage.setItem('cart', JSON.stringify(data.cart));
+                // Validar dados recebidos do banco também
+                const validatedCart = {};
+                Object.keys(data.cart).forEach(key => {
+                  const item = data.cart[key];
+                  const price = parseFloat(item.price);
+                  const quantity = parseInt(item.quantity);
+                  
+                  if (!isNaN(price) && !isNaN(quantity) && price > 0 && quantity > 0 && item.id && item.name) {
+                    validatedCart[key] = {
+                      ...item,
+                      price: price,
+                      quantity: quantity
+                    };
+                  }
+                });
+                
+                localStorage.setItem('cart', JSON.stringify(validatedCart));
                 this.loadCart();
               }
             }

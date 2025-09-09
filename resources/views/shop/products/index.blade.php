@@ -461,41 +461,8 @@
         });
       }
     });
-    // Funções reutilizadas do welcome.blade.php
-    function addToCart(productId, productName, price, image) {
-      let cart = JSON.parse(localStorage.getItem('cart') || '{}'); // Mudado de '[]' para '{}'
-
-      // Encontrar a chave correta do item (pode ser produto-id, produto-id-c1, produto-id-c1-s2, etc.)
-      const cartKey = Object.keys(cart).find(key => key.startsWith(productId.toString())) || productId.toString();
-
-      if (cart[cartKey]) {
-        cart[cartKey].quantity += 1;
-      } else {
-        cart[cartKey] = {
-          id: productId,
-          name: productName,
-          price: price,
-          image: image,
-          quantity: 1,
-          added_at: new Date().toISOString()
-        };
-      }
-
-      localStorage.setItem('cart', JSON.stringify(cart));
-
-      // Atualizar badge do carrinho
-      updateCartBadge();
-
-      // Mostrar feedback
-      showAddToCartFeedback();
-
-      // Disparar evento para sincronizar com navbar
-      window.dispatchEvent(new CustomEvent('cartUpdated', {
-        detail: {
-          totalItems: Object.values(cart).reduce((sum, item) => sum + item.quantity, 0)
-        }
-      }));
-    }
+    // Função removida - addToCart não é mais usada na lista de produtos
+    // Os usuários devem ir para a página do produto para adicionar ao carrinho
 
     function updateCartBadge() {
       const cart = JSON.parse(localStorage.getItem('cart') || '{}'); // Mudado de '[]' para '{}'

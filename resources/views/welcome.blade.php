@@ -23,12 +23,12 @@
               <p class="welcome-banner-subtitle">Aproveite condições especiais por tempo limitado!</p>
               <div class="welcome-banner-buttons">
                 <a href="{{ route('shop.products.index') }}" class="welcome-btn welcome-btn-primary">
-                  <ion-icon name="bag-outline" class="welcome-btn-icon"></ion-icon>
-                  Comprar Agora
-                </a>
-                <a href="{{ route('shop.products.index') }}" class="welcome-btn welcome-btn-secondary">
                   <ion-icon name="eye-outline" class="welcome-btn-icon"></ion-icon>
                   Ver Produtos
+                </a>
+                <a href="{{ route('shop.products.index') }}" class="welcome-btn welcome-btn-secondary">
+                  <ion-icon name="search-outline" class="welcome-btn-icon"></ion-icon>
+                  Explorar Catálogo
                 </a>
               </div>
             </div>
@@ -223,17 +223,12 @@
                       </div>
                     </div>
 
-                    <!-- Botões de ação -->
+                    <!-- Botão de ação -->
                     <div class="welcome-product-actions">
-                      <button class="welcome-product-add-cart-btn" title="Adicionar ao carrinho"
-                        onclick="addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
-                        <ion-icon name="bag-outline"></ion-icon>
-                      </button>
-                      <button class="welcome-product-buy-now-btn" title="Comprar agora"
-                        onclick="buyNow({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
-                        <ion-icon name="flash-outline"></ion-icon>
-                        Comprar
-                      </button>
+                      <a href="{{ route('shop.products.show', $product) }}" class="welcome-product-view-btn" title="Ver produto">
+                        <ion-icon name="eye-outline"></ion-icon>
+                        Ver Produto
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -436,47 +431,8 @@
       }
     }
 
-    // Função para adicionar ao carrinho
-    function addToCart(productId, productName, price, image) {
-      // Obter carrinho atual do localStorage (novo formato de objeto)
-      let cart = JSON.parse(localStorage.getItem('cart') || '{}');
-
-      // Encontrar a chave correta do item (pode ser produto-id, produto-id-c1, produto-id-c1-s2, etc.)
-      const cartKey = Object.keys(cart).find(key => key.startsWith(productId.toString())) || productId.toString();
-
-      // Verificar se o produto já está no carrinho
-      if (cart[cartKey]) {
-        cart[cartKey].quantity += 1;
-      } else {
-        cart[cartKey] = {
-          id: productId,
-          name: productName,
-          price: price,
-          image: image,
-          quantity: 1,
-          color: null,
-          colorName: null,
-          size: null,
-          added_at: new Date().toISOString()
-        };
-      }
-
-      // Salvar no localStorage
-      localStorage.setItem('cart', JSON.stringify(cart));
-
-      // Atualizar badge do carrinho na navbar
-      updateCartBadge();
-
-      // Disparar evento para sincronizar com navbar
-      window.dispatchEvent(new CustomEvent('cartUpdated', {
-        detail: {
-          totalItems: Object.values(cart).reduce((sum, item) => sum + item.quantity, 0)
-        }
-      }));
-
-      // Mostrar feedback visual
-      showAddToCartFeedback();
-    }
+    // Função removida - addToCart não é mais usada na página inicial
+    // Os usuários devem ir para a página do produto para adicionar ao carrinho
 
     // Função para atualizar badge do carrinho
     function updateCartBadge() {
@@ -516,58 +472,10 @@
       }, 3000);
     }
 
-    // Função para comprar agora
-    function buyNow(productId, productName, price, image) {
-      // Limpar carrinho atual (novo formato de objeto)
-      localStorage.setItem('cart', JSON.stringify({}));
+    // Função removida - buyNow não é mais usada na página inicial
+    // Os usuários devem ir para a página do produto para comprar
 
-      // Adicionar apenas este produto
-      const cart = {
-        [productId.toString()]: {
-          id: productId,
-          name: productName,
-          price: price,
-          image: image,
-          quantity: 1,
-          added_at: new Date().toISOString()
-        }
-      };
-
-      localStorage.setItem('cart', JSON.stringify(cart));
-
-      // Atualizar badge do carrinho
-      updateCartBadge();
-
-      // Mostrar feedback
-      showBuyNowFeedback();
-
-      // Disparar evento para sincronizar com navbar
-      window.dispatchEvent(new CustomEvent('cartUpdated', {
-        detail: {
-          totalItems: 1
-        }
-      }));
-
-      // Redirecionar para checkout
-      setTimeout(() => {
-        window.location.href = '{{ route('shop.checkout') }}';
-      }, 1000);
-    }
-
-    function showBuyNowFeedback() {
-      const toast = document.createElement('div');
-      toast.className = 'cart-toast cart-toast--buy';
-      toast.innerHTML = `
-        <ion-icon name="flash"></ion-icon>
-        <span>Redirecionando para checkout...</span>
-      `;
-
-      document.body.appendChild(toast);
-
-      setTimeout(() => {
-        toast.remove();
-      }, 3000);
-    }
+    // Função removida - showBuyNowFeedback não é mais necessária
 
     // Função para mostrar feedback visual
     function showAddToCartFeedback() {
@@ -606,4 +514,73 @@
       initializeFavorites();
     });
   </script>
+
+  <style>
+    /* Estilo para o botão Ver Produto */
+    .welcome-product-view-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: #3b82f6;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .welcome-product-view-btn:hover {
+      background: #2563eb;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .welcome-product-view-btn ion-icon {
+      font-size: 16px;
+    }
+
+    /* Estilo para o botão Ver Produto na lista de produtos */
+    .product-view-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: #3b82f6;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .product-view-btn:hover {
+      background: #2563eb;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .product-view-btn ion-icon {
+      font-size: 16px;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+      .welcome-product-view-btn,
+      .product-view-btn {
+        padding: 10px 16px;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
 @endpush

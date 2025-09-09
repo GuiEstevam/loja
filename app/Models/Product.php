@@ -70,4 +70,48 @@ class Product extends Model
     {
         return $this->belongsTo(Brand::class);
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function approvedReviews()
+    {
+        return $this->hasMany(Review::class)->approved();
+    }
+
+    /**
+     * Métodos para estatísticas de reviews
+     */
+    public function getAverageRatingAttribute(): float
+    {
+        return $this->approvedReviews()->avg('rating') ?? 0;
+    }
+
+    public function getTotalReviewsAttribute(): int
+    {
+        return $this->approvedReviews()->count();
+    }
+
+    public function getRatingDistributionAttribute(): array
+    {
+        $distribution = [];
+        
+        for ($rating = 1; $rating <= 5; $rating++) {
+            $distribution[$rating] = $this->approvedReviews()
+                ->where('rating', $rating)
+                ->count();
+        }
+
+        return $distribution;
+    }
+
+    /**
+     * Verificar se usuário pode avaliar este produto
+     */
+    public function canUserReview($userId): bool
+    {
+        return Review::canUserReviewProduct($userId, $this->id);
+    }
 }

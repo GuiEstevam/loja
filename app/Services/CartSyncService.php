@@ -87,8 +87,11 @@ class CartSyncService
     {
         $dbCart = $this->loadCartFromDatabase($user, $sessionId);
 
+        // Validar e limpar carrinho local primeiro
+        $validatedLocalCart = $this->validateCartItems($localCart);
+
         // Mesclar carrinhos (local tem prioridade)
-        foreach ($localCart as $cartKey => $localItem) {
+        foreach ($validatedLocalCart as $cartKey => $localItem) {
             if (isset($dbCart[$cartKey])) {
                 // Se existe no banco, usar a maior quantidade
                 $dbCart[$cartKey]['quantity'] = max($localItem['quantity'], $dbCart[$cartKey]['quantity']);
@@ -98,7 +101,47 @@ class CartSyncService
             }
         }
 
-        return $dbCart;
+        // Validar carrinho final antes de retornar
+        return $this->validateCartItems($dbCart);
+    }
+
+    /**
+     * Validar itens do carrinho
+     */
+    private function validateCartItems(array $cart): array
+    {
+        $validatedCart = [];
+
+        foreach ($cart as $cartKey => $item) {
+            // Verificar se o item tem as propriedades necessárias
+            if (!is_array($item) || empty($item)) {
+                continue;
+            }
+
+            // Validar propriedades essenciais
+            $hasValidId = isset($item['id']) && is_numeric($item['id']) && $item['id'] > 0;
+            $hasValidName = isset($item['name']) && is_string($item['name']) && trim($item['name']) !== '';
+            $hasValidPrice = isset($item['price']) && is_numeric($item['price']) && $item['price'] > 0;
+            $hasValidQuantity = isset($item['quantity']) && is_numeric($item['quantity']) && $item['quantity'] > 0;
+
+            if ($hasValidId && $hasValidName && $hasValidPrice && $hasValidQuantity) {
+                $validatedCart[$cartKey] = [
+                    'id' => (int) $item['id'],
+                    'name' => trim($item['name']),
+                    'price' => (float) $item['price'],
+                    'quantity' => (int) $item['quantity'],
+                    'image' => $item['image'] ?? 'default.jpg',
+                    'sku' => $item['sku'] ?? null,
+                    'brand' => $item['brand'] ?? null,
+                    'categories' => $item['categories'] ?? [],
+                    'color' => $item['color'] ?? null,
+                    'color_hex' => $item['color_hex'] ?? null,
+                    'size' => $item['size'] ?? null,
+                ];
+            }
+        }
+
+        return $validatedCart;
     }
 
     /**

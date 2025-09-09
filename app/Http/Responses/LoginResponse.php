@@ -10,7 +10,17 @@ class LoginResponse implements LoginResponseContract
     {
         $user = $request->user();
 
-        // Se o usuário estava em uma página específica (como carrinho), redireciona para lá
+        // Tentar obter a URL de destino da sessão
+        $intendedUrl = session('intended_url');
+        
+        // Se há uma URL de destino específica, usa ela
+        if ($intendedUrl) {
+            // Limpar a URL de destino da sessão
+            session()->forget('intended_url');
+            return redirect($intendedUrl);
+        }
+        
+        // Fallback para redirect()->intended()
         $intended = redirect()->intended();
         
         // Se não há URL de destino específica, redireciona baseado no tipo de usuário

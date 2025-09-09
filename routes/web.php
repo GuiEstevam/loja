@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\BrandController as AdminBrandController;
 use App\Http\Controllers\Admin\ColorController as AdminColorController;
 use App\Http\Controllers\Admin\SizeController as AdminSizeController;
+use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 
 // Shop Controllers
 use App\Http\Controllers\Shop\ProductController as ShopProductController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\Shop\CartController as ShopCartController;
 use App\Http\Controllers\Shop\FavoritesController as ShopFavoritesController;
 use App\Http\Controllers\Shop\CategoryController as ShopCategoryController;
 use App\Http\Controllers\Shop\BrandController as ShopBrandController;
+use App\Http\Controllers\Shop\ReviewController as ShopReviewController;
 
 
 // Página inicial
@@ -44,6 +46,14 @@ Route::get('/categorias/{category:slug}', [ShopCategoryController::class, 'show'
 
 Route::get('/marcas', [ShopBrandController::class, 'index'])->name('shop.brands.index');
 Route::get('/marcas/{brand:slug}', [ShopBrandController::class, 'show'])->name('shop.brands.show');
+
+// Rota de fallback para /brands (redireciona para /marcas)
+Route::get('/brands', function () {
+    return redirect()->route('shop.brands.index');
+});
+Route::get('/brands/{brand:slug}', function ($brand) {
+    return redirect()->route('shop.brands.show', $brand);
+});
 
 // Favoritos
 Route::get('/favoritos', [ShopFavoritesController::class, 'index'])->name('shop.favorites.index');
@@ -96,6 +106,14 @@ Route::middleware('auth')->group(function () {
     // Pontos de fidelidade
     Route::get('/meus-pontos', [ShopLoyaltyPointController::class, 'index'])->name('shop.loyalty_points.index');
 
+    // Reviews e Avaliações
+    Route::get('/produtos/{product}/reviews', [ShopReviewController::class, 'index'])->name('shop.reviews.index');
+    Route::post('/reviews', [ShopReviewController::class, 'store'])->name('shop.reviews.store');
+    Route::put('/reviews/{review}', [ShopReviewController::class, 'update'])->name('shop.reviews.update');
+    Route::delete('/reviews/{review}', [ShopReviewController::class, 'destroy'])->name('shop.reviews.destroy');
+    Route::post('/reviews/{review}/helpful', [ShopReviewController::class, 'markHelpful'])->name('shop.reviews.helpful');
+    Route::get('/produtos/{product}/can-review', [ShopReviewController::class, 'canReview'])->name('shop.reviews.can-review');
+
     // Endereços do usuário (CRUD)
     Route::resource('enderecos', ShopAddressController::class);
 
@@ -127,6 +145,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('brands', AdminBrandController::class);
     Route::resource('colors', AdminColorController::class);
     Route::resource('sizes', AdminSizeController::class);
+
+    // Reviews e Moderação
+    Route::resource('reviews', AdminReviewController::class)->only(['index', 'show', 'destroy']);
+    Route::post('reviews/{review}/approve', [AdminReviewController::class, 'approve'])->name('reviews.approve');
+    Route::post('reviews/{review}/reject', [AdminReviewController::class, 'reject'])->name('reviews.reject');
+    Route::post('reviews/approve-multiple', [AdminReviewController::class, 'approveMultiple'])->name('reviews.approve-multiple');
+    Route::post('reviews/reject-multiple', [AdminReviewController::class, 'rejectMultiple'])->name('reviews.reject-multiple');
+    Route::get('reviews-stats', [AdminReviewController::class, 'stats'])->name('reviews.stats');
 
     // Outras resources do admin (descomente conforme necessidade do MVP)
     // Route::resource('order-items', AdminOrderItemController::class);

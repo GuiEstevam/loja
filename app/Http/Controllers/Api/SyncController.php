@@ -25,9 +25,23 @@ class SyncController extends Controller
         $user = Auth::user();
         $sessionId = session()->getId();
 
+        // Log para debug
+        \Log::info('Sync Cart Request', [
+            'local_cart_count' => count($localCart),
+            'local_cart' => $localCart,
+            'user_id' => $user?->id,
+            'session_id' => $sessionId
+        ]);
+
         try {
             // Mesclar carrinhos
             $mergedCart = $this->cartSyncService->mergeCarts($localCart, $user, $sessionId);
+
+            // Log carrinho mesclado
+            \Log::info('Merged Cart', [
+                'merged_cart_count' => count($mergedCart),
+                'merged_cart' => $mergedCart
+            ]);
 
             // Sincronizar com banco
             $this->cartSyncService->syncCartToDatabase($mergedCart, $user, $sessionId);
@@ -38,6 +52,11 @@ class SyncController extends Controller
                 'cart' => $mergedCart
             ]);
         } catch (\Exception $e) {
+            \Log::error('Sync Cart Error', [
+                'error' => $e->getMessage(),
+                'local_cart' => $localCart
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Erro ao sincronizar carrinho: ' . $e->getMessage()

@@ -80,17 +80,12 @@
         </div>
       @endif
 
-      <!-- Botões de ação -->
+      <!-- Botão de ação -->
       <div class="product-actions">
-        <button class="product-add-cart-btn" title="Adicionar ao carrinho"
-          onclick="addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
-          <ion-icon name="bag-outline"></ion-icon>
-        </button>
-        <button class="product-buy-now-btn" title="Comprar agora"
-          onclick="buyNow({{ $product->id }}, '{{ $product->name }}', {{ $product->is_sale ? $product->sale_price : $product->price }}, '{{ asset('products/' . $product->image) }}')">
-          <ion-icon name="flash-outline"></ion-icon>
-          Comprar
-        </button>
+        <a href="{{ route('shop.products.show', $product) }}" class="product-view-btn" title="Ver produto">
+          <ion-icon name="eye-outline"></ion-icon>
+          Ver Produto
+        </a>
       </div>
     </div>
   </div>
@@ -100,3 +95,42 @@
     <p class="products-empty-text">Tente ajustar os filtros ou usar termos de busca diferentes.</p>
   </div>
 @endforelse
+
+<style>
+  /* Estilo para o botão Ver Produto na lista de produtos */
+  .product-view-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: #3b82f6;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .product-view-btn:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+
+  .product-view-btn ion-icon {
+    font-size: 16px;
+  }
+
+  /* Responsividade */
+  @media (max-width: 768px) {
+    .product-view-btn {
+      padding: 10px 16px;
+      font-size: 0.8rem;
+    }
+  }
+</style>
