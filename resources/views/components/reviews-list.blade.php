@@ -255,6 +255,7 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+    min-width: 120px;
 }
 
 .filter-group label {
@@ -277,6 +278,7 @@
     gap: 8px;
     cursor: pointer;
     font-size: 0.875rem;
+    padding: 8px 0;
 }
 
 .checkbox-label input[type="checkbox"] {

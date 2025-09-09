@@ -113,7 +113,7 @@
             </svg>
             <div class="alert-content">
                 <h4>Faça login para avaliar</h4>
-                <p>Você precisa estar logado para avaliar produtos.</p>
+                <p>Entre com sua conta para compartilhar sua experiência com este produto.</p>
                 <a href="{{ route('login') }}" class="btn btn-primary">Fazer Login</a>
             </div>
         </div>
@@ -180,8 +180,18 @@
     transition: color 0.2s ease;
 }
 
-.rating-input input[type="radio"]:checked ~ .rating-star .star-icon,
+/* Correção: Seleção da esquerda para direita */
+.rating-input input[type="radio"]:checked ~ .rating-star .star-icon {
+    color: #fbbf24;
+}
+
+/* Estrelas após a selecionada ficam cinzas */
 .rating-input input[type="radio"]:checked ~ .rating-star ~ .rating-star .star-icon {
+    color: #d1d5db;
+}
+
+/* Classe JavaScript para controle de seleção */
+.rating-star.selected .star-icon {
     color: #fbbf24;
 }
 
@@ -345,6 +355,24 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Controle de seleção das estrelas (esquerda para direita)
+    const ratingInputs = document.querySelectorAll('input[name="rating"]');
+    const ratingStars = document.querySelectorAll('.rating-star');
+    
+    ratingInputs.forEach((input, index) => {
+        input.addEventListener('change', function() {
+            // Remove todas as classes de seleção
+            ratingStars.forEach(star => {
+                star.classList.remove('selected');
+            });
+            
+            // Adiciona classe de seleção até a estrela clicada
+            for (let i = 0; i <= index; i++) {
+                ratingStars[i].classList.add('selected');
+            }
+        });
+    });
+
     // Contador de caracteres
     const titleInput = document.getElementById('title');
     const commentInput = document.getElementById('comment');
