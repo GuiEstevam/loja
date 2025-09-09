@@ -291,9 +291,21 @@
 }
 
 .alert-warning {
-    background: #fffbeb;
-    border: 1px solid #fed7aa;
-    color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fed7aa;
+  color: #92400e;
+}
+
+.alert-success {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+
+.alert-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
 }
 
 .alert-icon {
@@ -355,13 +367,80 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('review-form');
     if (form) {
         form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
             const rating = document.querySelector('input[name="rating"]:checked');
             if (!rating) {
-                e.preventDefault();
-                alert('Por favor, selecione uma avaliação (1-5 estrelas)');
+                showAlert('Por favor, selecione uma avaliação (1-5 estrelas)', 'error');
                 return false;
             }
+
+            // Mostrar loading
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>Enviando...';
+            submitBtn.disabled = true;
+
+            // Enviar formulário via AJAX
+            const formData = new FormData(form);
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    form.reset();
+                    document.getElementById('title-count').textContent = '0';
+                    document.getElementById('comment-count').textContent = '0';
+                    
+                    // Recarregar página após 2 segundos
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                } else {
+                    showAlert(data.error || 'Erro ao enviar avaliação', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                showAlert('Erro ao enviar avaliação. Tente novamente.', 'error');
+            })
+            .finally(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
         });
+    }
+
+    // Função para mostrar alertas
+    function showAlert(message, type = 'info') {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type}`;
+        alertDiv.innerHTML = `
+            <svg class="alert-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+            <div class="alert-content">
+                <p>${message}</p>
+            </div>
+        `;
+        
+        // Inserir no início do formulário
+        const form = document.getElementById('review-form');
+        if (form) {
+            form.insertBefore(alertDiv, form.firstChild);
+            
+            // Remover após 5 segundos
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
     }
 });
 
