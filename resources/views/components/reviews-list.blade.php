@@ -154,3 +154,95 @@
         </div>
     @endif
 </div>
+
+<!-- Modal de Confirmação -->
+<div id="confirmModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">Confirmar Ação</h3>
+            <button type="button" class="modal-close" onclick="closeConfirmModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p id="modalMessage">Tem certeza que deseja realizar esta ação?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeConfirmModal()">Cancelar</button>
+            <button type="button" class="btn btn-primary" id="modalConfirmBtn">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Edição -->
+<div id="editModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content edit-modal-content">
+        <div class="modal-header">
+            <h3>Editar Avaliação</h3>
+            <button type="button" class="modal-close" onclick="closeEditModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="editReviewForm">
+                <input type="hidden" id="editReviewId" name="review_id">
+                
+                <div class="form-group">
+                    <label for="editRating">Sua Avaliação *</label>
+                    <div class="rating-input" id="editRatingInput">
+                        <input type="radio" id="edit-star-1" name="rating" value="1">
+                        <label for="edit-star-1" class="rating-star" data-rating="1">
+                            <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                        </label>
+                        
+                        <input type="radio" id="edit-star-2" name="rating" value="2">
+                        <label for="edit-star-2" class="rating-star" data-rating="2">
+                            <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                        </label>
+                        
+                        <input type="radio" id="edit-star-3" name="rating" value="3">
+                        <label for="edit-star-3" class="rating-star" data-rating="3">
+                            <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                        </label>
+                        
+                        <input type="radio" id="edit-star-4" name="rating" value="4">
+                        <label for="edit-star-4" class="rating-star" data-rating="4">
+                            <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                        </label>
+                        
+                        <input type="radio" id="edit-star-5" name="rating" value="5">
+                        <label for="edit-star-5" class="rating-star" data-rating="5">
+                            <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editTitle">Título da Avaliação</label>
+                    <input type="text" id="editTitle" name="title" class="form-input" placeholder="Resumo da sua experiência" maxlength="255">
+                    <div class="char-counter">
+                        <span id="editTitleCounter">0</span>/255 caracteres
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editComment">Comentário Detalhado</label>
+                    <textarea id="editComment" name="comment" class="form-textarea" placeholder="Conte sua experiência com o produto, qualidade, entrega, etc." maxlength="1000"></textarea>
+                    <div class="char-counter">
+                        <span id="editCommentCounter">0</span>/1000 caracteres
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="cancelEditBtn">Cancelar</button>
+            <button type="button" class="btn btn-primary" id="saveEditBtn">Salvar Alterações</button>
+        </div>
+    </div>
+</div>

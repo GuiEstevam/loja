@@ -79,10 +79,14 @@ class ReviewController extends Controller
 
         $product = Product::findOrFail($validated['product_id']);
 
-        // Verificar se usuário pode avaliar
-        if (!$product->canUserReview(Auth::id())) {
+        // Verificar se usuário já tem review para este produto
+        $existingReview = Review::where('user_id', Auth::id())
+            ->where('product_id', $validated['product_id'])
+            ->exists();
+
+        if ($existingReview) {
             return response()->json([
-                'error' => 'Você não pode avaliar este produto. Apenas compradores podem avaliar.'
+                'error' => 'Você já avaliou este produto.'
             ], 403);
         }
 
@@ -133,6 +137,22 @@ class ReviewController extends Controller
                 'error' => 'Erro ao enviar avaliação. Tente novamente.'
             ], 500);
         }
+    }
+
+    /**
+     * Buscar review específica do usuário
+     */
+    public function show(Review $review)
+    {
+        // Verificar se review pertence ao usuário
+        if ($review->user_id !== Auth::id()) {
+            return response()->json(['error' => 'Acesso negado'], 403);
+        }
+
+        return response()->json([
+            'success' => true,
+            'review' => $review
+        ]);
     }
 
     /**

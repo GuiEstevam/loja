@@ -108,6 +108,7 @@ Route::middleware('auth')->group(function () {
 
     // Reviews e Avaliações
     Route::get('/produtos/{product}/reviews', [ShopReviewController::class, 'index'])->name('shop.reviews.index');
+    Route::get('/reviews/{review}', [ShopReviewController::class, 'show'])->name('shop.reviews.show');
     Route::post('/reviews', [ShopReviewController::class, 'store'])->name('shop.reviews.store');
     Route::put('/reviews/{review}', [ShopReviewController::class, 'update'])->name('shop.reviews.update');
     Route::delete('/reviews/{review}', [ShopReviewController::class, 'destroy'])->name('shop.reviews.destroy');

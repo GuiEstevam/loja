@@ -134,6 +134,7 @@
     font-size: 0.875rem;
     height: 32px;
     box-sizing: border-box;
+    min-height: 40px;
 }
 
 .checkbox-label {
@@ -379,6 +380,169 @@
     margin-top: 24px;
     display: flex;
     justify-content: center;
+}
+
+/* Modal de Confirmação */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 0;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    color: #374151;
+}
+
+.modal-body {
+    padding: 20px 24px;
+}
+
+.modal-body p {
+    margin: 0;
+    color: #374151;
+    line-height: 1.5;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    padding: 20px 24px;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* Modal de Edição */
+.edit-modal-content {
+    max-width: 600px;
+    width: 95%;
+}
+
+.edit-modal-content .form-group {
+    margin-bottom: 20px;
+}
+
+.edit-modal-content .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.edit-modal-content .form-input,
+.edit-modal-content .form-textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: border-color 0.2s ease;
+}
+
+.edit-modal-content .form-input:focus,
+.edit-modal-content .form-textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.edit-modal-content .form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.edit-modal-content .char-counter {
+    text-align: right;
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+.edit-modal-content .rating-input {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.edit-modal-content .rating-input input[type="radio"] {
+    display: none;
+}
+
+.edit-modal-content .rating-star {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.edit-modal-content .rating-star:hover {
+    transform: scale(1.1);
+}
+
+.edit-modal-content .rating-star .star-icon {
+    width: 40px;
+    height: 40px;
+    color: #d1d5db;
+    transition: color 0.2s ease;
+}
+
+/* Classe JavaScript para controle de seleção no modal */
+.edit-modal-content .rating-star.selected .star-icon {
+    color: #fbbf24;
+}
+
+/* Estrelas não selecionadas ficam cinzas no modal */
+.edit-modal-content .rating-star:not(.selected) .star-icon {
+    color: #d1d5db;
+}
+
+/* Hover effect via JavaScript para modal */
+.edit-modal-content .rating-star.hover .star-icon {
+    color: #fbbf24;
 }
 
 /* Responsive Design */

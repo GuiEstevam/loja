@@ -71,8 +71,10 @@
 /* Rating Input */
 .rating-input {
     display: flex;
-    gap: 8px;
+    gap: 12px;
     align-items: center;
+    justify-content: space-between;
+    width: 100%;
 }
 
 .rating-input input[type="radio"] {
@@ -89,20 +91,10 @@
 }
 
 .rating-star .star-icon {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     color: #d1d5db;
     transition: color 0.2s ease;
-}
-
-/* Correção: Seleção da esquerda para direita */
-.rating-input input[type="radio"]:checked ~ .rating-star .star-icon {
-    color: #fbbf24;
-}
-
-/* Estrelas após a selecionada ficam cinzas */
-.rating-input input[type="radio"]:checked ~ .rating-star ~ .rating-star .star-icon {
-    color: #d1d5db;
 }
 
 /* Classe JavaScript para controle de seleção */
@@ -110,7 +102,13 @@
     color: #fbbf24;
 }
 
-.rating-input:hover .rating-star .star-icon {
+/* Estrelas não selecionadas ficam cinzas */
+.rating-star:not(.selected) .star-icon {
+    color: #d1d5db;
+}
+
+/* Hover effect via JavaScript */
+.rating-star.hover .star-icon {
     color: #fbbf24;
 }
 

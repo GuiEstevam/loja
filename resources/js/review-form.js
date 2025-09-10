@@ -20,6 +20,29 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    
+    // Controle de hover para mostrar preview
+    ratingStars.forEach((star, index) => {
+        star.addEventListener('mouseenter', function() {
+            // Remove todas as classes de hover
+            ratingStars.forEach(s => s.classList.remove('hover'));
+            
+            // Adiciona classe hover até a estrela atual
+            for (let i = 0; i <= index; i++) {
+                ratingStars[i].classList.add('hover');
+            }
+        });
+    });
+    
+    // Remove hover quando sair do container
+    const ratingInput = document.querySelector('.rating-input');
+    if (ratingInput) {
+        ratingInput.addEventListener('mouseleave', function() {
+            ratingStars.forEach(star => {
+                star.classList.remove('hover');
+            });
+        });
+    }
 
     // Contador de caracteres
     const titleInput = document.getElementById('title');
