@@ -245,7 +245,7 @@ df -h
 # Status dos Serviços
 sudo systemctl status nginx
 sudo systemctl status mysql
-sudo systemctl status php8.2-fpm
+sudo systemctl status php8.4-fpm
 sudo systemctl status redis-server
 ```
 

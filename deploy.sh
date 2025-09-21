@@ -58,16 +58,16 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install -y \
     nginx \
     mysql-server \
-    php8.2-fpm \
-    php8.2-mysql \
-    php8.2-xml \
-    php8.2-gd \
-    php8.2-curl \
-    php8.2-zip \
-    php8.2-mbstring \
-    php8.2-bcmath \
-    php8.2-intl \
-    php8.2-redis \
+    php8.4-fpm \
+    php8.4-mysql \
+    php8.4-xml \
+    php8.4-gd \
+    php8.4-curl \
+    php8.4-zip \
+    php8.4-mbstring \
+    php8.4-bcmath \
+    php8.4-intl \
+    php8.4-redis \
     redis-server \
     supervisor \
     git \
@@ -81,14 +81,14 @@ sudo apt install -y \
 log "Configurando PHP..."
 
 # Configurar PHP-FPM
-sudo sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/' /etc/php/8.2/fpm/php.ini
-sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 100M/' /etc/php/8.2/fpm/php.ini
-sudo sed -i 's/post_max_size = 8M/post_max_size = 100M/' /etc/php/8.2/fpm/php.ini
-sudo sed -i 's/max_execution_time = 30/max_execution_time = 300/' /etc/php/8.2/fpm/php.ini
+sudo sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/' /etc/php/8.4/fpm/php.ini
+sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 100M/' /etc/php/8.4/fpm/php.ini
+sudo sed -i 's/post_max_size = 8M/post_max_size = 100M/' /etc/php/8.4/fpm/php.ini
+sudo sed -i 's/max_execution_time = 30/max_execution_time = 300/' /etc/php/8.4/fpm/php.ini
 
 # Reiniciar PHP-FPM
-sudo systemctl restart php8.2-fpm
-sudo systemctl enable php8.2-fpm
+sudo systemctl restart php8.4-fpm
+sudo systemctl enable php8.4-fpm
 
 log "Configurando MySQL..."
 
@@ -133,7 +133,7 @@ server {
     error_page 404 /index.php;
 
     location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php8.4-fpm.sock;
         fastcgi_param SCRIPT_FILENAME \$realpath_root\$fastcgi_script_name;
         include fastcgi_params;
     }
