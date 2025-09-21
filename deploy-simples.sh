@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Script de Deploy Simplificado para SkyFashion
+# Script de Deploy Simplificado para Loja
 # Execute este script após fazer upload dos arquivos para o servidor
 
 set -e
 
-echo "🚀 Deploy Simplificado do SkyFashion"
+echo "🚀 Deploy Simplificado da Loja"
 echo "====================================="
 
 # Cores para output

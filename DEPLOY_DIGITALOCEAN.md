@@ -1,13 +1,13 @@
-# 🚀 Deploy do SkyFashion no DigitalOcean
+# 🚀 Deploy da Loja no DigitalOcean
 
-Este guia completo irá te ajudar a fazer o deploy do projeto SkyFashion no DigitalOcean.
+Este guia completo irá te ajudar a fazer o deploy do projeto Loja no DigitalOcean.
 
 ## 📋 Pré-requisitos
 
 - Conta no DigitalOcean
 - Domínio configurado (opcional, mas recomendado)
 - Acesso SSH ao servidor
-- Projeto SkyFashion local funcionando
+- Projeto Loja local funcionando
 
 ## 🖥️ 1. Criar Droplet no DigitalOcean
 
@@ -37,18 +37,18 @@ ssh root@SEU_IP_DO_SERVIDOR
 
 ```bash
 # Criar usuário
-adduser skyfashion
+adduser loja
 
 # Adicionar ao grupo sudo
-usermod -aG sudo skyfashion
+usermod -aG sudo loja
 
 # Configurar SSH para o novo usuário
-cp -r ~/.ssh /home/skyfashion/
-chown -R skyfashion:skyfashion /home/skyfashion/.ssh
+cp -r ~/.ssh /home/loja/
+chown -R loja:loja /home/loja/.ssh
 
 # Sair e conectar com o novo usuário
 exit
-ssh skyfashion@SEU_IP_DO_SERVIDOR
+ssh loja@SEU_IP_DO_SERVIDOR
 ```
 
 ### 2.3 Atualizar Sistema
@@ -67,15 +67,15 @@ sudo apt install git -y
 
 # Clonar repositório
 cd /var/www
-sudo git clone https://github.com/SEU_USUARIO/skyfashion.git
-sudo chown -R www-data:www-data skyfashion
+sudo git clone https://github.com/SEU_USUARIO/loja.git
+sudo chown -R www-data:www-data loja
 ```
 
 ### 3.2 Método 2: Upload via SCP
 
 ```bash
 # No seu computador local
-scp -r ./loja skyfashion@SEU_IP:/var/www/
+scp -r ./loja loja@SEU_IP:/var/www/
 ```
 
 ### 3.3 Método 3: Upload via SFTP

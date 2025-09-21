@@ -33,8 +33,8 @@ if [[ $EUID -eq 0 ]]; then
 fi
 
 # Definir variáveis
-PROJECT_DIR="/var/www/skyfashion"
-BACKUP_DIR="/var/backups/skyfashion"
+PROJECT_DIR="/var/www/loja"
+BACKUP_DIR="/var/backups/loja"
 NGINX_SITES="/etc/nginx/sites-available"
 NGINX_ENABLED="/etc/nginx/sites-enabled"
 
@@ -96,9 +96,9 @@ log "Configurando MySQL..."
 sudo mysql_secure_installation
 
 # Criar banco de dados e usuário
-sudo mysql -e "CREATE DATABASE IF NOT EXISTS skyfashion CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-sudo mysql -e "CREATE USER IF NOT EXISTS 'skyfashion_user'@'localhost' IDENTIFIED BY 'SENHA_FORTE_AQUI';"
-sudo mysql -e "GRANT ALL PRIVILEGES ON skyfashion.* TO 'skyfashion_user'@'localhost';"
+sudo mysql -e "CREATE DATABASE IF NOT EXISTS loja CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+sudo mysql -e "CREATE USER IF NOT EXISTS 'loja_user'@'localhost' IDENTIFIED BY 'SENHA_FORTE_AQUI';"
+sudo mysql -e "GRANT ALL PRIVILEGES ON loja.* TO 'loja_user'@'localhost';"
 sudo mysql -e "FLUSH PRIVILEGES;"
 
 log "Configurando Redis..."
@@ -110,7 +110,7 @@ sudo systemctl start redis-server
 log "Configurando Nginx..."
 
 # Criar configuração do Nginx
-sudo tee $NGINX_SITES/skyfashion > /dev/null <<EOF
+sudo tee $NGINX_SITES/loja > /dev/null <<EOF
 server {
     listen 80;
     server_name seudominio.com www.seudominio.com;
@@ -152,7 +152,7 @@ server {
 EOF
 
 # Habilitar site
-sudo ln -sf $NGINX_SITES/skyfashion $NGINX_ENABLED/
+sudo ln -sf $NGINX_SITES/loja $NGINX_ENABLED/
 sudo rm -f $NGINX_ENABLED/default
 
 # Testar configuração do Nginx
@@ -165,8 +165,8 @@ sudo systemctl enable nginx
 log "Configurando Supervisor para queues..."
 
 # Criar configuração do Supervisor
-sudo tee /etc/supervisor/conf.d/skyfashion-worker.conf > /dev/null <<EOF
-[program:skyfashion-worker]
+sudo tee /etc/supervisor/conf.d/loja-worker.conf > /dev/null <<EOF
+[program:loja-worker]
 process_name=%(program_name)s_%(process_num)02d
 command=php $PROJECT_DIR/artisan queue:work --sleep=3 --tries=3 --max-time=3600
 autostart=true
@@ -183,7 +183,7 @@ EOF
 # Recarregar Supervisor
 sudo supervisorctl reread
 sudo supervisorctl update
-sudo supervisorctl start skyfashion-worker:*
+sudo supervisorctl start loja-worker:*
 
 log "Configurando SSL com Let's Encrypt..."
 
