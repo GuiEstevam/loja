@@ -30,6 +30,7 @@ if (!function_exists('translateOrderStatus')) {
         $translations = [
             'pending' => 'Pendente',
             'paid' => 'Pago',
+            'approved' => 'Aprovado',
             'processing' => 'Processando',
             'shipped' => 'Enviado',
             'delivered' => 'Entregue',
