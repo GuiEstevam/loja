@@ -1,69 +1,62 @@
-<?php
+@extends('layouts.app')
+@section('title', 'Novo Tamanho')
 
-namespace App\Http\Controllers\Admin;
+@section('content')
+<div class="admin-page">
+    <div class="admin-content">
+        <div class="admin-container">
+            <!-- Header da Página -->
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <nav class="admin-breadcrumb">
+                        <a href="{{ route('admin.dashboard') }}">
+                            <ion-icon name="home-outline"></ion-icon>
+                            Dashboard
+                        </a>
+                        <ion-icon name="chevron-forward-outline" class="separator"></ion-icon>
+                        <a href="{{ route('admin.sizes.index') }}">Tamanhos</a>
+                        <ion-icon name="chevron-forward-outline" class="separator"></ion-icon>
+                        <span>Novo</span>
+                    </nav>
 
-use App\Http\Controllers\Controller;
-use App\Models\Size;
-use Illuminate\Http\Request;
+                    <div class="admin-header-content">
+                        <div class="admin-header-text">
+                            <h1 class="admin-card-title">
+                                <ion-icon name="add-circle-outline"></ion-icon>
+                                Criar Novo Tamanho
+                            </h1>
+                            <p class="admin-card-subtitle">Adicione um novo tamanho ao sistema</p>
+                        </div>
+                        
+                        <div class="admin-header-actions">
+                            <a href="{{ route('admin.sizes.index') }}" class="admin-btn admin-btn-secondary">
+                                <ion-icon name="arrow-back-outline"></ion-icon>
+                                Voltar para Lista
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-class SizeController extends Controller
-{
-    public function index(Request $request)
-    {
-        $query = Size::orderBy('name');
+            <!-- Formulário de Criação de Tamanho -->
+            <form method="POST" action="{{ route('admin.sizes.store') }}" class="admin-form">
+                @csrf
 
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where('name', 'like', '%' . $search . '%');
-        }
+                @include('admin.sizes._form')
 
-        $sizes = $query->paginate(15);
-
-        return view('admin.sizes.index', compact('sizes'));
-    }
-
-    public function create()
-    {
-        return view('admin.sizes.create');
-    }
-
-    public function store(Request $request)
-    {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'active' => 'boolean',
-        ]);
-        Size::create($data);
-        return redirect()->route('admin.sizes.index')->with('success', 'Tamanho criado!');
-    }
-
-    public function edit(Size $size)
-    {
-        return view('admin.sizes.edit', compact('size'));
-    }
-
-    public function update(Request $request, Size $size)
-    {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'active' => 'boolean',
-        ]);
-        $size->update($data);
-        return redirect()->route('admin.sizes.index')->with('success', 'Tamanho atualizado!');
-    }
-
-    public function show(Size $size)
-    {
-        $products = $size
-            ->products()
-            ->with(['categories', 'brand', 'colors'])
-            ->paginate(12);
-        return view('admin.sizes.show', compact('size', 'products'));
-    }
-
-    public function destroy(Size $size)
-    {
-        $size->delete();
-        return redirect()->route('admin.sizes.index')->with('success', 'Tamanho removido!');
-    }
-}
+                <!-- Ações do Formulário -->
+                <div class="admin-form-actions">
+                    <button type="submit" class="admin-btn admin-btn-primary">
+                        <ion-icon name="add-outline"></ion-icon>
+                        Criar Tamanho
+                    </button>
+                    <a href="{{ route('admin.sizes.index') }}" class="admin-btn admin-btn-secondary">
+                        <ion-icon name="close-outline"></ion-icon>
+                        Voltar para Lista
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endsection

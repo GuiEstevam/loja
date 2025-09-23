@@ -80,6 +80,22 @@
                       <h3 class="admin-category-title">Tamanhos</h3>
                       <p class="admin-category-description">Gerencie os tamanhos disponíveis</p>
                     </a>
+
+                    <a href="{{ route('admin.users.index') }}" class="admin-category-card users">
+                      <div class="admin-category-icon">
+                        <ion-icon name="people-outline"></ion-icon>
+                      </div>
+                      <h3 class="admin-category-title">Usuários</h3>
+                      <p class="admin-category-description">Gerencie usuários e clientes</p>
+                    </a>
+
+                    <a href="{{ route('admin.reviews.index') }}" class="admin-category-card reviews">
+                      <div class="admin-category-icon">
+                        <ion-icon name="star-outline"></ion-icon>
+                      </div>
+                      <h3 class="admin-category-title">Avaliações</h3>
+                      <p class="admin-category-description">Modere avaliações dos produtos</p>
+                    </a>
                   </div>
                 </div>
               </div>

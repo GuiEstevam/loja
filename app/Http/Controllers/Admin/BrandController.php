@@ -20,7 +20,12 @@ class BrandController extends Controller
             });
         }
 
-        $brands = $query->paginate(15);
+        if ($request->filled('status')) {
+            $status = $request->input('status');
+            $query->where('active', $status == '1');
+        }
+
+        $brands = $query->with('products')->paginate(15);
 
         return view('admin.brands.index', compact('brands'));
     }
@@ -35,9 +40,13 @@ class BrandController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:brands,slug',
+            'description' => 'nullable|string|max:1000',
             'active' => 'boolean',
             'logo' => 'nullable|image|',
         ]);
+
+        // Garantir que o campo active seja boolean
+        $data['active'] = $request->has('active') ? true : false;
 
         if ($request->hasFile('logo')) {
             $logoName = uniqid() . '.' . $request->logo->extension();
@@ -45,9 +54,9 @@ class BrandController extends Controller
             $data['logo'] = $logoName;
         }
 
-        Brand::create($data);
+        $brand = Brand::create($data);
 
-        return redirect()->route('admin.brands.index')->with('success', 'Marca criada!');
+        return redirect()->route('admin.brands.show', $brand)->with('success', 'Marca criada com sucesso!');
     }
 
     public function edit(Brand $brand)
@@ -55,11 +64,12 @@ class BrandController extends Controller
         return view('admin.brands.edit', compact('brand'));
     }
 
-    public function show(Brand $brand)
+    public function show(Request $request, Brand $brand)
     {
+        $perPage = $request->get('per_page', 5);
         $products = $brand->products()
             ->with('categories', 'colors', 'sizes')
-            ->paginate(12);
+            ->paginate($perPage);
 
         return view('admin.brands.show', compact('brand', 'products'));
     }
@@ -69,9 +79,13 @@ class BrandController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:brands,slug,' . $brand->id,
+            'description' => 'nullable|string|max:1000',
             'active' => 'boolean',
             'logo' => 'nullable|image|',
         ]);
+
+        // Garantir que o campo active seja boolean
+        $data['active'] = $request->has('active') ? true : false;
 
         if ($request->hasFile('logo')) {
             $logoName = uniqid() . '.' . $request->logo->extension();
@@ -85,12 +99,18 @@ class BrandController extends Controller
 
         $brand->update($data);
 
-        return redirect()->route('admin.brands.index')->with('success', 'Marca atualizada!');
+        return redirect()->route('admin.brands.show', $brand)->with('success', 'Marca atualizada com sucesso!');
     }
 
     public function destroy(Brand $brand)
     {
+        // Remove o logo se existir
+        if ($brand->logo && file_exists(public_path('brands/' . $brand->logo))) {
+            unlink(public_path('brands/' . $brand->logo));
+        }
+        
         $brand->delete();
-        return redirect()->route('admin.brands.index')->with('success', 'Marca removida!');
+        
+        return redirect()->route('admin.brands.index')->with('success', 'Marca removida com sucesso!');
     }
 }

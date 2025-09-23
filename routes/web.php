@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\BrandController as AdminBrandController;
 use App\Http\Controllers\Admin\ColorController as AdminColorController;
 use App\Http\Controllers\Admin\SizeController as AdminSizeController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 
 // Shop Controllers
 use App\Http\Controllers\Shop\ProductController as ShopProductController;
@@ -154,6 +155,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('reviews/approve-multiple', [AdminReviewController::class, 'approveMultiple'])->name('reviews.approve-multiple');
     Route::post('reviews/reject-multiple', [AdminReviewController::class, 'rejectMultiple'])->name('reviews.reject-multiple');
     Route::get('reviews-stats', [AdminReviewController::class, 'stats'])->name('reviews.stats');
+
+    // Gestão de Usuários
+    Route::resource('users', AdminUserController::class);
+    Route::post('users/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('users.toggle-status');
+    Route::get('users-stats', [AdminUserController::class, 'stats'])->name('users.stats');
 
     // Outras resources do admin (descomente conforme necessidade do MVP)
     // Route::resource('order-items', AdminOrderItemController::class);

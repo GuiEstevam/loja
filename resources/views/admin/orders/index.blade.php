@@ -18,11 +18,22 @@
               <span>Pedidos</span>
             </nav>
 
-            <h1 class="admin-card-title">
-              <ion-icon name="receipt-outline"></ion-icon>
-              Gerenciar Pedidos
-            </h1>
-            <p class="admin-card-subtitle">Visão geral e gestão de todos os pedidos</p>
+            <div class="admin-header-content">
+              <div class="admin-header-text">
+                <h1 class="admin-card-title">
+                  <ion-icon name="receipt-outline"></ion-icon>
+                  Gerenciar Pedidos
+                </h1>
+                <p class="admin-card-subtitle">Visão geral e gestão de todos os pedidos</p>
+              </div>
+              
+              <div class="admin-header-actions">
+                <a href="{{ route('admin.dashboard') }}" class="admin-btn admin-btn-secondary">
+                  <ion-icon name="home-outline"></ion-icon>
+                  Voltar ao Dashboard
+                </a>
+              </div>
+            </div>
           </div>
 
           <!-- Estatísticas -->

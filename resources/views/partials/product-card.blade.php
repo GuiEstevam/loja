@@ -12,8 +12,8 @@
     </h3>
     <div class="mb-1 text-left">
       @php $fakePrice = $product->price * 1.2; @endphp
-      <span class="text-gray-400 text-base line-through mr-2">De: R$ {{ number_format($fakePrice, 2, ',', '.') }}</span>
-      <span class="text-blue-600 font-bold text-lg block">Por: R$
+      <span class="text-gray-400 text-base line-through mr-2">De: € {{ number_format($fakePrice, 2, ',', '.') }}</span>
+      <span class="text-blue-600 font-bold text-lg block">Por: €
         {{ number_format($product->price, 2, ',', '.') }}</span>
     </div>
     <button

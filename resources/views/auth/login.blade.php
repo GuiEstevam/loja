@@ -298,6 +298,12 @@
                 </div>
             @endsession
             
+            @session('error')
+                <div class="error-message">
+                    {{ $value }}
+                </div>
+            @endsession
+            
             <form method="POST" action="{{ route('login') }}">
                 @csrf
                 

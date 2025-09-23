@@ -158,7 +158,7 @@
                             </div>
                             <div class="order-item">
                                 <span class="order-label">Total:</span>
-                                <span class="order-value">R$ {{ number_format($review->order->total, 2, ',', '.') }}</span>
+                                <span class="order-value">€ {{ number_format($review->order->total, 2, ',', '.') }}</span>
                             </div>
                         </div>
                     </div>
@@ -180,7 +180,7 @@
                     <div class="product-details">
                         <div class="product-name">{{ $review->product->name }}</div>
                         <div class="product-sku">SKU: {{ $review->product->sku }}</div>
-                        <div class="product-price">R$ {{ number_format($review->product->price, 2, ',', '.') }}</div>
+                        <div class="product-price">€ {{ number_format($review->product->price, 2, ',', '.') }}</div>
                         
                         <div class="product-stats">
                             <div class="stat-item">
