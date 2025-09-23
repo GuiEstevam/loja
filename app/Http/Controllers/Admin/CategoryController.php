@@ -20,7 +20,7 @@ class CategoryController extends Controller
             });
         }
 
-        $categories = $query->paginate(15);
+        $categories = $query->with('products')->paginate(15);
 
         return view('admin.categories.index', compact('categories'));
     }
@@ -35,10 +35,15 @@ class CategoryController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:categories,slug',
+            'description' => 'nullable|string|max:1000',
             'active' => 'boolean'
         ]);
-        Category::create($data);
-        return redirect()->route('admin.categories.index')->with('success', 'Categoria criada!');
+        
+        // Garantir que o campo active seja boolean
+        $data['active'] = $request->has('active') ? true : false;
+        
+        $category = Category::create($data);
+        return redirect()->route('admin.categories.show', $category)->with('success', 'Categoria criada com sucesso!');
     }
 
     public function edit(Category $category)
@@ -46,9 +51,10 @@ class CategoryController extends Controller
         return view('admin.categories.edit', compact('category'));
     }
 
-    public function show(Category $category)
+    public function show(Request $request, Category $category)
     {
-        $products = $category->products()->with('brand', 'colors', 'sizes')->paginate(12);
+        $perPage = $request->get('per_page', 5);
+        $products = $category->products()->with('brand', 'colors', 'sizes')->paginate($perPage);
         return view('admin.categories.show', compact('category', 'products'));
     }
 
@@ -58,15 +64,20 @@ class CategoryController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:categories,slug,' . $category->id,
+            'description' => 'nullable|string|max:1000',
             'active' => 'boolean'
         ]);
+        
+        // Garantir que o campo active seja boolean
+        $data['active'] = $request->has('active') ? true : false;
+        
         $category->update($data);
-        return redirect()->route('admin.categories.index')->with('success', 'Categoria atualizada!');
+        return redirect()->route('admin.categories.show', $category)->with('success', 'Categoria atualizada com sucesso!');
     }
 
     public function destroy(Category $category)
     {
         $category->delete();
-        return redirect()->route('admin.categories.index')->with('success', 'Categoria removida!');
+        return redirect()->route('admin.categories.index')->with('success', 'Categoria removida com sucesso!');
     }
 }

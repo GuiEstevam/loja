@@ -33,26 +33,44 @@
 
   {{-- Modal de feedback global --}}
   @if (session('success') || $errors->any())
-    <div id="feedbackModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full shadow-lg relative">
+    <div id="feedbackModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 9999;">
+      <div style="background-color: var(--bg-card, #ffffff); border-radius: 12px; padding: 24px; max-width: 400px; width: 90%; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); position: relative; border: 1px solid var(--border, #e5e5e5);">
         <button type="button" id="closeModal"
-          class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-2xl font-bold leading-none focus:outline-none"
-          aria-label="Fechar">
+          style="position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 24px; font-weight: bold; color: var(--text-secondary, #666); cursor: pointer; line-height: 1; padding: 4px 8px; border-radius: 4px; transition: color 0.2s;"
+          aria-label="Fechar"
+          onmouseover="this.style.color='var(--text-primary, #333)'"
+          onmouseout="this.style.color='var(--text-secondary, #666)'">
           &times;
         </button>
-        <h2 class="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">Mensagem</h2>
+        <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 16px; color: var(--text-primary, #333); display: flex; align-items: center; gap: 8px;">
+          @if (session('success'))
+            <ion-icon name="checkmark-circle" style="color: var(--success-color, #22c55e); font-size: 24px;"></ion-icon>
+            Sucesso
+          @else
+            <ion-icon name="alert-circle" style="color: var(--error-color, #ef4444); font-size: 24px;"></ion-icon>
+            Erro
+          @endif
+        </h2>
         @if (session('success'))
-          <div class="mb-4 text-green-600 dark:text-green-400">{{ session('success') }}</div>
+          <div style="margin-bottom: 16px; color: var(--success-color, #22c55e); font-weight: 500;">{{ session('success') }}</div>
         @endif
         @if ($errors->any())
-          <div class="mb-4 text-red-600 dark:text-red-400">
-            <ul class="list-disc list-inside">
+          <div style="margin-bottom: 16px; color: var(--error-color, #ef4444);">
+            <ul style="list-style-type: disc; margin-left: 20px; margin: 0;">
               @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
+                <li style="margin-bottom: 4px;">{{ $error }}</li>
               @endforeach
             </ul>
           </div>
         @endif
+        <div style="text-align: right; margin-top: 20px;">
+          <button type="button" onclick="document.getElementById('feedbackModal').style.display='none'" 
+                  style="background-color: var(--primary, #3b82f6); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 500; transition: background-color 0.2s;"
+                  onmouseover="this.style.backgroundColor='var(--primary-dark, #2563eb)'"
+                  onmouseout="this.style.backgroundColor='var(--primary, #3b82f6)'">
+            OK
+          </button>
+        </div>
       </div>
     </div>
     <script>

@@ -18,11 +18,26 @@
               <span>Produtos</span>
             </nav>
 
-            <h1 class="admin-card-title">
-              <ion-icon name="cube-outline"></ion-icon>
-              Gerenciar Produtos
-            </h1>
-            <p class="admin-card-subtitle">Visão geral e gestão de todos os produtos</p>
+            <div class="admin-header-content">
+              <div class="admin-header-text">
+                <h1 class="admin-card-title">
+                  <ion-icon name="cube-outline"></ion-icon>
+                  Gerenciar Produtos
+                </h1>
+                <p class="admin-card-subtitle">Visão geral e gestão de todos os produtos</p>
+              </div>
+              
+              <div class="admin-header-actions">
+                <a href="{{ route('admin.products.create') }}" class="admin-btn admin-btn-primary">
+                  <ion-icon name="add-outline"></ion-icon>
+                  Novo Produto
+                </a>
+                <a href="{{ route('admin.dashboard') }}" class="admin-btn admin-btn-secondary">
+                  <ion-icon name="home-outline"></ion-icon>
+                  Voltar ao Dashboard
+                </a>
+              </div>
+            </div>
           </div>
 
           <!-- Filtros -->
@@ -52,11 +67,6 @@
                   <ion-icon name="search-outline"></ion-icon>
                   Pesquisar
                 </button>
-
-                <a href="{{ route('admin.products.create') }}" class="admin-btn admin-btn-primary">
-                  <ion-icon name="add-outline"></ion-icon>
-                  Novo Produto
-                </a>
               </div>
             </form>
           </div>

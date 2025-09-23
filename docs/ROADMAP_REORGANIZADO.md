@@ -42,7 +42,72 @@
 
 ---
 
-### **Sprint 2 - Sistema de Favoritos Melhorado**
+### **Sprint 2 - Dashboard Admin Completo**
+**Duração**: 1 semana
+**Status**: 🚀 **EM ANDAMENTO**
+**Objetivo**: Implementar dashboard administrativo completo e funcional
+
+#### **Funcionalidades**
+- [ ] **Métricas Principais**: Vendas, pedidos, produtos, clientes
+- [ ] **Gráficos e Estatísticas**: Visualizações interativas
+- [ ] **Gestão de Usuários**: Listagem, visualização, edição de usuários
+- [ ] **Relatórios Básicos**: Vendas, produtos mais vendidos
+- [ ] **Visão Geral do Negócio**: KPIs principais
+- [ ] **Interface Responsiva**: Dashboard adaptável
+
+#### **Entregáveis**
+- ✅ Dashboard admin completo e funcional
+- ✅ Sistema de gestão de usuários
+- ✅ Relatórios básicos implementados
+- ✅ Interface moderna e responsiva
+- ✅ Testes de funcionalidade
+- ✅ Documentação de uso
+
+---
+
+### **Sprint 3 - Dashboard Cliente Melhorado**
+**Duração**: 1 semana
+**Objetivo**: Aprimorar área do cliente com funcionalidades essenciais
+
+#### **Funcionalidades**
+- [ ] **Visão Geral**: Resumo de pedidos, favoritos, pontos
+- [ ] **Histórico Detalhado**: Timeline de atividades
+- [ ] **Preferências**: Configurações de conta
+- [ ] **Estatísticas**: Gráficos de compras
+- [ ] **Interface Responsiva**: Adaptável a todos os dispositivos
+- [ ] **Navegação Intuitiva**: Menu organizado e claro
+
+#### **Entregáveis**
+- ✅ Dashboard cliente completo e intuitivo
+- ✅ Funcionalidades de relatório pessoal
+- ✅ Interface responsiva e moderna
+- ✅ Testes de usabilidade
+- ✅ Documentação de funcionalidades
+
+---
+
+### **Sprint 4 - Relatórios e Analytics**
+**Duração**: 1 semana
+**Objetivo**: Implementar sistema completo de relatórios
+
+#### **Funcionalidades**
+- [ ] **Relatórios de Vendas**: Por período, produto, cliente
+- [ ] **Análise de Clientes**: Comportamento, segmentação
+- [ ] **Exportação**: PDF, Excel, CSV
+- [ ] **Métricas de Performance**: Conversão, abandono
+- [ ] **Dashboard Executivo**: Visão estratégica
+- [ ] **Agendamento**: Relatórios automáticos
+
+#### **Entregáveis**
+- ✅ Sistema de relatórios completo
+- ✅ Dashboard executivo
+- ✅ Exportação de dados
+- ✅ Testes de cálculo
+- ✅ Documentação de métricas
+
+---
+
+### **Sprint 5 - Sistema de Favoritos Melhorado**
 **Duração**: 1 semana
 **Objetivo**: Melhorar sistema de favoritos existente
 
@@ -63,7 +128,7 @@
 
 ---
 
-### **Sprint 3 - Busca Avançada e Filtros**
+### **Sprint 6 - Busca Avançada e Filtros**
 **Duração**: 1 semana
 **Objetivo**: Implementar busca inteligente e filtros
 
@@ -71,9 +136,9 @@
 - [ ] **Busca Inteligente**: Busca por texto, categoria, marca
 - [ ] **Filtros Avançados**: Preço, cor, tamanho, disponibilidade
 - [ ] **Ordenação**: Por relevância, preço, avaliação, data
-- [ ] **Busca por Voz**: Integração com reconhecimento de voz
 - [ ] **Sugestões**: Autocomplete e sugestões inteligentes
 - [ ] **Histórico**: Histórico de buscas do usuário
+- [ ] **Performance**: Busca otimizada
 
 #### **Entregáveis**
 - ✅ Sistema de busca avançado
@@ -84,28 +149,7 @@
 
 ---
 
-### **Sprint 4 - Dashboard do Cliente Melhorado**
-**Duração**: 1 semana
-**Objetivo**: Aprimorar área do cliente
-
-#### **Funcionalidades**
-- [ ] **Visão Geral**: Resumo de pedidos e favoritos
-- [ ] **Histórico Detalhado**: Timeline de atividades
-- [ ] **Preferências**: Configurações de conta
-- [ ] **Notificações**: Central de notificações
-- [ ] **Estatísticas**: Gráficos de compras
-- [ ] **Exportação**: Relatórios de atividades
-
-#### **Entregáveis**
-- ✅ Dashboard completo e intuitivo
-- ✅ Funcionalidades de relatório
-- ✅ Interface responsiva
-- ✅ Testes de usabilidade
-- ✅ Documentação de funcionalidades
-
----
-
-### **Sprint 5 - Sistema de Cupons e Descontos**
+### **Sprint 7 - Sistema de Cupons e Descontos**
 **Duração**: 1 semana
 **Objetivo**: Implementar sistema de cupons
 
@@ -126,7 +170,7 @@
 
 ---
 
-### **Sprint 6 - Programa de Fidelidade**
+### **Sprint 8 - Programa de Fidelidade**
 **Duração**: 1 semana
 **Objetivo**: Implementar sistema de pontos
 
@@ -147,7 +191,7 @@
 
 ---
 
-### **Sprint 7 - Chat de Suporte**
+### **Sprint 9 - Chat de Suporte**
 **Duração**: 1 semana
 **Objetivo**: Implementar atendimento ao cliente
 
@@ -168,28 +212,7 @@
 
 ---
 
-### **Sprint 8 - Relatórios e Analytics**
-**Duração**: 1 semana
-**Objetivo**: Implementar sistema de relatórios
-
-#### **Funcionalidades**
-- [ ] **Dashboard Admin**: Métricas principais
-- [ ] **Relatórios de Vendas**: Vendas por período
-- [ ] **Relatórios de Produtos**: Produtos mais vendidos
-- [ ] **Relatórios de Clientes**: Análise de clientes
-- [ ] **Exportação**: PDF, Excel, CSV
-- [ ] **Agendamento**: Relatórios automáticos
-
-#### **Entregáveis**
-- ✅ Sistema de relatórios completo
-- ✅ Dashboard com métricas
-- ✅ Exportação de dados
-- ✅ Testes de cálculo
-- ✅ Documentação de métricas
-
----
-
-### **Sprint 9 - Integração de Pagamento Real**
+### **Sprint 10 - Integração de Pagamento Real**
 **Duração**: 2 semanas
 **Objetivo**: Implementar pagamento real
 
@@ -213,14 +236,15 @@
 ## 📊 **Cronograma Reorganizado**
 
 ### **✅ Semana 1**: Sprint 1 - Avaliações (CONCLUÍDA)
-### **🚀 Semana 2**: Sprint 2 - Favoritos (PRÓXIMA)
-### **📋 Semana 3**: Sprint 3 - Busca Avançada
-### **📋 Semana 4**: Sprint 4 - Dashboard Cliente
-### **📋 Semana 5**: Sprint 5 - Cupons
-### **📋 Semana 6**: Sprint 6 - Fidelidade
-### **📋 Semana 7**: Sprint 7 - Chat Suporte
-### **📋 Semana 8**: Sprint 8 - Relatórios
-### **📋 Semana 9-10**: Sprint 9 - Pagamento Real
+### **🚀 Semana 2**: Sprint 2 - Dashboard Admin Completo (EM ANDAMENTO)
+### **📋 Semana 3**: Sprint 3 - Dashboard Cliente Melhorado
+### **📋 Semana 4**: Sprint 4 - Relatórios e Analytics
+### **📋 Semana 5**: Sprint 5 - Sistema de Favoritos Melhorado
+### **📋 Semana 6**: Sprint 6 - Busca Avançada e Filtros
+### **📋 Semana 7**: Sprint 7 - Sistema de Cupons e Descontos
+### **📋 Semana 8**: Sprint 8 - Programa de Fidelidade
+### **📋 Semana 9**: Sprint 9 - Chat de Suporte
+### **📋 Semana 10-11**: Sprint 10 - Integração de Pagamento Real
 
 ---
 
@@ -255,18 +279,18 @@
 - ✅ **Entrega**: Sistema funcionando e testado
 - ✅ **Resultado**: 10 bugs resolvidos, UX/UI melhorada, arquitetura refatorada
 
-### **🚀 Sprint 2 - Sistema de Favoritos Melhorado (PRÓXIMA)**
-- 🎯 **Objetivo**: Melhorar sistema de favoritos existente
+### **🚀 Sprint 2 - Dashboard Admin Completo (EM ANDAMENTO)**
+- 🎯 **Objetivo**: Implementar dashboard administrativo completo e funcional
 - ⏱️ **Duração**: 1 semana
-- 📋 **Escopo**: Sincronização, interface melhorada, filtros
-- ✅ **Entrega**: Sistema aprimorado e funcional
+- 📋 **Escopo**: Métricas, gráficos, gestão de usuários, relatórios básicos
+- ✅ **Entrega**: Dashboard admin completo com gestão de usuários
 
 ---
 
-**Conclusão**: ✅ **Sprint 1 Concluída com Sucesso!** Sistema de avaliações completamente funcional com 10 bugs resolvidos e melhorias de UX/UI implementadas. Pronto para Sprint 2 - Sistema de Favoritos Melhorado.
+**Conclusão**: ✅ **Sprint 1 Concluída com Sucesso!** Sistema de avaliações completamente funcional com 10 bugs resolvidos e melhorias de UX/UI implementadas. Agora focando em funcionalidades essenciais: Dashboard Admin Completo.
 
 ---
 
 **Status**: ✅ **SPRINT 1 CONCLUÍDA**
-**Próximo**: 🚀 **SPRINT 2 - SISTEMA DE FAVORITOS MELHORADO**
-**Abordagem**: 🎯 **UMA FUNCIONALIDADE POR SPRINT**
+**Atual**: 🚀 **SPRINT 2 - DASHBOARD ADMIN COMPLETO (EM ANDAMENTO)**
+**Abordagem**: 🎯 **FUNCIONALIDADES ESSENCIAIS PRIMEIRO**
