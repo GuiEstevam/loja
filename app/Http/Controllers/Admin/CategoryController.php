@@ -22,7 +22,14 @@ class CategoryController extends Controller
 
         $categories = $query->with('products')->paginate(15);
 
-        return view('admin.categories.index', compact('categories'));
+        // Estatísticas gerais
+        $stats = [
+            'total' => Category::count(),
+            'active' => Category::where('active', true)->count(),
+            'inactive' => Category::where('active', false)->count(),
+        ];
+
+        return view('admin.categories.index', compact('categories', 'stats'));
     }
 
     public function create()

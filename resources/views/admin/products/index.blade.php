@@ -40,7 +40,58 @@
             </div>
           </div>
 
-          <!-- Filtros -->
+          <!-- Estatísticas -->
+          <div class="admin-card-body">
+            <div class="admin-stats-container">
+              <div class="admin-stats-grid">
+                <div class="admin-stat-card">
+                  <div class="admin-stat-header">
+                    <div class="admin-stat-icon">
+                      <ion-icon name="cube-outline"></ion-icon>
+                    </div>
+                  </div>
+                  <div class="admin-stat-content">
+                    <div class="admin-stat-value">{{ $stats['total'] }}</div>
+                    <div class="admin-stat-label">Total</div>
+                  </div>
+                </div>
+                
+                <div class="admin-stat-card">
+                  <div class="admin-stat-header">
+                    <div class="admin-stat-icon">
+                      <ion-icon name="checkmark-circle-outline"></ion-icon>
+                    </div>
+                  </div>
+                  <div class="admin-stat-content">
+                    <div class="admin-stat-value">{{ $stats['active'] }}</div>
+                    <div class="admin-stat-label">Ativos</div>
+                  </div>
+                </div>
+                
+                <div class="admin-stat-card">
+                  <div class="admin-stat-header">
+                    <div class="admin-stat-icon">
+                      <ion-icon name="warning-outline"></ion-icon>
+                    </div>
+                  </div>
+                  <div class="admin-stat-content">
+                    <div class="admin-stat-value">{{ $stats['low_stock'] }}</div>
+                    <div class="admin-stat-label">Baixo Estoque</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h2 class="admin-card-title">
+              <ion-icon name="search-outline"></ion-icon>
+              Filtros de Busca
+            </h2>
+          </div>
           <div class="admin-card-body">
             <form method="GET" class="admin-filters">
               <div class="admin-filters-main">
@@ -70,33 +121,37 @@
               </div>
             </form>
           </div>
+        </div>
 
-          <!-- Tabela -->
-          <div class="admin-table-container">
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>Imagem</th>
-                  <th>Produto</th>
-                  <th>Marca</th>
-                  <th>Categorias</th>
-                  <th>Cores</th>
-                  <th>Tamanhos</th>
-                  <th>Preço</th>
-                  <th>Estoque</th>
-                  <th>Status</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody id="products-table-body">
-                @include('admin.products.partials.products-table')
-              </tbody>
-            </table>
-          </div>
+        <!-- Tabela -->
+        <div class="admin-card">
+          <div class="admin-card-body">
+            <div class="admin-table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Imagem</th>
+                    <th>Produto</th>
+                    <th>Marca</th>
+                    <th>Categorias</th>
+                    <th>Cores</th>
+                    <th>Tamanhos</th>
+                    <th>Preço</th>
+                    <th>Estoque</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="products-table-body">
+                  @include('admin.products.partials.products-table')
+                </tbody>
+              </table>
+            </div>
 
-          <!-- Paginação -->
-          <div id="products-pagination">
-            @include('admin.products.partials.pagination')
+            <!-- Paginação -->
+            <div id="products-pagination">
+              @include('admin.products.partials.pagination')
+            </div>
           </div>
         </div>
       </div>

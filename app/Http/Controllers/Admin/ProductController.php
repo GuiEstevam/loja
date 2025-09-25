@@ -42,6 +42,14 @@ class ProductController extends Controller
             ->paginate($perPage)
             ->withQueryString();
 
+        // Estatísticas gerais
+        $stats = [
+            'total' => Product::count(),
+            'active' => Product::where('active', true)->count(),
+            'inactive' => Product::where('active', false)->count(),
+            'low_stock' => Product::where('stock', '<=', 10)->count(),
+        ];
+
         // Se for uma requisição Ajax, retornar JSON
         if ($request->ajax()) {
             return response()->json([
@@ -58,7 +66,7 @@ class ProductController extends Controller
             ]);
         }
 
-        return view('admin.products.index', compact('products', 'perPageOptions', 'perPage'));
+        return view('admin.products.index', compact('products', 'perPageOptions', 'perPage', 'stats'));
     }
 
     public function search(Request $request)

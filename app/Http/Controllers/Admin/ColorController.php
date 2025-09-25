@@ -27,7 +27,14 @@ class ColorController extends Controller
 
         $colors = $query->with('products')->paginate(15);
 
-        return view('admin.colors.index', compact('colors'));
+        // Estatísticas gerais
+        $stats = [
+            'total' => Color::count(),
+            'active' => Color::where('active', true)->count(),
+            'inactive' => Color::where('active', false)->count(),
+        ];
+
+        return view('admin.colors.index', compact('colors', 'stats'));
     }
 
     public function create()

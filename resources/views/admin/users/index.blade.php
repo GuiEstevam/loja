@@ -43,15 +43,15 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Estatísticas Rápidas -->
-            <div class="admin-card">
-                <div class="admin-card-body">
+                            <!-- Estatísticas Rápidas -->
+            <div class="admin-card-body">
+                <div class="admin-stats-container">
                     <div class="admin-stats-grid">
                         <div class="admin-stat-card">
-                            <div class="admin-stat-icon">
-                                <ion-icon name="people-outline"></ion-icon>
+                            <div class="admin-stat-header">
+                                <div class="admin-stat-icon">
+                                    <ion-icon name="people-outline"></ion-icon>
+                                </div>
                             </div>
                             <div class="admin-stat-content">
                                 <div class="admin-stat-value">{{ $stats['total_users'] }}</div>
@@ -59,8 +59,10 @@
                             </div>
                         </div>
                         <div class="admin-stat-card">
-                            <div class="admin-stat-icon">
-                                <ion-icon name="person-outline"></ion-icon>
+                            <div class="admin-stat-header">
+                                <div class="admin-stat-icon">
+                                    <ion-icon name="person-outline"></ion-icon>
+                                </div>
                             </div>
                             <div class="admin-stat-content">
                                 <div class="admin-stat-value">{{ $stats['total_clients'] }}</div>
@@ -68,8 +70,10 @@
                             </div>
                         </div>
                         <div class="admin-stat-card">
-                            <div class="admin-stat-icon">
-                                <ion-icon name="shield-checkmark-outline"></ion-icon>
+                            <div class="admin-stat-header">
+                                <div class="admin-stat-icon">
+                                    <ion-icon name="shield-checkmark-outline"></ion-icon>
+                                </div>
                             </div>
                             <div class="admin-stat-content">
                                 <div class="admin-stat-value">{{ $stats['total_admins'] }}</div>
@@ -77,8 +81,10 @@
                             </div>
                         </div>
                         <div class="admin-stat-card">
-                            <div class="admin-stat-icon">
-                                <ion-icon name="checkmark-circle-outline"></ion-icon>
+                            <div class="admin-stat-header">
+                                <div class="admin-stat-icon">
+                                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                                </div>
                             </div>
                             <div class="admin-stat-content">
                                 <div class="admin-stat-value">{{ $stats['verified_users'] }}</div>
@@ -88,10 +94,18 @@
                     </div>
                 </div>
             </div>
+            </div>
 
             <!-- Filtros e Busca -->
-            <div class="admin-card-body">
-                <form method="GET" class="admin-filters">
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h2 class="admin-card-title">
+                        <ion-icon name="funnel-outline"></ion-icon>
+                        Filtros de Busca
+                    </h2>
+                </div>
+                <div class="admin-card-body">
+                    <form method="GET" class="admin-filters">
                     <div class="admin-filters-main">
                         <div class="admin-form-group">
                             <label for="search" class="admin-form-label">Buscar Usuário</label>
@@ -134,6 +148,7 @@
                         </a>
                     </div>
                 </form>
+                </div>
             </div>
 
             <!-- Lista de Usuários -->
@@ -157,30 +172,38 @@
                                     @foreach($users as $user)
                                         <tr>
                                             <td>
-                                                <div class="admin-user-info">
-                                                    <div class="admin-user-avatar">
-                                                        @if($user->profile_photo_url)
-                                                            <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}">
-                                                        @else
-                                                            <ion-icon name="person-outline"></ion-icon>
-                                                        @endif
-                                                    </div>
-                                                    <div class="admin-user-details">
-                                                        <div class="admin-user-name">{{ $user->name }}</div>
-                                                        @if($user->phone)
-                                                            <div class="admin-user-phone">{{ $user->phone }}</div>
-                                                        @endif
+                                                <div class="admin-table-cell">
+                                                    <div class="admin-user-info">
+                                                        <div class="admin-user-avatar">
+                                                            @if($user->profile_photo_url)
+                                                                <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}">
+                                                            @else
+                                                                {{ substr($user->name, 0, 1) }}
+                                                            @endif
+                                                        </div>
+                                                        <div class="admin-user-details">
+                                                            <div class="admin-table-primary">{{ $user->name }}</div>
+                                                            @if($user->phone)
+                                                                <div class="admin-user-phone">{{ $user->phone }}</div>
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>{{ $user->email }}</td>
                                             <td>
-                                                <div class="admin-user-roles">
-                                                    @foreach($user->roles as $role)
-                                                        <span class="admin-role-badge role-{{ $role->name }}">
-                                                            {{ ucfirst($role->name) }}
-                                                        </span>
-                                                    @endforeach
+                                                <div class="admin-table-cell">
+                                                    <div class="admin-table-primary">{{ $user->email }}</div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="admin-table-cell">
+                                                    <div class="admin-user-roles">
+                                                        @foreach($user->roles as $role)
+                                                            <span class="admin-role-badge role-{{ $role->name }}">
+                                                                {{ ucfirst($role->name) }}
+                                                            </span>
+                                                        @endforeach
+                                                    </div>
                                                 </div>
                                             </td>
                                             <td>
@@ -206,9 +229,11 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <div class="admin-date-info">
-                                                    <div>{{ $user->created_at->format('d/m/Y') }}</div>
-                                                    <div class="admin-date-time">{{ $user->created_at->format('H:i') }}</div>
+                                                <div class="admin-table-cell">
+                                                    <div class="admin-date-info">
+                                                        <div class="admin-date">{{ $user->created_at->format('d/m/Y') }}</div>
+                                                        <div class="admin-time">{{ $user->created_at->format('H:i') }}</div>
+                                                    </div>
                                                 </div>
                                             </td>
                                             <td>
@@ -316,37 +341,7 @@
     </div>
 </div>
 
-<script>
-function showDeleteModal(itemName, deleteUrl) {
-    const modal = document.getElementById('deleteModal');
-    const itemNameElement = document.getElementById('deleteItemName');
-    const deleteForm = document.getElementById('deleteForm');
-    
-    itemNameElement.textContent = itemName;
-    deleteForm.action = deleteUrl;
-    
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-}
-
-function closeDeleteModal() {
-    const modal = document.getElementById('deleteModal');
-    modal.style.display = 'none';
-    document.body.style.overflow = 'auto';
-}
-
-function submitDeleteForm() {
-    const deleteForm = document.getElementById('deleteForm');
-    if (deleteForm && deleteForm.action) {
-        closeDeleteModal();
-        deleteForm.submit();
-    }
-}
-
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeDeleteModal();
-    }
-});
-</script>
+@push('scripts')
+<script src="{{ asset('js/admin/users.js') }}"></script>
+@endpush
 @endsection

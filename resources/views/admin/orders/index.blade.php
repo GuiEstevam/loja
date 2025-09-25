@@ -39,7 +39,6 @@
           <!-- Estatísticas -->
           <div class="admin-card-body">
             <div class="admin-stats-container">
-              <h2 class="admin-stats-title">Visão Geral da Loja</h2>
               <div class="admin-stats-grid">
                 <div class="admin-stat-card">
                   <div class="admin-stat-header">

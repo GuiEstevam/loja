@@ -99,48 +99,56 @@
             </div>
 
             <!-- Informações do Cliente e Produto -->
-            <div class="admin-cards-grid">
+            <div class="admin-info-grid">
                 <!-- Informações do Cliente -->
-                <div class="admin-card">
-                    <div class="admin-card-header">
-                        <h3 class="admin-card-title">
+                <div class="admin-info-card admin-info-card-user">
+                    <div class="admin-info-header">
+                        <div class="admin-info-icon">
                             <ion-icon name="person-outline"></ion-icon>
-                            Informações do Cliente
-                        </h3>
+                        </div>
+                        <div class="admin-info-title">
+                            <h3>Cliente</h3>
+                            <p>Informações do usuário</p>
+                        </div>
                     </div>
-                    <div class="admin-card-body">
-                        <div class="admin-user-detail">
-                            <div class="admin-user-avatar-large">{{ substr($review->user->name, 0, 1) }}</div>
-                            <div class="admin-user-info-large">
+                    <div class="admin-info-content">
+                        <div class="admin-user-profile">
+                            <div class="admin-user-avatar">
+                                {{ substr($review->user->name, 0, 1) }}
+                            </div>
+                            <div class="admin-user-details">
                                 <h4 class="admin-user-name">{{ $review->user->name }}</h4>
                                 <p class="admin-user-email">{{ $review->user->email }}</p>
                                 @if($review->verified_purchase)
-                                    <div class="admin-verified-badge-large">
+                                    <div class="admin-verified-badge">
                                         <ion-icon name="checkmark-circle"></ion-icon>
-                                        Compra Verificada
+                                        <span>Compra Verificada</span>
                                     </div>
                                 @endif
-                                <div class="admin-user-actions">
-                                    <a href="{{ route('admin.users.show', $review->user) }}" class="admin-btn admin-btn-sm admin-btn-secondary">
-                                        <ion-icon name="person-outline"></ion-icon>
-                                        Ver Perfil
-                                    </a>
-                                </div>
                             </div>
+                        </div>
+                        <div class="admin-info-actions">
+                            <a href="{{ route('admin.users.show', $review->user) }}" class="admin-btn admin-btn-primary admin-btn-sm">
+                                <ion-icon name="person-outline"></ion-icon>
+                                Ver Perfil
+                            </a>
                         </div>
                     </div>
                 </div>
 
                 <!-- Informações do Produto -->
-                <div class="admin-card">
-                    <div class="admin-card-header">
-                        <h3 class="admin-card-title">
+                <div class="admin-info-card admin-info-card-product">
+                    <div class="admin-info-header">
+                        <div class="admin-info-icon">
                             <ion-icon name="cube-outline"></ion-icon>
-                            Produto Avaliado
-                        </h3>
+                        </div>
+                        <div class="admin-info-title">
+                            <h3>Produto</h3>
+                            <p>Item avaliado</p>
+                        </div>
                     </div>
-                    <div class="admin-card-body">
-                        <div class="admin-product-detail">
+                    <div class="admin-info-content">
+                        <div class="admin-product-showcase">
                             <div class="admin-product-image">
                                 @if($review->product->image)
                                     <img src="{{ asset('products/' . $review->product->image) }}" 
@@ -152,11 +160,19 @@
                                     </div>
                                 @endif
                             </div>
-                            <div class="admin-product-info">
+                            <div class="admin-product-details">
                                 <h4 class="admin-product-name">{{ $review->product->name }}</h4>
-                                <p class="admin-product-sku">SKU: {{ $review->product->sku }}</p>
-                                <p class="admin-product-price">R$ {{ number_format($review->product->price, 2, ',', '.') }}</p>
+                                <div class="admin-product-meta">
+                                    <span class="admin-product-sku">SKU: {{ $review->product->sku }}</span>
+                                    <span class="admin-product-price">R$ {{ number_format($review->product->price, 2, ',', '.') }}</span>
+                                </div>
                             </div>
+                        </div>
+                        <div class="admin-info-actions">
+                            <a href="{{ route('admin.products.show', $review->product) }}" class="admin-btn admin-btn-primary admin-btn-sm">
+                                <ion-icon name="eye-outline"></ion-icon>
+                                Ver Produto
+                            </a>
                         </div>
                     </div>
                 </div>

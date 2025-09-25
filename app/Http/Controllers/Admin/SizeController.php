@@ -23,8 +23,15 @@ class SizeController extends Controller
         }
         
         $sizes = $query->with('products')->paginate(15);
+
+        // Estatísticas gerais
+        $stats = [
+            'total' => Size::count(),
+            'active' => Size::where('active', true)->count(),
+            'inactive' => Size::where('active', false)->count(),
+        ];
         
-        return view('admin.sizes.index', compact('sizes'));
+        return view('admin.sizes.index', compact('sizes', 'stats'));
     }
 
     public function create()

@@ -27,7 +27,14 @@ class BrandController extends Controller
 
         $brands = $query->with('products')->paginate(15);
 
-        return view('admin.brands.index', compact('brands'));
+        // Estatísticas gerais
+        $stats = [
+            'total' => Brand::count(),
+            'active' => Brand::where('active', true)->count(),
+            'inactive' => Brand::where('active', false)->count(),
+        ];
+
+        return view('admin.brands.index', compact('brands', 'stats'));
     }
 
     public function create()

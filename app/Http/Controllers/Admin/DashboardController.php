@@ -121,16 +121,80 @@ class DashboardController extends Controller
                 ->get();
         }
 
-        return view('admin.dashboard', [
+        // Estatísticas adicionais para as abas
+        $stats = [
+            // Estatísticas gerais
             'totalPedidos' => $totalPedidos,
             'totalReceita' => $totalReceita,
             'ticketMedio' => $ticketMedio,
             'totalProdutos' => $totalProdutos,
             'produtosBaixoEstoque' => $produtosBaixoEstoque,
-            'cuponsAtivos' => $cuponsAtivos,
-            'totalPontosFidelidade' => $totalPontosFidelidade,
             'novosClientes' => $novosClientes,
             'totalClientes' => User::role('cliente')->count(),
+            
+            // Estatísticas de vendas
+            'pedidosHoje' => Order::whereDate('created_at', today())->count(),
+            'receitaHoje' => Order::whereDate('created_at', today())->sum('total') ?: 0,
+            'pedidosSemana' => Order::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count(),
+            'receitaSemana' => Order::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->sum('total') ?: 0,
+            'pedidosMes' => Order::whereMonth('created_at', now()->month)->count(),
+            'receitaMes' => Order::whereMonth('created_at', now()->month)->sum('total') ?: 0,
+            
+            // Estatísticas de produtos
+            'produtosAtivos' => Product::where('active', true)->count(),
+            'produtosInativos' => Product::where('active', false)->count(),
+            'totalCategorias' => \App\Models\Category::count(),
+            'totalMarcas' => \App\Models\Brand::count(),
+            'totalCores' => \App\Models\Color::count(),
+            'totalTamanhos' => \App\Models\Size::count(),
+            
+            // Estatísticas de clientes
+            'usuariosVerificados' => User::whereNotNull('email_verified_at')->count(),
+            'usuariosNaoVerificados' => User::whereNull('email_verified_at')->count(),
+            'novosUsuariosHoje' => User::whereDate('created_at', today())->count(),
+            'novosUsuariosSemana' => User::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count(),
+            
+            // Estatísticas de avaliações
+            'totalAvaliacoes' => \App\Models\Review::count(),
+            'avaliacoesPendentes' => \App\Models\Review::pending()->count(),
+            'avaliacoesAprovadas' => \App\Models\Review::approved()->count(),
+            'avaliacoesRejeitadas' => \App\Models\Review::rejected()->count(),
+            'mediaAvaliacoes' => \App\Models\Review::approved()->avg('rating') ?: 0,
+        ];
+
+        // Produtos mais vendidos
+        $produtosMaisVendidos = collect();
+        if (Schema::hasTable('order_items')) {
+            $produtosMaisVendidos = DB::table('order_items')
+                ->join('products', 'order_items.product_id', '=', 'products.id')
+                ->select('products.id', 'products.name', 'products.image', DB::raw('SUM(order_items.quantity) as total_vendido'))
+                ->groupBy('products.id', 'products.name', 'products.image')
+                ->orderBy('total_vendido', 'desc')
+                ->limit(5)
+                ->get();
+        }
+
+        // Pedidos recentes
+        $pedidosRecentes = collect();
+        if (Schema::hasTable('orders')) {
+            $pedidosRecentes = Order::with('user')
+                ->orderBy('created_at', 'desc')
+                ->limit(5)
+                ->get();
+        }
+
+        // Atividades recentes (últimos usuários)
+        $atividadesRecentes = User::orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        return view('admin.dashboard', [
+            'stats' => $stats,
+            'produtosMaisVendidos' => $produtosMaisVendidos,
+            'pedidosRecentes' => $pedidosRecentes,
+            'atividadesRecentes' => $atividadesRecentes,
+            'produtosRecentes' => $produtosRecentes,
+            'produtosBaixoEstoqueList' => $produtosBaixoEstoqueList,
             'chartLabels' => $labels,
             'chartData' => $values,
             'dias' => $dias,

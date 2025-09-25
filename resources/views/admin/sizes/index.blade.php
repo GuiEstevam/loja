@@ -38,9 +38,59 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Filtros -->
+                <!-- Estatísticas -->
+                <div class="admin-card-body">
+                    <div class="admin-stats-container">
+                    <div class="admin-stats-grid">
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-header">
+                                <div class="admin-stat-icon">
+                                    <ion-icon name="resize-outline"></ion-icon>
+                                </div>
+                            </div>
+                            <div class="admin-stat-content">
+                                <div class="admin-stat-value">{{ $stats['total'] }}</div>
+                                <div class="admin-stat-label">Total</div>
+                            </div>
+                        </div>
+                        
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-header">
+                                <div class="admin-stat-icon">
+                                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                                </div>
+                            </div>
+                            <div class="admin-stat-content">
+                                <div class="admin-stat-value">{{ $stats['active'] }}</div>
+                                <div class="admin-stat-label">Ativos</div>
+                            </div>
+                        </div>
+                        
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-header">
+                                <div class="admin-stat-icon">
+                                    <ion-icon name="close-circle-outline"></ion-icon>
+                                </div>
+                            </div>
+                            <div class="admin-stat-content">
+                                <div class="admin-stat-value">{{ $stats['inactive'] }}</div>
+                                <div class="admin-stat-label">Inativos</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h2 class="admin-card-title">
+                    <ion-icon name="search-outline"></ion-icon>
+                    Filtros de Busca
+                </h2>
+            </div>
             <div class="admin-card-body">
                 <form method="GET" class="admin-filters">
                     <div class="admin-filters-main">
@@ -75,10 +125,11 @@
                     </div>
                 </form>
             </div>
+        </div>
 
-            <!-- Lista de Tamanhos -->
-            <div class="admin-card">
-                <div class="admin-card-body">
+        <!-- Lista de Tamanhos -->
+        <div class="admin-card">
+            <div class="admin-card-body">
                     @if($sizes->count() > 0)
                         <div class="admin-table-container">
                             <table class="admin-table">

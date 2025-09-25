@@ -42,6 +42,16 @@
     --warning-color: #f59e0b;
     --info-color: #3b82f6;
     --purple-color: #8b5cf6;
+    
+    /* Dashboard Card Colors */
+    --products-color: #8b5cf6;      /* Roxo - Produtos */
+    --orders-color: #06b6d4;        /* Ciano - Pedidos */
+    --categories-color: #10b981;    /* Verde - Categorias */
+    --brands-color: #f59e0b;        /* Laranja - Marcas */
+    --colors-color: #ef4444;        /* Vermelho - Cores */
+    --sizes-color: #6b7280;         /* Cinza - Tamanhos */
+    --users-color: #3b82f6;         /* Azul - Usuários */
+    --reviews-color: #ec4899;       /* Rosa - Avaliações */
 
     /* Background Colors */
     --bg-white: #ffffff;
