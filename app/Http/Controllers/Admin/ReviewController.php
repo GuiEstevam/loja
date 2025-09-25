@@ -55,7 +55,12 @@ class ReviewController extends Controller
             });
         }
 
-        $reviews = $query->paginate(20);
+        // Quantidade de itens por página
+        $perPage = $request->get('per_page', 15);
+        $perPageOptions = [5, 10, 15, 25, 50];
+
+        $reviews = $query->paginate($perPage)
+            ->withQueryString();
 
         // Estatísticas gerais
         $stats = [
@@ -66,7 +71,7 @@ class ReviewController extends Controller
             'verified' => Review::verified()->count(),
         ];
 
-        return view('admin.reviews.index', compact('reviews', 'stats'));
+        return view('admin.reviews.index', compact('reviews', 'stats', 'perPageOptions'));
     }
 
     /**

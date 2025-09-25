@@ -467,8 +467,9 @@
 }
 
 .admin-btn-primary:hover:not(:disabled) {
-    background-color: var(--secondary-color);
-    border-color: var(--secondary-color);
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    color: white;
 }
 
 .admin-btn-secondary {
@@ -874,8 +875,9 @@
 }
 
 .admin-header-actions .admin-btn-primary:hover {
-    background-color: var(--primary-hover, #7c3aed);
-    border-color: var(--primary-hover, #7c3aed);
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    color: white;
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3);
 }
@@ -1764,13 +1766,14 @@
 }
 
 .admin-logo-image {
-    max-width: 200px;
-    max-height: 200px;
-    width: auto;
-    height: auto;
+    max-width: 200px !important;
+    max-height: 200px !important;
+    width: auto !important;
+    height: auto !important;
     object-fit: contain;
     border-radius: var(--radius);
     box-shadow: var(--shadow-sm);
+    display: block;
 }
 
 /* ===== ADMIN FORM PREVIEW ===== */
@@ -1801,11 +1804,555 @@
 
 /* ===== ADMIN TABLE IMAGES ===== */
 .admin-table-image {
-    width: 60px;
-    height: 60px;
+    width: 60px !important;
+    height: 60px !important;
+    max-width: 60px !important;
+    max-height: 60px !important;
     object-fit: cover;
     border-radius: var(--radius);
     border: 1px solid var(--border);
+    display: block;
+}
+
+/* Container para imagens da tabela */
+.admin-table-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-sm);
+}
+
+/* Placeholder para imagens ausentes */
+.admin-table-placeholder {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-muted);
+    font-size: var(--font-size-xl);
+}
+
+/* ===== ADMIN REVIEWS ===== */
+.admin-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-lg);
+    margin-bottom: var(--space-2xl);
+}
+
+.admin-stat-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    transition: var(--transition);
+}
+
+.admin-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.admin-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.admin-stat-pending {
+    background: var(--warning-light);
+    color: var(--warning);
+}
+
+.admin-stat-approved {
+    background: var(--success-light);
+    color: var(--success);
+}
+
+.admin-stat-rejected {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+.admin-stat-total {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.admin-stat-number {
+    font-size: 2rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.admin-stat-label {
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+}
+
+/* User Info */
+.admin-user-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.admin-user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-lg);
+    flex-shrink: 0;
+}
+
+.admin-user-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.admin-verified-badge {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--font-size-xs);
+    color: var(--success);
+    font-weight: var(--font-weight-medium);
+}
+
+/* Rating Display */
+.admin-rating-display {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.admin-rating-stars {
+    display: flex;
+    gap: 2px;
+}
+
+.admin-star {
+    font-size: 16px;
+    color: var(--text-muted);
+    transition: var(--transition);
+}
+
+.admin-star.filled {
+    color: #fbbf24;
+}
+
+.admin-rating-text {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+}
+
+/* Date Info */
+.admin-date-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.admin-date {
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+}
+
+.admin-time {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+}
+
+/* Bulk Actions */
+.admin-bulk-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+    padding: var(--space-lg);
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.admin-bulk-selection {
+    display: flex;
+    align-items: center;
+}
+
+.admin-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
+    font-weight: var(--font-weight-medium);
+}
+
+.admin-checkbox {
+    display: none;
+}
+
+.admin-checkmark {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border-dark);
+    border-radius: 3px;
+    position: relative;
+    transition: var(--transition);
+}
+
+.admin-checkbox:checked + .admin-checkmark {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.admin-checkbox:checked + .admin-checkmark::after {
+    content: '✓';
+    position: absolute;
+    top: -2px;
+    left: 2px;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.admin-bulk-buttons {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.admin-review-checkbox {
+    margin-right: var(--space-sm);
+}
+
+/* Pagination Form */
+.admin-pagination-form {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.admin-pagination-form .admin-form-label {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.admin-pagination-form .admin-form-select {
+    min-width: 120px;
+}
+
+/* Review Details Page */
+.admin-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-lg);
+}
+
+/* Cards Grid */
+.admin-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-2xl);
+}
+
+.admin-cards-grid .admin-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.admin-cards-grid .admin-card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-xl);
+}
+
+@media (max-width: 768px) {
+    .admin-cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.admin-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.admin-detail-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+}
+
+.admin-detail-value {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+}
+
+/* User Detail Large */
+.admin-user-detail {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-lg);
+    width: 100%;
+    height: 100%;
+    padding: var(--space-sm);
+}
+
+.admin-user-avatar-large {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--font-weight-bold);
+    font-size: 2.5rem;
+    flex-shrink: 0;
+}
+
+.admin-user-info-large {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    flex: 1;
+}
+
+.admin-user-name {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.admin-user-email {
+    font-size: var(--font-size-lg);
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.admin-verified-badge-large {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--font-size-base);
+    color: var(--success);
+    font-weight: var(--font-weight-medium);
+    padding: var(--space-xs) var(--space-sm);
+    background: var(--success-light);
+    border-radius: var(--radius);
+}
+
+/* Product Detail */
+.admin-product-detail {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-lg);
+    width: 100%;
+    height: 100%;
+    padding: var(--space-sm);
+}
+
+.admin-product-image {
+    width: 120px;
+    height: 120px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.admin-product-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin-product-placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 2rem;
+}
+
+.admin-product-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    flex: 1;
+}
+
+.admin-product-name {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.admin-product-sku {
+    font-size: var(--font-size-base);
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.admin-product-price {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--success);
+    margin: 0;
+}
+
+/* Review Content */
+.admin-review-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.admin-review-rating {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.admin-rating-stars-large {
+    display: flex;
+    gap: 4px;
+}
+
+.admin-star-large {
+    font-size: 24px;
+    color: var(--text-muted);
+    transition: var(--transition);
+}
+
+.admin-star-large.filled {
+    color: #fbbf24;
+}
+
+.admin-rating-text-large {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+}
+
+.admin-review-title h4 {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.admin-review-comment p {
+    font-size: var(--font-size-base);
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin: 0;
+    padding: var(--space-lg);
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    border-left: 4px solid var(--primary);
+}
+
+/* Actions Large */
+.admin-actions-large {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+}
+
+.admin-btn-large {
+    padding: var(--space-md) var(--space-xl);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+}
+
+.admin-btn-sm {
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+}
+
+/* User Actions */
+.admin-user-actions {
+    margin-top: var(--space-lg);
+    padding-top: var(--space-sm);
+}
+
+/* Product Actions */
+.admin-product-actions {
+    margin-top: var(--space-sm);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+}
+
+/* Admin Link */
+.admin-link {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+    transition: var(--transition);
+}
+
+.admin-link:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+}
+
+/* Status Badges for Reviews */
+.admin-status-badge.status-approved {
+    background: #d1fae5;
+    color: #059669;
+    border-color: #a7f3d0;
+}
+
+.admin-status-badge.status-pending {
+    background: #fef3c7;
+    color: #d97706;
+    border-color: #fde68a;
+}
+
+.admin-status-badge.status-rejected {
+    background: #fee2e2;
+    color: #dc2626;
+    border-color: #fecaca;
 }
 
 /* ===== ADMIN MODAL ===== */

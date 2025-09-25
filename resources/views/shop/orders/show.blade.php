@@ -286,7 +286,7 @@
                         </a>
                         
                         <!-- Ações de Avaliação -->
-                        @if($order->status === 'delivered' || ($order->status === 'paid' && $order->payment?->status === 'approved'))
+                        @if(in_array($order->status, ['delivered', 'paid', 'processing', 'shipped']))
                             @php
                                 $hasReviewed = \App\Models\Review::where('user_id', auth()->id())
                                     ->where('product_id', $item->product_id)

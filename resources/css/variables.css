@@ -2,10 +2,10 @@
 
 :root {
     /* ===== CORES PRINCIPAIS ===== */
-    --primary: #3b82f6;
-    --primary-hover: #2563eb;
-    --primary-light: #dbeafe;
-    --primary-dark: #1e40af;
+    --primary: #8b5cf6;
+    --primary-hover: #7c3aed;
+    --primary-light: #ede9fe;
+    --primary-dark: #6d28d9;
 
     --secondary: #64748b;
     --secondary-hover: #475569;

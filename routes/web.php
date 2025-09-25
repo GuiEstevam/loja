@@ -154,7 +154,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('reviews/{review}/reject', [AdminReviewController::class, 'reject'])->name('reviews.reject');
     Route::post('reviews/approve-multiple', [AdminReviewController::class, 'approveMultiple'])->name('reviews.approve-multiple');
     Route::post('reviews/reject-multiple', [AdminReviewController::class, 'rejectMultiple'])->name('reviews.reject-multiple');
-    Route::get('reviews-stats', [AdminReviewController::class, 'stats'])->name('reviews.stats');
+    Route::get('reviews/stats', [AdminReviewController::class, 'stats'])->name('reviews.stats');
 
     // Gestão de Usuários
     Route::resource('users', AdminUserController::class);
