@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -16,18 +17,41 @@ class DashboardController extends Controller
     {
         $dias = (int) $request->input('dias', 7);
 
-        // Pedidos e receita no período
-        $ordersInPeriod = Order::where('created_at', '>=', now()->subDays($dias - 1));
-        $totalPedidos = $ordersInPeriod->count();
-        $totalReceita = (float) $ordersInPeriod->sum('total'); // ajuste 'total' para o campo de valor do pedido
-        $ticketMedio = $totalPedidos > 0 ? ($totalReceita / $totalPedidos) : 0;
+        // Pedidos e receita no período (defensivo contra diferenças de schema)
+        $totalPedidos = 0;
+        $totalReceita = 0.0;
+        if (Schema::hasTable('orders')) {
+            $ordersInPeriod = Order::where('created_at', '>=', now()->subDays(max($dias - 1, 0)));
+            $totalPedidos = (int) $ordersInPeriod->count();
+
+            // Nem todos ambientes podem ter a coluna "total"; calcular de forma segura
+            if (Schema::hasColumn('orders', 'total')) {
+                $totalReceita = (float) $ordersInPeriod->sum('total');
+            } else {
+                // fallback: somar subtotal - discount se existir
+                $totalReceita = (float) DB::table('orders')
+                    ->where('created_at', '>=', now()->subDays(max($dias - 1, 0)))
+                    ->selectRaw('COALESCE(SUM(COALESCE(subtotal,0) - COALESCE(discount,0)),0) as soma')
+                    ->value('soma');
+            }
+        }
+        $ticketMedio = $totalPedidos > 0 ? ($totalReceita / $totalPedidos) : 0.0;
 
         // Novos clientes no período
-        $novosClientes = User::role('cliente')->where('created_at', '>=', now()->subDays($dias - 1))->count();
+        $novosClientes = 0;
+        if (Schema::hasTable('users')) {
+            $novosClientes = (int) User::role('cliente')
+                ->where('created_at', '>=', now()->subDays(max($dias - 1, 0)))
+                ->count();
+        }
 
         // Produtos ativos e baixo estoque
-        $totalProdutos = Product::where('active', true)->count();
-        $produtosBaixoEstoque = Product::where('active', true)->where('stock', '<', 5)->count();
+        $totalProdutos = 0;
+        $produtosBaixoEstoque = 0;
+        if (Schema::hasTable('products')) {
+            $totalProdutos = (int) Product::where('active', true)->count();
+            $produtosBaixoEstoque = (int) Product::where('active', true)->where('stock', '<', 5)->count();
+        }
 
         // Cupons ativos (só busca se a tabela/coluna existir)
         $cuponsAtivos = null;
@@ -51,33 +75,51 @@ class DashboardController extends Controller
         }
 
         // Gráfico de pedidos por dia (últimos N dias)
-        $orders = Order::selectRaw('DATE(created_at) as date, COUNT(*) as total')
-            ->where('created_at', '>=', now()->subDays($dias - 1))
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get();
+        $orders = collect();
+        if (Schema::hasTable('orders')) {
+            // Alguns drivers/bancos exigem date() diferente; usar DATE() de forma segura
+            $driver = DB::getDriverName();
+            $dateExpr = $driver === 'pgsql' ? 'DATE(created_at)' : 'DATE(created_at)';
+            $orders = Order::selectRaw($dateExpr . ' as date, COUNT(*) as total')
+                ->where('created_at', '>=', now()->subDays(max($dias - 1, 0)))
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get();
+        }
 
         $labels = [];
         $values = [];
-        foreach ($orders as $order) {
-            $data = Carbon::parse($order->date)->locale('pt_BR');
-            $labels[] = $data->translatedFormat('d M');
-            $values[] = $order->total;
+        try {
+            foreach ($orders as $order) {
+                $data = Carbon::parse($order->date)->locale('pt_BR');
+                $labels[] = $data->translatedFormat('d M');
+                $values[] = (int) ($order->total ?? 0);
+            }
+        } catch (\Throwable $e) {
+            // Em caso de qualquer problema com datas/locale, não quebrar o dashboard
+            $labels = [];
+            $values = [];
         }
 
         // Produtos recentes (últimos 5)
-        $produtosRecentes = Product::with(['brand'])
-            ->orderBy('created_at', 'desc')
-            ->limit(5)
-            ->get();
+        $produtosRecentes = collect();
+        if (Schema::hasTable('products')) {
+            $produtosRecentes = Product::with(['brand'])
+                ->orderBy('created_at', 'desc')
+                ->limit(5)
+                ->get();
+        }
 
         // Produtos com baixo estoque
-        $produtosBaixoEstoqueList = Product::with(['brand'])
-            ->where('active', true)
-            ->where('stock', '<', 5)
-            ->orderBy('stock', 'asc')
-            ->limit(5)
-            ->get();
+        $produtosBaixoEstoqueList = collect();
+        if (Schema::hasTable('products')) {
+            $produtosBaixoEstoqueList = Product::with(['brand'])
+                ->where('active', true)
+                ->where('stock', '<', 5)
+                ->orderBy('stock', 'asc')
+                ->limit(5)
+                ->get();
+        }
 
         return view('admin.dashboard', [
             'totalPedidos' => $totalPedidos,
