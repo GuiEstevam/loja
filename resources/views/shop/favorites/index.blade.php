@@ -3,15 +3,39 @@
 @section('title', 'Meus Favoritos')
 
 @push('styles')
-  @vite(['resources/css/favorites.css'])
+  @vite(['resources/css/favorites.css', 'resources/css/dashboard.css'])
 @endpush
 
 @section('content')
-  <div class="favorites-container">
-    <div class="favorites-header">
-      <h1 class="favorites-title">Meus Favoritos</h1>
-      <p class="favorites-subtitle">Produtos que você salvou para comprar depois</p>
-    </div>
+  <div class="dashboard-page">
+    <div class="dashboard-container">
+      <!-- Breadcrumb -->
+      <nav class="dashboard-breadcrumb">
+        <div class="dashboard-breadcrumb-nav">
+          <a href="{{ route('shop.dashboard') }}" class="dashboard-breadcrumb-item">
+            <ion-icon name="home-outline"></ion-icon>
+            Dashboard
+          </a>
+          <span class="dashboard-breadcrumb-separator">›</span>
+          <span class="dashboard-breadcrumb-item active">
+            <ion-icon name="heart-outline"></ion-icon>
+            Meus Favoritos
+          </span>
+        </div>
+        <a href="{{ route('shop.dashboard') }}" class="dashboard-breadcrumb-back">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+          Voltar
+        </a>
+      </nav>
+
+      <!-- Header da Página -->
+      <div class="dashboard-header">
+        <h1 class="dashboard-title">
+          <ion-icon name="heart-outline"></ion-icon>
+          Meus Favoritos
+        </h1>
+        <p class="dashboard-subtitle">Produtos que você salvou para comprar depois</p>
+      </div>
 
     <div class="favorites-content">
       <!-- Lista de favoritos será carregada via JavaScript -->

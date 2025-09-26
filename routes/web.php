@@ -88,6 +88,15 @@ Route::middleware('auth')->group(function () {
     // Dashboard do usuário
     Route::get('/minha-conta', [App\Http\Controllers\Shop\DashboardController::class, 'index'])->name('shop.dashboard');
 
+    // Perfil do usuário
+    Route::get('/meu-perfil', [App\Http\Controllers\Shop\ProfileController::class, 'show'])->name('shop.profile.show');
+    Route::put('/meu-perfil', [App\Http\Controllers\Shop\ProfileController::class, 'update'])->name('shop.profile.update');
+    Route::put('/meu-perfil/senha', [App\Http\Controllers\Shop\ProfileController::class, 'updatePassword'])->name('shop.profile.update-password');
+    Route::put('/meu-perfil/foto', [App\Http\Controllers\Shop\ProfileController::class, 'updatePhoto'])->name('shop.profile.update-photo');
+    Route::delete('/meu-perfil/foto', [App\Http\Controllers\Shop\ProfileController::class, 'deletePhoto'])->name('shop.profile.delete-photo');
+    Route::delete('/meu-perfil/conta', [App\Http\Controllers\Shop\ProfileController::class, 'deleteAccount'])->name('shop.profile.delete-account');
+    Route::post('/meu-perfil/sessoes', [App\Http\Controllers\Shop\ProfileController::class, 'logoutOtherSessions'])->name('shop.profile.logout-other-sessions');
+
     // Pedidos do usuário
     Route::get('/meus-pedidos', [ShopOrderController::class, 'index'])->name('shop.orders.index');
     Route::get('/meus-pedidos/{order}', [ShopOrderController::class, 'show'])->name('shop.orders.show');

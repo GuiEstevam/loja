@@ -22,6 +22,7 @@ export default defineConfig({
                 "resources/js/reviews.js",
                 "resources/js/review-form.js",
                 "resources/js/orders.js",
+                "resources/js/dashboard.js",
             ],
             refresh: true,
         }),

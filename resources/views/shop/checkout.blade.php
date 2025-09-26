@@ -474,7 +474,7 @@
     // Função para carregar dados persistentes
     function loadPersistentData() {
       // Se não há dados persistentes, não fazer nada
-      const defaultAddress = @json($user->addresses->where('is_default', true)->first());
+      const defaultAddress = @json($defaultAddress);
       if (!defaultAddress) return;
 
       // Preencher campos se estiverem vazios

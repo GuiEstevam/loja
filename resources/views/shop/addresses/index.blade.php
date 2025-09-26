@@ -9,6 +9,25 @@
 @section('content')
   <div class="dashboard-page">
     <div class="dashboard-container">
+      <!-- Breadcrumb -->
+      <nav class="dashboard-breadcrumb">
+        <div class="dashboard-breadcrumb-nav">
+          <a href="{{ route('shop.dashboard') }}" class="dashboard-breadcrumb-item">
+            <ion-icon name="home-outline"></ion-icon>
+            Dashboard
+          </a>
+          <span class="dashboard-breadcrumb-separator">›</span>
+          <span class="dashboard-breadcrumb-item active">
+            <ion-icon name="location-outline"></ion-icon>
+            Meus Endereços
+          </span>
+        </div>
+        <a href="{{ route('shop.dashboard') }}" class="dashboard-breadcrumb-back">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+          Voltar
+        </a>
+      </nav>
+
       <!-- Header da Página -->
       <div class="dashboard-header">
         <h1 class="dashboard-title">

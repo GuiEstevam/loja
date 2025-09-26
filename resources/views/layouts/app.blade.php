@@ -29,7 +29,11 @@
   <main class="flex-1">
     @yield('content')
   </main>
-  <x-footer />
+  
+  {{-- Footer apenas para páginas que não são do dashboard --}}
+  @unless(request()->is('dashboard*') || request()->is('meu-perfil*') || request()->is('meus-pedidos*') || request()->is('meus-favoritos*') || request()->is('enderecos*'))
+    <x-footer />
+  @endunless
 
   {{-- Modal de feedback global --}}
   @if (session('success') || $errors->any())

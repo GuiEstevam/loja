@@ -20,7 +20,20 @@ class OrderController extends Controller
 
         $orders = $user->orders()->with(['items.product', 'payment'])->orderBy('created_at', 'desc')->paginate(10);
 
-        return view('shop.orders.index', compact('orders'));
+        // Preparar dados formatados para JavaScript
+        $ordersData = $orders->map(function($order) {
+            return [
+                'id' => $order->id,
+                'status' => $order->status,
+                'created_at' => $order->created_at->format('d/m/Y H:i'),
+                'items_count' => $order->items->count(),
+                'total' => $order->total, // Número sem formatação para cálculos no JS
+                'total_formatted' => number_format($order->total, 2, ',', '.'), // Formatação para exibição
+                'show_url' => route('shop.orders.show', $order)
+            ];
+        })->values();
+
+        return view('shop.orders.index', compact('orders', 'ordersData'));
     }
 
     // Mostra detalhes de um pedido do usuário
@@ -52,7 +65,11 @@ class OrderController extends Controller
         // Se não há dados na sessão, retornar view vazia
         // Os dados serão carregados via JavaScript do localStorage
         $user = Auth::user();
-        return view('shop.checkout', compact('cart', 'user'));
+        
+        // Preparar endereço padrão para JavaScript
+        $defaultAddress = $user->addresses->where('is_default', true)->first();
+        
+        return view('shop.checkout', compact('cart', 'user', 'defaultAddress'));
     }
 
     public function process(Request $request)

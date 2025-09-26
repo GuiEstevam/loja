@@ -3,73 +3,107 @@
 @section('title', 'Detalhes do Pedido #' . $order->id)
 
 @push('styles')
-@vite(['resources/css/orders.css'])
+@vite(['resources/css/orders.css', 'resources/css/dashboard.css'])
 @endpush
 
 @section('content')
-<div class="orders-page">
-    <div class="orders-container">
+<div class="dashboard-page">
+    <div class="dashboard-container">
         <!-- Breadcrumb -->
-        <nav class="orders-breadcrumb">
-            <a href="{{ route('shop.dashboard') }}">
-                <ion-icon name="home-outline"></ion-icon>
-                Início
+        <nav class="dashboard-breadcrumb">
+            <div class="dashboard-breadcrumb-nav">
+                <a href="{{ route('shop.dashboard') }}" class="dashboard-breadcrumb-item">
+                    <ion-icon name="home-outline"></ion-icon>
+                    Dashboard
+                </a>
+                <span class="dashboard-breadcrumb-separator">›</span>
+                <a href="{{ route('shop.orders.index') }}" class="dashboard-breadcrumb-item">
+                    <ion-icon name="bag-outline"></ion-icon>
+                    Meus Pedidos
+                </a>
+                <span class="dashboard-breadcrumb-separator">›</span>
+                <span class="dashboard-breadcrumb-item active">
+                    <ion-icon name="receipt-outline"></ion-icon>
+                    Pedido #{{ $order->id }}
+                </span>
+            </div>
+            <a href="{{ route('shop.orders.index') }}" class="dashboard-breadcrumb-back">
+                <ion-icon name="arrow-back-outline"></ion-icon>
+                Voltar
             </a>
-            <ion-icon name="chevron-forward"></ion-icon>
-            <a href="{{ route('shop.orders.index') }}">
-                <ion-icon name="bag-outline"></ion-icon>
-                Meus Pedidos
-            </a>
-            <ion-icon name="chevron-forward"></ion-icon>
-            <span>Pedido #{{ $order->id }}</span>
         </nav>
 
         <!-- Header da Página -->
-        <div class="orders-header">
-            <div class="orders-title">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">
                 <ion-icon name="receipt-outline"></ion-icon>
-                <h1>Pedido #{{ $order->id }}</h1>
-            </div>
-            <p class="orders-subtitle">Detalhes completos do seu pedido</p>
+                Pedido #{{ $order->id }}
+            </h1>
+            <p class="dashboard-subtitle">Detalhes completos do seu pedido</p>
         </div>
 
-        <!-- Card Principal do Pedido -->
-        <div class="order-card">
-            <!-- Header do Pedido -->
-            <div class="order-card-header">
-                <div class="order-info">
-                    <div class="order-number">Pedido #{{ $order->id }}</div>
-                    <div class="order-details">
-                        <div class="order-detail-item">
+        <!-- Informações do Pedido -->
+        <div class="dashboard-section">
+            <div class="dashboard-section-header">
+                <h3 class="dashboard-section-title">
+                    <ion-icon name="information-circle-outline"></ion-icon>
+                    Informações do Pedido
+                </h3>
+            </div>
+            <div class="dashboard-section-content">
+                <div class="dashboard-info-grid">
+                    <div class="dashboard-info-item">
+                        <div class="dashboard-info-icon">
                             <ion-icon name="calendar-outline"></ion-icon>
-                            <span>Data: {{ $order->created_at->format('d/m/Y H:i') }}</span>
                         </div>
-                        <div class="order-detail-item">
-                            <ion-icon name="cube-outline"></ion-icon>
-                            <span>Itens: {{ $order->items->count() }} produto(s)</span>
-                        </div>
-                        <div class="order-detail-item">
-                            <ion-icon name="cash-outline"></ion-icon>
-                            <span>Total: €{{ number_format($order->total, 2, ',', '.') }}</span>
+                        <div class="dashboard-info-content">
+                            <h4 class="dashboard-info-label">Data do Pedido</h4>
+                            <p class="dashboard-info-value">{{ $order->created_at->format('d/m/Y H:i') }}</p>
                         </div>
                     </div>
-                </div>
-                
-                <div class="order-status-section">
-                    <div class="order-status-badges">
-                        <span class="status-badge {{ $order->status }}">
-                            <ion-icon name="checkmark-circle"></ion-icon>
-                            {{ translateOrderStatus($order->status) }}
-                        </span>
-                        @if($order->payment && $order->payment->status)
-                            <span class="status-badge paid">
-                                <ion-icon name="card"></ion-icon>
-                                {{ translateOrderStatus($order->payment->status) }}
+                    
+                    <div class="dashboard-info-item">
+                        <div class="dashboard-info-icon">
+                            <ion-icon name="cube-outline"></ion-icon>
+                        </div>
+                        <div class="dashboard-info-content">
+                            <h4 class="dashboard-info-label">Quantidade de Itens</h4>
+                            <p class="dashboard-info-value">{{ $order->items->count() }} produto(s)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-info-item">
+                        <div class="dashboard-info-icon">
+                            <ion-icon name="cash-outline"></ion-icon>
+                        </div>
+                        <div class="dashboard-info-content">
+                            <h4 class="dashboard-info-label">Valor Total</h4>
+                            <p class="dashboard-info-value">€{{ number_format($order->total, 2, ',', '.') }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-info-item">
+                        <div class="dashboard-info-icon">
+                            <ion-icon name="flag-outline"></ion-icon>
+                        </div>
+                        <div class="dashboard-info-content">
+                            <h4 class="dashboard-info-label">Status</h4>
+                            <span class="dashboard-status-badge {{ $order->status }}">
+                                @switch($order->status)
+                                    @case('pending') Pendente @break
+                                    @case('paid') Pago @break
+                                    @case('processing') Processando @break
+                                    @case('shipped') Enviado @break
+                                    @case('delivered') Entregue @break
+                                    @case('cancelled') Cancelado @break
+                                    @default {{ ucfirst($order->status) }}
+                                @endswitch
                             </span>
-                        @endif
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
 
             <!-- Sistema de Abas -->
             <div class="order-tabs">
@@ -98,48 +132,87 @@
                     <!-- Aba: Visão Geral -->
                     <div id="overview" class="order-tab-panel active">
                         <div class="tab-panel-content">
-                            <h3 class="tab-section-title">
-                                <ion-icon name="information-circle-outline"></ion-icon>
-                                Informações Gerais
-                            </h3>
-                            <div class="info-grid">
-                                <div class="info-item">
-                                    <span class="info-label">Número do Pedido:</span>
-                                    <span class="info-value">#{{ $order->id }}</span>
+                            <!-- Informações Detalhadas do Pedido -->
+                            <div class="dashboard-info-grid">
+                                <div class="dashboard-info-item">
+                                    <div class="dashboard-info-icon">
+                                        <ion-icon name="receipt-outline"></ion-icon>
+                                    </div>
+                                    <div class="dashboard-info-content">
+                                        <h4 class="dashboard-info-label">Número do Pedido</h4>
+                                        <p class="dashboard-info-value">#{{ $order->id }}</p>
+                                    </div>
                                 </div>
-                                <div class="info-item">
-                                    <span class="info-label">Data do Pedido:</span>
-                                    <span class="info-value">{{ $order->created_at->format('d/m/Y H:i') }}</span>
+                                
+                                <div class="dashboard-info-item">
+                                    <div class="dashboard-info-icon">
+                                        <ion-icon name="calendar-outline"></ion-icon>
+                                    </div>
+                                    <div class="dashboard-info-content">
+                                        <h4 class="dashboard-info-label">Data do Pedido</h4>
+                                        <p class="dashboard-info-value">{{ $order->created_at->format('d/m/Y H:i') }}</p>
+                                    </div>
                                 </div>
-                                <div class="info-item">
-                                    <span class="info-label">Status:</span>
-                                    <span class="info-value status-{{ $order->status }}">
-                                        {{ translateOrderStatus($order->status) }}
-                                    </span>
+                                
+                                <div class="dashboard-info-item">
+                                    <div class="dashboard-info-icon">
+                                        <ion-icon name="flag-outline"></ion-icon>
+                                    </div>
+                                    <div class="dashboard-info-content">
+                                        <h4 class="dashboard-info-label">Status</h4>
+                                        <span class="dashboard-status-badge {{ $order->status }}">
+                                            @switch($order->status)
+                                                @case('pending') Pendente @break
+                                                @case('paid') Pago @break
+                                                @case('processing') Processando @break
+                                                @case('shipped') Enviado @break
+                                                @case('delivered') Entregue @break
+                                                @case('cancelled') Cancelado @break
+                                                @default {{ ucfirst($order->status) }}
+                                            @endswitch
+                                        </span>
+                                    </div>
                                 </div>
-                                <div class="info-item">
-                                    <span class="info-label">Total:</span>
-                                    <span class="info-value">€{{ number_format($order->total, 2, ',', '.') }}</span>
+                                
+                                <div class="dashboard-info-item">
+                                    <div class="dashboard-info-icon">
+                                        <ion-icon name="cash-outline"></ion-icon>
+                                    </div>
+                                    <div class="dashboard-info-content">
+                                        <h4 class="dashboard-info-label">Valor Total</h4>
+                                        <p class="dashboard-info-value">€{{ number_format($order->total, 2, ',', '.') }}</p>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <h3 class="tab-section-title">
-                                <ion-icon name="person-outline"></ion-icon>
-                                Informações de Contato
-                            </h3>
-                            <div class="info-grid">
-                                <div class="info-item">
-                                    <span class="info-label">Nome:</span>
-                                    <span class="info-value">{{ $order->name ?? $order->user->name }}</span>
+                                
+                                <div class="dashboard-info-item">
+                                    <div class="dashboard-info-icon">
+                                        <ion-icon name="person-outline"></ion-icon>
+                                    </div>
+                                    <div class="dashboard-info-content">
+                                        <h4 class="dashboard-info-label">Nome do Cliente</h4>
+                                        <p class="dashboard-info-value">{{ $order->name ?? $order->user->name }}</p>
+                                    </div>
                                 </div>
-                                <div class="info-item">
-                                    <span class="info-label">Email:</span>
-                                    <span class="info-value">{{ $order->email ?? $order->user->email }}</span>
+                                
+                                <div class="dashboard-info-item">
+                                    <div class="dashboard-info-icon">
+                                        <ion-icon name="mail-outline"></ion-icon>
+                                    </div>
+                                    <div class="dashboard-info-content">
+                                        <h4 class="dashboard-info-label">Email</h4>
+                                        <p class="dashboard-info-value">{{ $order->email ?? $order->user->email }}</p>
+                                    </div>
                                 </div>
+                                
                                 @if($order->phone)
-                                    <div class="info-item">
-                                        <span class="info-label">Telefone:</span>
-                                        <span class="info-value">{{ $order->phone }}</span>
+                                    <div class="dashboard-info-item">
+                                        <div class="dashboard-info-icon">
+                                            <ion-icon name="call-outline"></ion-icon>
+                                        </div>
+                                        <div class="dashboard-info-content">
+                                            <h4 class="dashboard-info-label">Telefone</h4>
+                                            <p class="dashboard-info-value">{{ $order->phone }}</p>
+                                        </div>
                                     </div>
                                 @endif
                             </div>
@@ -367,21 +440,26 @@
                     </div>
                 </div>
             </div>
+                    <!-- Ações do Pedido -->
+        <div class="dashboard-section">
+            <div class="dashboard-section-content">
+                <div class="dashboard-actions">
+                    <a href="{{ route('shop.orders.index') }}" class="dashboard-back-btn">
+                        <ion-icon name="arrow-back-outline"></ion-icon>
+                        Voltar para Pedidos
+                    </a>
+                    @if($order->status === 'pending')
+                        <a href="{{ route('shop.checkout') }}" class="dashboard-btn">
+                            <ion-icon name="card-outline"></ion-icon>
+                            Finalizar Pagamento
+                        </a>
+                    @endif
+                </div>
+            </div>
+        </div>
         </div>
 
-        <!-- Ações do Pedido -->
-        <div class="order-actions-footer">
-            <a href="{{ route('shop.orders.index') }}" class="btn btn-secondary">
-                <ion-icon name="arrow-back-outline"></ion-icon>
-                Voltar para Pedidos
-            </a>
-            @if($order->status === 'pending')
-                <a href="{{ route('shop.checkout') }}" class="btn btn-primary">
-                    <ion-icon name="card-outline"></ion-icon>
-                    Finalizar Pagamento
-                </a>
-            @endif
-        </div>
+
     </div>
 </div>
 
